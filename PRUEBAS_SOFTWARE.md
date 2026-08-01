@@ -41,7 +41,3 @@ caminos y ramas específicas de la lógica (por ejemplo, cada `except` de una fu
 
 ---
 
-## Resultado final
-
-```text
-============================== 8 passed in 0.42s ===============================
