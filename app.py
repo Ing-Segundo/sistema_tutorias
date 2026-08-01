@@ -151,6 +151,7 @@ def requiere_rol(*roles_permitidos):
 
 # ===================== LOGIN =====================
 @app.route("/", methods=["GET", "POST"])
+@app.route("/login", methods=["GET", "POST"])
 def login():
     ip = request.remote_addr
     if request.method == "POST":
@@ -171,8 +172,10 @@ def login():
 
 @app.route("/salir")
 def salir():
-    session.clear(); respuesta = redirect(url_for("login"))
-    respuesta.delete_cookie("token"); return respuesta
+    session.clear()
+    respuesta = redirect("/")
+    respuesta.delete_cookie("token")
+    return respuesta
 
 # ===================== ALUMNO =====================
 @app.route("/panel-alumno")
