@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Tutor · Sistema de Tutorías</title>
+    <!-- Tailwind + DaisyUI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+    <!-- Font Awesome 6 (gratis) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <style>
+        /* Variables y estilos base (heredados del coordinador) */
+        :root {
+            --verde-ut: #0E7C70;
+            --verde-sec: #15803D;
+            --verde-suave: #E6F7F5;
+            --verde-claro: #F0FDF4;
+            --texto-principal: #1E293B;
+            --texto-sec: #64748B;
+            --borde-suave: #CCEBE8;
+            --sombra-suave: 0 8px 24px rgba(14, 124, 112, 0.08);
+            --sombra-media: 0 12px 32px rgba(14, 124, 112, 0.12);
+            --radius: 1.25rem;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+            color: var(--texto-principal);
+        }
+
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        /* Navbar superior */
+        .navbar-custom {
+            background: white;
+            border-bottom: 1px solid #e9edf2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            padding: 0.5rem 1.5rem;
+        }
+
+        /* Tarjetas */
+        .card-modern {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid #eef2f6;
+            box-shadow: var(--sombra-suave);
+            transition: all 0.25s ease;
+        }
+        .card-modern:hover {
+            box-shadow: var(--sombra-media);
+            transform: translateY(-2px);
+        }
+
+        /* Títulos de sección */
+        .section-title {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--verde-ut);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title i {
+            font-size: 1.1rem;
+            color: var(--verde-sec);
+        }
+
+        /* Botón primario */
+        .btn-primary-ut {
+            background: var(--verde-ut);
+            color: white;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            border: none;
+            padding: 0.5rem 1.25rem;
+        }
+        .btn-primary-ut:hover {
+            background: var(--verde-sec);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(14, 124, 112, 0.2);
+            color: white;
+        }
+
+        /* Botón info (azul) */
+        .btn-info-ut {
+            background: #3B82F6;
+            color: white;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            border: none;
+            padding: 0.5rem 1.25rem;
+        }
+        .btn-info-ut:hover {
+            background: #2563EB;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.2);
+            color: white;
+        }
+
+        /* Badges personalizados */
+        .badge-success-light {
+            background: var(--verde-suave);
+            color: var(--verde-ut);
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        .badge-warning-light {
+            background: #FFFBEB;
+            color: #B45309;
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        .badge-info-light {
+            background: #EFF6FF;
+            color: #1D4ED8;
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        .badge-secondary-light {
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+
+        /* Inputs y selects mejorados */
+        .input-modern {
+            background: #f9fafb;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .input-modern:focus {
+            border-color: var(--verde-ut);
+            box-shadow: 0 0 0 3px rgba(14, 124, 112, 0.12);
+            background: white;
+            outline: none;
+        }
+        .input-modern::placeholder {
+            color: #94a3b8;
+        }
+
+        .select-modern {
+            background: #f9fafb;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.5rem 2rem 0.5rem 1rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .select-modern:focus {
+            border-color: var(--verde-ut);
+            box-shadow: 0 0 0 3px rgba(14, 124, 112, 0.12);
+            background-color: white;
+            outline: none;
+        }
+
+        /* Tabla */
+        .table-modern thead {
+            background: #f1f5f9;
+            border-radius: 0.75rem 0.75rem 0 0;
+        }
+        .table-modern thead th {
+            font-weight: 600;
+            color: #1e293b;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .table-modern tbody td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        .table-modern tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Sidebar */
+        .sidebar-menu a {
+            border-radius: 0.75rem;
+            padding: 0.6rem 1rem;
+            margin: 0.2rem 0;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #334155;
+        }
+        .sidebar-menu a i {
+            width: 1.25rem;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .sidebar-menu a:hover {
+            background: var(--verde-suave);
+            color: var(--verde-ut);
+        }
+        .sidebar-menu a.active {
+            background: var(--verde-suave);
+            color: var(--verde-ut);
+            font-weight: 600;
+            border-right: 3px solid var(--verde-ut);
+        }
+
+        /* Botón toggle menú */
+        .drawer-toggle-label {
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+        .drawer-toggle-label:hover {
+            background: #f1f5f9;
+        }
+
+        /* Ajustes responsivos */
+        @media (max-width: 768px) {
+            .card-modern { padding: 1rem; }
+        }
+
+        /* Scroll suave */
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+<div class="drawer lg:drawer-open">
+    <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="drawer-content flex flex-col">
+
+        <!-- BARRA SUPERIOR -->
+        <header class="navbar-custom flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <label for="menu-drawer" class="drawer-toggle-label lg:hidden">
+                    <i class="fas fa-bars text-[#0E7C70]"></i>
+                </label>
+                <span class="text-xl font-bold text-[#0E7C70] tracking-tight">
+                    <i class="fas fa-chalkboard-teacher mr-2"></i>Panel Tutor
+                </span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-500 hidden sm:inline">Bienvenido</span>
+                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 text-red-700 border-0 hover:bg-red-100 rounded-xl transition">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
+                </a>
+            </div>
+        </header>
+
+        <!-- CUERPO -->
+        <main class="flex-1 p-4 md:p-6 max-w-6xl mx-auto w-full">
+
+            <!-- Mensajes flash -->
+            {% with m = get_flashed_messages(with_categories=true) %}
+                {% if m %}
+                    <div class="alert alert-{{ m[0][0] }} mb-4 rounded-xl shadow-sm border-0">
+                        <i class="fas fa-{{ 'check-circle' if m[0][0] == 'success' else 'exclamation-triangle' }} mr-2"></i>
+                        {{ m[0][1] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- MIS DATOS (perfil del tutor) -->
+            <section class="card-modern p-5 md:p-6 mb-6">
+                <h3 class="section-title mb-4">
+                    <i class="fas fa-id-badge"></i> Mis Datos
+                </h3>
+                <div class="flex flex-col md:flex-row md:items-center gap-3 mb-3">
+                    <p class="text-sm"><strong>Nombre:</strong> {{ tutor.usuario.nombre_completo }}</p>
+                    <span class="badge bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold">Tutor</span>
+                </div>
+                <form method="POST" action="{{ url_for('actualizar_horario') }}" class="flex flex-wrap items-center gap-3 mb-3">
+                    <div class="flex-1 min-w-[150px]">
+                        <label for="horario" class="sr-only">Horario de atención</label>
+                        <input type="text" name="horario" id="horario" class="input-modern" value="{{ tutor.horario }}" placeholder="Ej. Lunes a Viernes 10:00-14:00" required />
+                    </div>
+                    <button class="btn-primary-ut flex items-center gap-2">
+                        <i class="fas fa-clock"></i> Actualizar Horario
+                    </button>
+                </form>
+                <div>
+                    <a href="{{ url_for('reporte_tutor_pdf') }}" class="btn-info-ut flex items-center gap-2 text-sm">
+                        <i class="fas fa-file-pdf"></i> Descargar reporte PDF
+                    </a>
+                </div>
+            </section>
+
+            <!-- ASIGNAR NUEVA TUTORÍA -->
+            <section class="card-modern p-5 md:p-6 mb-6">
+                <h3 class="section-title mb-4">
+                    <i class="fas fa-plus-circle"></i> Asignar Nueva Tutoría
+                </h3>
+                <form method="POST" action="{{ url_for('crear_tutoria') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                    <select name="id_alumno" class="select-modern" required>
+                        <option value="">Selecciona alumno</option>
+                        {% for a in alumnos %}
+                            <option value="{{ a.id }}">{{ a.usuario.nombre_completo }}</option>
+                        {% endfor %}
+                    </select>
+                    <input type="date" name="fecha" class="input-modern" required />
+                    <input type="text" name="tema" class="input-modern" placeholder="Tema de la tutoría" required />
+                    <button class="btn-primary-ut flex items-center justify-center gap-2">
+                        <i class="fas fa-calendar-plus"></i> Crear
+                    </button>
+                </form>
+            </section>
+
+            <!-- TUTORÍAS A CARGO -->
+            <section class="card-modern p-5 md:p-6 overflow-x-auto">
+                <h3 class="section-title mb-4">
+                    <i class="fas fa-list-ul"></i> Tutorías a mi cargo
+                </h3>
+                <table class="table-modern w-full text-sm">
+                    <thead>
+                        <tr>
+                            <th>Alumno</th>
+                            <th>Fecha</th>
+                            <th>Tema</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in tutorias %}
+                        <tr>
+                            <td>{{ t.alumno.usuario.nombre_completo }}</td>
+                            <td class="whitespace-nowrap">{{ t.fecha.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ t.tema }}</td>
+                            <td>
+                                {% if t.estado == 'Solicitada' %}
+                                    <span class="badge-warning-light"><i class="fas fa-hourglass-half mr-1"></i>Solicitada</span>
+                                {% elif t.estado == 'Realizada' %}
+                                    <span class="badge-success-light"><i class="fas fa-check-circle mr-1"></i>Realizada</span>
+                                {% elif t.estado == 'En proceso' %}
+                                    <span class="badge-info-light"><i class="fas fa-spinner mr-1"></i>En proceso</span>
+                                {% else %}
+                                    <span class="badge-secondary-light"><i class="fas fa-tag mr-1"></i>{{ t.estado }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="flex flex-wrap items-center gap-1">
+                                    {% if t.estado == 'Solicitada' %}
+                                        <a href="{{ url_for('aceptar_tutoria', id=t.id) }}" class="btn btn-ghost btn-xs text-green-600 hover:bg-green-50 border border-green-200 rounded-xl">
+                                            <i class="fas fa-check"></i> Aceptar
+                                        </a>
+                                        <a href="{{ url_for('form_editar_tutoria', id=t.id) }}" class="btn btn-ghost btn-xs text-[#0E7C70] hover:bg-[#E6F7F5] border border-[#CCEBE8] rounded-xl">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                    {% endif %}
+
+                                    {% if t.estado in ['Asignada por tutor', 'Confirmada'] %}
+                                        <a href="{{ url_for('iniciar_tutoria', id=t.id) }}" class="btn-primary-ut btn-xs flex items-center gap-1">
+                                            <i class="fas fa-play"></i> Iniciar
+                                        </a>
+                                    {% endif %}
+
+                                    {% if t.estado in ['Asignada por tutor', 'En proceso', 'Realizada'] %}
+                                        <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="btn-info-ut btn-xs flex items-center gap-1">
+                                            <i class="fas fa-eye"></i> Ficha
+                                        </a>
+                                    {% endif %}
+
+                                    <!-- Botón Completar (solo si estado no es Asignada/En proceso/Realizada) -->
+                                    {% if t.estado not in ['Asignada por tutor','En proceso','Realizada'] %}
+                                        <a href="{{ url_for('completar_tutoria', id=t.id) }}" class="btn btn-ghost btn-xs text-blue-600 hover:bg-blue-50 border border-blue-200 rounded-xl">
+                                            <i class="fas fa-check-double"></i> Completar
+                                        </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5" class="text-center py-6 text-gray-400">
+                                <i class="fas fa-inbox mr-2"></i> Sin tutorías pendientes
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MENÚ LATERAL -->
+    <div class="drawer-side z-50">
+        <label for="menu-drawer" class="drawer-overlay"></label>
+        <aside class="bg-white w-64 h-full p-4 border-r border-[#eef2f6] flex flex-col">
+            <div class="flex items-center gap-2 mb-6 px-2">
+                <i class="fas fa-chalkboard-teacher text-2xl text-[#0E7C70]"></i>
+                <span class="text-lg font-bold text-[#0E7C70] tracking-tight">Tutorías</span>
+            </div>
+            <ul class="sidebar-menu flex-1">
+                <li><a href="{{ url_for('panel_tutor') }}" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="{{ url_for('reporte_tutor_pdf') }}"><i class="fas fa-file-pdf"></i> Reporte PDF</a></li>
+                <li><a href="{{ url_for('reportes_tutor') }}"><i class="fas fa-chart-pie"></i> Mis Reportes</a></li>
+            </ul>
+            <div class="border-t border-[#eef2f6] pt-4 mt-2 text-xs text-gray-400 px-2">
+                <i class="fas fa-shield-alt mr-1"></i> Acceso restringido
+            </div>
+        </aside>
+    </div>
+
+</div>
+
+</body>
+</html>

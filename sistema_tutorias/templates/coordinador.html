@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Panel Coordinador · Sistema de Tutorías</title>
+    <!-- Tailwind + DaisyUI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+    <!-- Font Awesome 6 (gratis) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <style>
+        /* Variables y estilos base */
+        :root {
+            --verde-ut: #0E7C70;
+            --verde-sec: #15803D;
+            --verde-suave: #E6F7F5;
+            --verde-claro: #F0FDF4;
+            --texto-principal: #1E293B;
+            --texto-sec: #64748B;
+            --borde-suave: #CCEBE8;
+            --sombra-suave: 0 8px 24px rgba(14, 124, 112, 0.08);
+            --sombra-media: 0 12px 32px rgba(14, 124, 112, 0.12);
+            --radius: 1.25rem;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+            color: var(--texto-principal);
+        }
+
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        /* Navbar superior */
+        .navbar-custom {
+            background: white;
+            border-bottom: 1px solid #e9edf2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            padding: 0.5rem 1.5rem;
+        }
+
+        /* Tarjetas */
+        .card-modern {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid #eef2f6;
+            box-shadow: var(--sombra-suave);
+            transition: all 0.25s ease;
+        }
+
+        .card-modern:hover {
+            box-shadow: var(--sombra-media);
+            transform: translateY(-2px);
+        }
+
+        /* Títulos de sección */
+        .section-title {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--verde-ut);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title i {
+            font-size: 1.1rem;
+            color: var(--verde-sec);
+        }
+
+        /* Botón primario */
+        .btn-primary-ut {
+            background: var(--verde-ut);
+            color: white;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            border: none;
+            padding: 0.5rem 1.25rem;
+        }
+        .btn-primary-ut:hover {
+            background: var(--verde-sec);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(14, 124, 112, 0.2);
+            color: white;
+        }
+
+        /* Badges personalizados */
+        .badge-success-light {
+            background: var(--verde-suave);
+            color: var(--verde-ut);
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        .badge-danger-light {
+            background: #fee2e2;
+            color: #b91c1c;
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+
+        /* Inputs y selects mejorados */
+        .input-modern {
+            background: #f9fafb;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.5rem 1rem;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .input-modern:focus {
+            border-color: var(--verde-ut);
+            box-shadow: 0 0 0 3px rgba(14, 124, 112, 0.12);
+            background: white;
+            outline: none;
+        }
+        .input-modern::placeholder {
+            color: #94a3b8;
+        }
+
+        .select-modern {
+            background: #f9fafb;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.5rem 2rem 0.5rem 1rem;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .select-modern:focus {
+            border-color: var(--verde-ut);
+            box-shadow: 0 0 0 3px rgba(14, 124, 112, 0.12);
+            background-color: white;
+            outline: none;
+        }
+
+        /* Tabla */
+        .table-modern thead {
+            background: #f1f5f9;
+            border-radius: 0.75rem 0.75rem 0 0;
+        }
+        .table-modern thead th {
+            font-weight: 600;
+            color: #1e293b;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .table-modern tbody td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        .table-modern tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Estadísticas */
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #eef2f6;
+            box-shadow: var(--sombra-suave);
+            transition: all 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--sombra-media);
+        }
+        .stat-number {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--verde-ut);
+            line-height: 1.2;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--texto-sec);
+            font-weight: 500;
+        }
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--verde-suave);
+            opacity: 0.7;
+        }
+
+        /* Sidebar */
+        .sidebar-menu a {
+            border-radius: 0.75rem;
+            padding: 0.6rem 1rem;
+            margin: 0.2rem 0;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #334155;
+        }
+        .sidebar-menu a i {
+            width: 1.25rem;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .sidebar-menu a:hover {
+            background: var(--verde-suave);
+            color: var(--verde-ut);
+        }
+        .sidebar-menu a.active {
+            background: var(--verde-suave);
+            color: var(--verde-ut);
+            font-weight: 600;
+            border-right: 3px solid var(--verde-ut);
+        }
+
+        /* Botón toggle menú */
+        .drawer-toggle-label {
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+        .drawer-toggle-label:hover {
+            background: #f1f5f9;
+        }
+
+        /* Ajustes responsivos */
+        @media (max-width: 768px) {
+            .stat-number { font-size: 1.75rem; }
+            .card-modern { padding: 1rem; }
+        }
+
+        /* Scroll suave */
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+<div class="drawer lg:drawer-open">
+    <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="drawer-content flex flex-col">
+
+        <!-- BARRA SUPERIOR -->
+        <header class="navbar-custom flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <label for="menu-drawer" class="drawer-toggle-label lg:hidden">
+                    <i class="fas fa-bars text-[#0E7C70]"></i>
+                </label>
+                <span class="text-xl font-bold text-[#0E7C70] tracking-tight">
+                    <i class="fas fa-graduation-cap mr-2"></i>Panel Coordinador
+                </span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-500 hidden sm:inline">Bienvenido</span>
+                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 text-red-700 border-0 hover:bg-red-100 rounded-xl transition">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
+                </a>
+            </div>
+        </header>
+
+        <!-- CUERPO -->
+        <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
+
+            <!-- Mensajes flash -->
+            {% with m = get_flashed_messages(with_categories=true) %}
+                {% if m %}
+                    <div class="alert alert-{{ m[0][0] }} mb-4 rounded-xl shadow-sm border-0">
+                        <i class="fas fa-{{ 'check-circle' if m[0][0] == 'success' else 'exclamation-triangle' }} mr-2"></i>
+                        {{ m[0][1] }}
+                    </div>
+                {% endif %}
+            {% endwith %}
+
+            <!-- TARJETAS DE ESTADÍSTICAS -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div class="stat-card flex items-center justify-between">
+                    <div>
+                        <div class="stat-number">{{ usuarios|selectattr('tipo','equalto','alumno')|list|length }}</div>
+                        <div class="stat-label">Alumnos</div>
+                    </div>
+                    <i class="fas fa-user-graduate stat-icon"></i>
+                </div>
+                <div class="stat-card flex items-center justify-between">
+                    <div>
+                        <div class="stat-number">{{ usuarios|selectattr('tipo','equalto','tutor')|list|length }}</div>
+                        <div class="stat-label">Tutores</div>
+                    </div>
+                    <i class="fas fa-chalkboard-teacher stat-icon"></i>
+                </div>
+                <div class="stat-card flex items-center justify-between">
+                    <div>
+                        <div class="stat-number">{{ tutorias|length }}</div>
+                        <div class="stat-label">Tutorías Totales</div>
+                    </div>
+                    <i class="fas fa-calendar-check stat-icon"></i>
+                </div>
+            </section>
+
+            <!-- CREAR USUARIO -->
+            <section class="card-modern p-5 md:p-6 mb-6">
+                <h3 class="section-title mb-4">
+                    <i class="fas fa-user-plus"></i> Crear Nuevo Usuario
+                </h3>
+                <form method="POST" action="{{ url_for('crear_usuario') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                    <select name="tipo" class="select-modern" required>
+                        <option value="">Rol</option>
+                        <option value="alumno">Alumno</option>
+                        <option value="tutor">Tutor</option>
+                        <option value="coordinador">Coordinador</option>
+                    </select>
+                    <input type="text" name="credencial" class="input-modern" placeholder="Credencial" required />
+                    <input type="text" name="nombre" class="input-modern" placeholder="Nombre completo" required />
+                    <input type="text" name="contrasena" class="input-modern" placeholder="Contraseña" required />
+                    <button class="btn-primary-ut flex items-center justify-center gap-2">
+                        <i class="fas fa-save"></i> Crear
+                    </button>
+                </form>
+            </section>
+
+            <!-- ADMINISTRAR USUARIOS -->
+            <section class="card-modern p-5 md:p-6 mb-6 overflow-x-auto">
+                <h3 class="section-title mb-4">
+                    <i class="fas fa-users-cog"></i> Administrar Usuarios
+                </h3>
+                <table class="table-modern w-full text-sm">
+                    <thead>
+                        <tr>
+                            <th>Rol</th>
+                            <th>Credencial</th>
+                            <th>Nombre</th>
+                            <th>Estado</th>
+                            <th>Asignar Tutor</th>
+                            <th>Acción</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for u in usuarios %}
+                        <tr>
+                            <td><span class="badge bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold">{{ u.tipo|upper }}</span></td>
+                            <td class="font-mono text-xs">{{ u.credencial }}</td>
+                            <td>{{ u.nombre_completo }}</td>
+                            <td>
+                                {% if u.bloqueado %}
+                                    <span class="badge-danger-light"><i class="fas fa-lock mr-1"></i>Bloqueado</span>
+                                {% else %}
+                                    <span class="badge-success-light"><i class="fas fa-check-circle mr-1"></i>Activo</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if u.tipo == 'alumno' and u.perfil_alumno %}
+                                <form method="POST" action="{{ url_for('asignar_tutor', id_alumno=u.perfil_alumno.id) }}" class="flex flex-wrap items-center gap-1">
+                                    <select name="id_tutor" class="select-modern text-xs py-1 px-2 w-28" required>
+                                        <option value="">Asignar</option>
+                                        {% for t in usuarios %}
+                                            {% if t.tipo == 'tutor' %}
+                                                <option value="{{ t.id }}">{{ t.nombre_completo }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                    <button class="btn btn-ghost btn-xs text-[#0E7C70] hover:bg-[#E6F7F5] rounded-xl border border-[#CCEBE8]">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('cambiar_estado', id=u.id) }}" class="btn btn-ghost btn-xs rounded-xl hover:bg-gray-100">
+                                    {% if u.bloqueado %}
+                                        <i class="fas fa-unlock text-green-600"></i> Desbloquear
+                                    {% else %}
+                                        <i class="fas fa-lock text-red-500"></i> Bloquear
+                                    {% endif %}
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+            <!-- RESPALDOS Y RECUPERACIÓN -->
+            <section class="card-modern p-5 md:p-6 mb-6">
+                <h3 class="section-title mb-4">
+                    <i class="fas fa-database"></i> Respaldos y Recuperación
+                </h3>
+                <div class="flex flex-wrap items-center gap-3 mb-4">
+                    <a href="{{ url_for('respaldo_manual') }}" class="btn-primary-ut flex items-center gap-2">
+                        <i class="fas fa-cloud-upload-alt"></i> Crear Respaldo
+                    </a>
+                    <a href="{{ url_for('reporte_general_pdf') }}" class="btn btn-ghost border border-[#CCEBE8] rounded-xl hover:bg-[#E6F7F5]">
+                        <i class="fas fa-file-pdf text-red-500"></i> Reporte General PDF
+                    </a>
+                </div>
+
+                <form method="POST" action="{{ url_for('config_respaldos') }}" class="flex flex-wrap items-center gap-3 bg-[#f9fafb] p-3 rounded-xl mb-4">
+                    <label class="flex items-center gap-2 text-sm font-medium">
+                        <input type="checkbox" name="activo" class="toggle toggle-sm" {{ 'checked' if cfg.activo else '' }} />
+                        Respaldo automático
+                    </label>
+                    <div class="flex items-center gap-1">
+                        <input type="number" name="intervalo" class="input-modern w-20 py-1 px-2 text-sm" min="1" value="{{ cfg.intervalo_horas }}" />
+                        <span class="text-sm text-gray-500">horas</span>
+                    </div>
+                    <button class="btn btn-sm bg-white border border-[#CCEBE8] rounded-xl hover:bg-[#E6F7F5]">
+                        <i class="fas fa-save"></i> Guardar
+                    </button>
+                </form>
+
+                <h4 class="font-semibold text-sm text-gray-600 mb-2">Respaldos disponibles</h4>
+                <div class="flex flex-wrap gap-2">
+                    {% for r in respaldos %}
+                    <div class="badge bg-[#E6F7F5] text-[#0E7C70] px-3 py-2 rounded-full text-sm flex items-center gap-1">
+                        <i class="fas fa-archive"></i> {{ r }}
+                        <a href="{{ url_for('restaurar', nombre=r) }}" class="ml-1 text-red-500 hover:text-red-700 transition" onclick="return confirm('¿Restaurar este respaldo? Se perderán los datos actuales.')">
+                            <i class="fas fa-undo-alt"></i>
+                        </a>
+                    </div>
+                    {% else %}
+                    <span class="text-sm text-gray-400">No hay respaldos</span>
+                    {% endfor %}
+                </div>
+            </section>
+
+            <!-- AUDITORÍA -->
+            <section class="card-modern p-5 md:p-6 overflow-x-auto">
+                <h3 class="section-title mb-4">
+                    <i class="fas fa-clipboard-list"></i> Auditoría de Acciones
+                </h3>
+                <table class="table-modern w-full text-sm">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Usuario</th>
+                            <th>Acción</th>
+                            <th>IP</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for a in auditoria %}
+                        <tr>
+                            <td class="whitespace-nowrap">{{ a.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                            <td>{{ a.usuario }}</td>
+                            <td><span class="bg-gray-100 px-2 py-0.5 rounded-full text-xs">{{ a.accion }}</span></td>
+                            <td class="font-mono text-xs">{{ a.ip }}</td>
+                        </tr>
+                        {% else %}
+                        <tr><td colspan="4" class="text-center text-gray-400 py-4">No hay registros de auditoría</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MENÚ LATERAL -->
+    <div class="drawer-side z-50">
+        <label for="menu-drawer" class="drawer-overlay"></label>
+        <aside class="bg-white w-64 h-full p-4 border-r border-[#eef2f6] flex flex-col">
+            <div class="flex items-center gap-2 mb-6 px-2">
+                <i class="fas fa-graduation-cap text-2xl text-[#0E7C70]"></i>
+                <span class="text-lg font-bold text-[#0E7C70] tracking-tight">Tutorías</span>
+            </div>
+            <ul class="sidebar-menu flex-1">
+                <li><a href="{{ url_for('panel_coordinador') }}" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="{{ url_for('reportes') }}"><i class="fas fa-chart-bar"></i> Estadísticas</a></li>
+                <li><a href="{{ url_for('reporte_general_pdf') }}"><i class="fas fa-file-pdf"></i> Reporte PDF</a></li>
+            </ul>
+            <div class="border-t border-[#eef2f6] pt-4 mt-2 text-xs text-gray-400 px-2">
+                <i class="fas fa-shield-alt mr-1"></i> Acceso restringido
+            </div>
+        </aside>
+    </div>
+
+</div>
+
+</body>
+</html>

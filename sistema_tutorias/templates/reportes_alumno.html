@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mis Reportes · Sistema de Tutorías</title>
+    <!-- Tailwind + DaisyUI -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+    <!-- Google Fonts: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
+
+    <style>
+        /* Variables y estilos base (heredados de los paneles) */
+        :root {
+            --verde-ut: #0E7C70;
+            --verde-sec: #15803D;
+            --verde-suave: #E6F7F5;
+            --verde-claro: #F0FDF4;
+            --texto-principal: #1E293B;
+            --texto-sec: #64748B;
+            --borde-suave: #CCEBE8;
+            --sombra-suave: 0 8px 24px rgba(14, 124, 112, 0.08);
+            --sombra-media: 0 12px 32px rgba(14, 124, 112, 0.12);
+            --radius: 1.25rem;
+        }
+
+        * {
+            font-family: 'Inter', sans-serif;
+            color: var(--texto-principal);
+        }
+
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+        }
+
+        /* Navbar superior */
+        .navbar-custom {
+            background: white;
+            border-bottom: 1px solid #e9edf2;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            padding: 0.5rem 1.5rem;
+        }
+
+        /* Tarjetas */
+        .card-modern {
+            background: white;
+            border-radius: var(--radius);
+            border: 1px solid #eef2f6;
+            box-shadow: var(--sombra-suave);
+            transition: all 0.25s ease;
+        }
+        .card-modern:hover {
+            box-shadow: var(--sombra-media);
+            transform: translateY(-2px);
+        }
+
+        /* Títulos de sección */
+        .section-title {
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: var(--verde-ut);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .section-title i {
+            font-size: 1.1rem;
+            color: var(--verde-sec);
+        }
+
+        /* Botón primario */
+        .btn-primary-ut {
+            background: var(--verde-ut);
+            color: white;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            transition: all 0.25s ease;
+            border: none;
+            padding: 0.5rem 1.25rem;
+        }
+        .btn-primary-ut:hover {
+            background: var(--verde-sec);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(14, 124, 112, 0.2);
+            color: white;
+        }
+
+        /* Badges personalizados */
+        .badge-success-light {
+            background: var(--verde-suave);
+            color: var(--verde-ut);
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        .badge-warning-light {
+            background: #FFFBEB;
+            color: #B45309;
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        .badge-info-light {
+            background: #EFF6FF;
+            color: #1D4ED8;
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+        .badge-secondary-light {
+            background: #f1f5f9;
+            color: #475569;
+            border-radius: 2rem;
+            padding: 0.25rem 1rem;
+            font-weight: 500;
+            font-size: 0.75rem;
+        }
+
+        /* Tabla */
+        .table-modern thead {
+            background: #f1f5f9;
+            border-radius: 0.75rem 0.75rem 0 0;
+        }
+        .table-modern thead th {
+            font-weight: 600;
+            color: #1e293b;
+            padding: 0.75rem 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+        .table-modern tbody td {
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+            vertical-align: middle;
+        }
+        .table-modern tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Sidebar */
+        .sidebar-menu a {
+            border-radius: 0.75rem;
+            padding: 0.6rem 1rem;
+            margin: 0.2rem 0;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #334155;
+        }
+        .sidebar-menu a i {
+            width: 1.25rem;
+            text-align: center;
+            font-size: 1rem;
+        }
+        .sidebar-menu a:hover {
+            background: var(--verde-suave);
+            color: var(--verde-ut);
+        }
+        .sidebar-menu a.active {
+            background: var(--verde-suave);
+            color: var(--verde-ut);
+            font-weight: 600;
+            border-right: 3px solid var(--verde-ut);
+        }
+
+        /* Botón toggle menú */
+        .drawer-toggle-label {
+            cursor: pointer;
+            font-size: 1.25rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+        .drawer-toggle-label:hover {
+            background: #f1f5f9;
+        }
+
+        /* Tarjetas de estadísticas */
+        .stat-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.25rem 1.5rem;
+            border: 1px solid #eef2f6;
+            box-shadow: var(--sombra-suave);
+            transition: all 0.2s ease;
+            text-align: center;
+        }
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--sombra-media);
+        }
+        .stat-number {
+            font-size: 2.25rem;
+            font-weight: 700;
+            color: var(--verde-ut);
+            line-height: 1.2;
+        }
+        .stat-number.amber {
+            color: #D97706;
+        }
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--texto-sec);
+            font-weight: 500;
+            margin-top: 0.25rem;
+        }
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--verde-suave);
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Ajustes responsivos */
+        @media (max-width: 768px) {
+            .card-modern { padding: 1rem; }
+            .stat-number { font-size: 1.75rem; }
+        }
+
+        /* Scroll suave */
+        html { scroll-behavior: smooth; }
+    </style>
+</head>
+<body>
+
+<div class="drawer lg:drawer-open">
+    <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="drawer-content flex flex-col">
+
+        <!-- BARRA SUPERIOR -->
+        <header class="navbar-custom flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <label for="menu-drawer" class="drawer-toggle-label lg:hidden">
+                    <i class="fas fa-bars text-[#0E7C70]"></i>
+                </label>
+                <span class="text-xl font-bold text-[#0E7C70] tracking-tight">
+                    <i class="fas fa-chart-pie mr-2"></i>Mis Reportes
+                </span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="text-sm text-gray-500 hidden sm:inline">Bienvenido</span>
+                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 text-red-700 border-0 hover:bg-red-100 rounded-xl transition">
+                    <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
+                </a>
+            </div>
+        </header>
+
+        <!-- CUERPO -->
+        <main class="flex-1 p-4 md:p-6 max-w-6xl mx-auto w-full">
+
+            <!-- TARJETAS DE ESTADÍSTICAS -->
+            <section class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="stat-number">{{ total }}</div>
+                    <div class="stat-label">Total Solicitadas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
+                    <div class="stat-number">{{ realizadas }}</div>
+                    <div class="stat-label">Realizadas</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
+                    <div class="stat-number amber">{{ pendientes }}</div>
+                    <div class="stat-label">Pendientes</div>
+                </div>
+            </section>
+
+            <!-- GRÁFICA -->
+            <section class="card-modern p-5 md:p-6 mb-6 max-w-lg mx-auto">
+                <h3 class="section-title justify-center mb-4">
+                    <i class="fas fa-chart-pie"></i> Estado de mis Tutorías
+                </h3>
+                <canvas id="graficaAlumno" class="w-full h-auto"></canvas>
+            </section>
+
+            <!-- TABLA DE DETALLE -->
+            <section class="card-modern p-5 md:p-6 overflow-x-auto">
+                <h3 class="section-title mb-4">
+                    <i class="fas fa-list-ul"></i> Detalle de mis tutorías
+                </h3>
+                <table class="table-modern w-full text-sm">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Tema</th>
+                            <th>Tutor</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for t in tutorias %}
+                        <tr>
+                            <td class="whitespace-nowrap">{{ t.fecha.strftime('%d/%m/%Y') }}</td>
+                            <td>{{ t.tema }}</td>
+                            <td>
+                                {% if t.tutor %}
+                                    <span class="badge bg-[#E6F7F5] text-[#0E7C70] px-3 py-1 rounded-full text-xs font-semibold">
+                                        {{ t.tutor.nombre_completo }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-xs">Sin asignar</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if t.estado == 'Solicitada' %}
+                                    <span class="badge-warning-light"><i class="fas fa-hourglass-half mr-1"></i>Solicitada</span>
+                                {% elif t.estado == 'Realizada' %}
+                                    <span class="badge-success-light"><i class="fas fa-check-circle mr-1"></i>Realizada</span>
+                                {% elif t.estado == 'En proceso' %}
+                                    <span class="badge-info-light"><i class="fas fa-spinner mr-1"></i>En proceso</span>
+                                {% elif t.estado == 'Asignada por tutor' %}
+                                    <span class="badge-secondary-light"><i class="fas fa-user-check mr-1"></i>Asignada</span>
+                                {% else %}
+                                    <span class="badge-secondary-light"><i class="fas fa-tag mr-1"></i>{{ t.estado }}</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="4" class="text-center py-6 text-gray-400">
+                                <i class="fas fa-inbox mr-2"></i> No hay registros disponibles
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- MENÚ LATERAL -->
+    <div class="drawer-side z-50">
+        <label for="menu-drawer" class="drawer-overlay"></label>
+        <aside class="bg-white w-64 h-full p-4 border-r border-[#eef2f6] flex flex-col">
+            <div class="flex items-center gap-2 mb-6 px-2">
+                <i class="fas fa-user-graduate text-2xl text-[#0E7C70]"></i>
+                <span class="text-lg font-bold text-[#0E7C70] tracking-tight">Tutorías</span>
+            </div>
+            <ul class="sidebar-menu flex-1">
+                <li><a href="{{ url_for('panel_alumno') }}"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="{{ url_for('reporte_alumno_pdf') }}"><i class="fas fa-file-pdf"></i> Reporte PDF</a></li>
+                <li><a href="{{ url_for('reportes_alumno') }}" class="active"><i class="fas fa-chart-pie"></i> Mis Reportes</a></li>
+            </ul>
+            <div class="border-t border-[#eef2f6] pt-4 mt-2 text-xs text-gray-400 px-2">
+                <i class="fas fa-shield-alt mr-1"></i> Acceso restringido
+            </div>
+        </aside>
+    </div>
+</div>
+
+<!-- SCRIPTS DE CHART.JS -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('graficaAlumno').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Realizadas', 'Pendientes'],
+                datasets: [{
+                    data: [{{ realizadas }}, {{ pendientes }}],
+                    backgroundColor: ['#0E7C70', '#F59E0B'],
+                    borderWidth: 0,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                family: 'Inter',
+                                size: 13,
+                                weight: '500'
+                            },
+                            color: '#1E293B'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                let value = context.parsed || 0;
+                                let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                let percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                return label + ': ' + value + ' (' + percentage + '%)';
+                            }
+                        }
+                    }
+                },
+                cutout: '70%'
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
