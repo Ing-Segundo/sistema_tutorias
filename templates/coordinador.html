@@ -31,26 +31,27 @@
         }
 
         body {
-            background: #f8fafc;
+            background: #F8FAFC;
             min-height: 100vh;
         }
 
         /* Navbar superior */
         .navbar-custom {
-            background: white;
-            border-bottom: 1px solid #e9edf2;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(8px);
+            border-bottom: 1px solid #E2E8F0;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+            padding: 0.875rem 1.5rem;
             width: 100%;
         }
 
-        /* Tarjetas */
+        /* Tarjetas estilo Alumno/Tutor */
         .card-modern {
-            background: white;
+            background: #FFFFFF;
             border-radius: var(--radius);
-            border: 1px solid #eef2f6;
+            border: 1px solid #E2E8F0;
             box-shadow: var(--sombra-suave);
-            transition: all 0.25s ease;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             width: 100%;
         }
 
@@ -65,122 +66,136 @@
             color: var(--verde-ut);
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.625rem;
         }
         .section-title i {
-            font-size: 1.1rem;
-            color: var(--verde-sec);
+            font-size: 1.15rem;
+            color: var(--verde-ut);
         }
 
         /* Botón primario */
         .btn-primary-ut {
             background: var(--verde-ut);
-            color: white;
+            color: #FFFFFF !important;
             border-radius: 0.75rem;
             font-weight: 500;
             transition: all 0.25s ease;
             border: none;
-            padding: 0.5rem 1.25rem;
+            padding: 0.625rem 1.25rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .btn-primary-ut * {
+            color: #FFFFFF !important;
         }
         .btn-primary-ut:hover {
             background: var(--verde-sec);
             transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(14, 124, 112, 0.2);
-            color: white;
+            box-shadow: 0 6px 18px rgba(14, 124, 112, 0.25);
         }
 
         /* Badges personalizados */
-        .badge-success-light {
+        .badge-ut {
             background: var(--verde-suave);
             color: var(--verde-ut);
+            border: 1px solid var(--borde-suave);
             border-radius: 2rem;
             padding: 0.25rem 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 0.75rem;
             display: inline-flex;
             align-items: center;
         }
+        .badge-ut * {
+            color: var(--verde-ut);
+        }
+
         .badge-danger-light {
-            background: #fee2e2;
-            color: #b91c1c;
+            background: #FEE2E2;
+            color: #B91C1C;
+            border: 1px solid #FECACA;
             border-radius: 2rem;
             padding: 0.25rem 0.75rem;
-            font-weight: 500;
+            font-weight: 600;
             font-size: 0.75rem;
             display: inline-flex;
             align-items: center;
+        }
+        .badge-danger-light * {
+            color: #B91C1C;
         }
 
         /* Inputs y selects */
-        .input-modern {
-            background: #f9fafb;
-            border: 1px solid #e2e8f0;
+        .input-modern, .select-modern {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
             border-radius: 0.75rem;
-            padding: 0.5rem 1rem;
+            padding: 0.625rem 1rem;
+            font-size: 0.875rem;
             transition: all 0.2s ease;
             width: 100%;
         }
-        .input-modern:focus {
+        .input-modern:focus, .select-modern:focus {
             border-color: var(--verde-ut);
             box-shadow: 0 0 0 3px rgba(14, 124, 112, 0.12);
-            background: white;
+            background: #FFFFFF;
             outline: none;
         }
 
         .select-modern {
-            background: #f9fafb;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            padding: 0.5rem 2rem 0.5rem 1rem;
             appearance: none;
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2364748b' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
             background-position: right 1rem center;
-            transition: all 0.2s ease;
-            width: 100%;
-        }
-        .select-modern:focus {
-            border-color: var(--verde-ut);
-            box-shadow: 0 0 0 3px rgba(14, 124, 112, 0.12);
-            background-color: white;
-            outline: none;
+            padding-right: 2.5rem;
         }
 
-        /* Tabla */
+        /* Tabla estilizada */
         .table-modern {
             width: 100%;
-            border-collapse: collapse;
-        }
-        .table-modern thead {
-            background: #f1f5f9;
+            border-collapse: separate;
+            border-spacing: 0;
         }
         .table-modern thead th {
+            background: #F1F5F9;
             font-weight: 600;
-            color: #1e293b;
-            padding: 0.75rem 1rem;
-            border-bottom: 2px solid #e2e8f0;
-            font-size: 0.85rem;
+            color: var(--texto-sec);
+            padding: 0.875rem 1rem;
+            font-size: 0.75rem;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.05em;
+            border-bottom: 1px solid #E2E8F0;
             text-align: left;
         }
+        .table-modern thead th:first-child { border-top-left-radius: 0.75rem; }
+        .table-modern thead th:last-child { border-top-right-radius: 0.75rem; }
+        
         .table-modern tbody td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #f1f5f9;
+            padding: 1rem;
+            border-bottom: 1px solid #F1F5F9;
             vertical-align: middle;
+            font-size: 0.875rem;
+        }
+        .table-modern tbody tr {
+            transition: background-color 0.2s ease;
         }
         .table-modern tbody tr:hover {
-            background-color: #f8fafc;
+            background-color: #F8FAFC;
+        }
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
         }
 
         /* Estadísticas */
         .stat-card {
-            background: white;
-            border-radius: 1rem;
+            background: #FFFFFF;
+            border-radius: var(--radius);
             padding: 1.25rem 1.5rem;
-            border: 1px solid #eef2f6;
+            border: 1px solid #E2E8F0;
             box-shadow: var(--sombra-suave);
-            transition: all 0.2s ease;
+            transition: all 0.25s ease;
             width: 100%;
         }
         .stat-card:hover {
@@ -188,55 +203,74 @@
             box-shadow: var(--sombra-media);
         }
         .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
+            font-size: 2.25rem;
+            font-weight: 800;
             color: var(--verde-ut);
-            line-height: 1.2;
+            line-height: 1;
+            margin-bottom: 0.25rem;
         }
         .stat-label {
             font-size: 0.875rem;
             color: var(--texto-sec);
             font-weight: 500;
         }
-        .stat-icon {
-            font-size: 1.75rem;
+        .stat-icon-wrapper {
+            width: 3.25rem;
+            height: 3.25rem;
+            border-radius: 1rem;
+            background: var(--verde-suave);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .stat-icon-wrapper i {
+            font-size: 1.5rem;
             color: var(--verde-ut);
-            opacity: 0.6;
         }
 
-        /* Sidebar */
+        /* Sidebar Menu */
         .sidebar-menu a {
             border-radius: 0.75rem;
-            padding: 0.6rem 1rem;
-            margin: 0.2rem 0;
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 0;
             font-weight: 500;
             transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            color: #334155;
+            gap: 0.875rem;
+            color: #475569;
         }
         .sidebar-menu a i {
             width: 1.25rem;
             text-align: center;
-            font-size: 1rem;
+            font-size: 1.1rem;
+            color: #64748B;
         }
         .sidebar-menu a:hover {
             background: var(--verde-suave);
+            color: var(--verde-ut);
+        }
+        .sidebar-menu a:hover i {
             color: var(--verde-ut);
         }
         .sidebar-menu a.active {
             background: var(--verde-suave);
             color: var(--verde-ut);
             font-weight: 600;
-            border-right: 3px solid var(--verde-ut);
+        }
+        .sidebar-menu a.active i {
+            color: var(--verde-ut);
         }
 
         .drawer-toggle-label {
             cursor: pointer;
             font-size: 1.25rem;
-            padding: 0.25rem 0.5rem;
+            padding: 0.375rem;
             border-radius: 0.5rem;
+            transition: background 0.2s;
+        }
+        .drawer-toggle-label:hover {
+            background: #F1F5F9;
         }
 
         html { scroll-behavior: smooth; }
@@ -256,84 +290,110 @@
                 <label for="menu-drawer" class="drawer-toggle-label lg:hidden">
                     <i class="fas fa-bars text-[#0E7C70]"></i>
                 </label>
-                <span class="text-xl font-bold text-[#0E7C70] tracking-tight">
-                    <i class="fas fa-graduation-cap mr-2"></i>Panel Coordinador
-                </span>
+                <div class="flex items-center gap-2">
+                    <i class="fas fa-user-shield text-[#0E7C70] text-xl"></i>
+                    <span class="text-xl font-bold text-[#0E7C70] tracking-tight">Panel Coordinador</span>
+                </div>
             </div>
-            <div class="flex items-center gap-3">
-                <span class="text-sm text-gray-500 hidden sm:inline">Bienvenido</span>
-                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 text-red-700 border-0 hover:bg-red-100 rounded-xl transition">
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex flex-col text-right">
+                    <span class="text-xs text-slate-400 font-medium">Rol Actual</span>
+                    <span class="text-sm font-semibold text-slate-700">Coordinador Geral</span>
+                </div>
+                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 text-red-600 border border-red-100 hover:bg-red-100 rounded-xl transition shadow-none font-medium">
                     <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
                 </a>
             </div>
         </header>
 
-        <!-- CUERPO -->
-        <main class="flex-1 p-4 md:p-8 w-full max-w-full">
+        <!-- CUERPO DE LA PÁGINA -->
+        <main class="flex-1 p-4 md:p-8 w-full max-w-7xl mx-auto">
 
-            <!-- Mensajes flash -->
+            <!-- Mensajes Flash -->
             {% with m = get_flashed_messages(with_categories=true) %}
                 {% if m %}
-                    <div class="alert alert-{{ m[0][0] }} mb-6 rounded-xl shadow-sm border-0 w-full">
-                        <i class="fas fa-{{ 'check-circle' if m[0][0] == 'success' else 'exclamation-triangle' }} mr-2"></i>
-                        {{ m[0][1] }}
+                    <div class="alert alert-{{ m[0][0] }} mb-6 rounded-2xl shadow-sm border-0 w-full bg-white flex items-center gap-3 p-4">
+                        <i class="fas fa-{{ 'check-circle text-emerald-500' if m[0][0] == 'success' else 'exclamation-triangle text-amber-500' }} text-lg"></i>
+                        <span class="font-medium text-slate-700">{{ m[0][1] }}</span>
                     </div>
                 {% endif %}
             {% endwith %}
 
             <!-- TARJETAS DE ESTADÍSTICAS -->
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8 w-full">
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 w-full">
                 <div class="stat-card flex items-center justify-between">
                     <div>
                         <div class="stat-number">{{ usuarios|selectattr('tipo','equalto','alumno')|list|length }}</div>
                         <div class="stat-label">Alumnos Registrados</div>
                     </div>
-                    <i class="fas fa-user-graduate stat-icon"></i>
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
                 </div>
+
                 <div class="stat-card flex items-center justify-between">
                     <div>
                         <div class="stat-number">{{ usuarios|selectattr('tipo','equalto','tutor')|list|length }}</div>
                         <div class="stat-label">Tutores Activos</div>
                     </div>
-                    <i class="fas fa-chalkboard-teacher stat-icon"></i>
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
                 </div>
+
                 <div class="stat-card flex items-center justify-between">
                     <div>
                         <div class="stat-number">{{ tutorias|length }}</div>
                         <div class="stat-label">Tutorías Totales</div>
                     </div>
-                    <i class="fas fa-calendar-check stat-icon"></i>
+                    <div class="stat-icon-wrapper">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
                 </div>
             </section>
 
             <!-- CREAR USUARIO -->
-            <section class="card-modern p-6 mb-8 w-full">
-                <h3 class="section-title mb-4">
+            <section class="card-modern p-6 md:p-8 mb-8 w-full">
+                <h3 class="section-title mb-6">
                     <i class="fas fa-user-plus"></i> Crear Nuevo Usuario
                 </h3>
                 <form method="POST" action="{{ url_for('crear_usuario') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
-                    <select name="tipo" class="select-modern" required>
-                        <option value="">Rol</option>
-                        <option value="alumno">Alumno</option>
-                        <option value="tutor">Tutor</option>
-                        <option value="coordinador">Coordinador</option>
-                    </select>
-                    <input type="text" name="credencial" class="input-modern" placeholder="Credencial" required />
-                    <input type="text" name="nombre" class="input-modern" placeholder="Nombre completo" required />
-                    <input type="text" name="contrasena" class="input-modern" placeholder="Contraseña" required />
-                    <button class="btn-primary-ut flex items-center justify-center gap-2 h-full">
-                        <i class="fas fa-save"></i> Crear
-                    </button>
+                    <div>
+                        <select name="tipo" class="select-modern" required>
+                            <option value="" disabled selected>Seleccionar Rol</option>
+                            <option value="alumno">Alumno</option>
+                            <option value="tutor">Tutor</option>
+                            <option value="coordinador">Coordinador</option>
+                        </select>
+                    </div>
+                    <div>
+                        <input type="text" name="credencial" class="input-modern" placeholder="Credencial / Matrícula" required />
+                    </div>
+                    <div>
+                        <input type="text" name="nombre" class="input-modern" placeholder="Nombre completo" required />
+                    </div>
+                    <div>
+                        <input type="password" name="contrasena" class="input-modern" placeholder="Contraseña" required />
+                    </div>
+                    <div>
+                        <button type="submit" class="btn-primary-ut w-full h-full">
+                            <i class="fas fa-plus-circle"></i> Crear Usuario
+                        </button>
+                    </div>
                 </form>
             </section>
 
             <!-- ADMINISTRAR USUARIOS -->
-            <section class="card-modern p-6 mb-8 w-full">
-                <h3 class="section-title mb-4">
-                    <i class="fas fa-users-cog"></i> Administrar Usuarios
-                </h3>
-                <div class="overflow-x-auto w-full">
-                    <table class="table-modern w-full text-sm">
+            <section class="card-modern p-6 md:p-8 mb-8 w-full">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <h3 class="section-title">
+                        <i class="fas fa-users-cog"></i> Administrar Usuarios
+                    </h3>
+                    <span class="text-xs text-slate-400 font-medium">Total: {{ usuarios|length }} usuarios</span>
+                </div>
+                
+                <div class="overflow-x-auto w-full rounded-xl border border-slate-200">
+                    <table class="table-modern w-full">
                         <thead>
                             <tr>
                                 <th>Rol</th>
@@ -347,41 +407,45 @@
                         <tbody>
                             {% for u in usuarios %}
                             <tr>
-                                <td><span class="badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold">{{ u.tipo|upper }}</span></td>
-                                <td class="font-mono text-xs">{{ u.credencial }}</td>
-                                <td class="font-medium">{{ u.nombre_completo }}</td>
+                                <td>
+                                    <span class="badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wider">
+                                        {{ u.tipo }}
+                                    </span>
+                                </td>
+                                <td class="font-mono text-xs font-medium text-slate-600">{{ u.credencial }}</td>
+                                <td class="font-semibold text-slate-800">{{ u.nombre_completo }}</td>
                                 <td>
                                     {% if u.bloqueado %}
                                         <span class="badge-danger-light"><i class="fas fa-lock mr-1.5"></i>Bloqueado</span>
                                     {% else %}
-                                        <span class="badge-success-light"><i class="fas fa-check-circle mr-1.5"></i>Activo</span>
+                                        <span class="badge-ut"><i class="fas fa-check-circle mr-1.5"></i>Activo</span>
                                     {% endif %}
                                 </td>
                                 <td>
                                     {% if u.tipo == 'alumno' and u.perfil_alumno %}
                                     <form method="POST" action="{{ url_for('asignar_tutor', id_alumno=u.perfil_alumno.id) }}" class="flex items-center gap-2">
-                                        <select name="id_tutor" class="select-modern text-xs py-1 px-2 w-36" required>
-                                            <option value="">Seleccionar</option>
+                                        <select name="id_tutor" class="select-modern text-xs py-1.5 px-3 min-w-[140px]" required>
+                                            <option value="" disabled selected>Seleccionar</option>
                                             {% for t in usuarios %}
                                                 {% if t.tipo == 'tutor' %}
                                                     <option value="{{ t.id }}">{{ t.nombre_completo }}</option>
                                                 {% endif %}
                                             {% endfor %}
                                         </select>
-                                        <button class="btn btn-ghost btn-xs text-[#0E7C70] hover:bg-[#E6F7F5] rounded-xl border border-[#CCEBE8]">
+                                        <button class="btn btn-ghost btn-sm text-[#0E7C70] bg-[#E6F7F5] hover:bg-[#CCEBE8] rounded-xl border-none">
                                             <i class="fas fa-arrow-right"></i>
                                         </button>
                                     </form>
                                     {% else %}
-                                        <span class="text-xs text-gray-400">N/A</span>
+                                        <span class="text-xs text-slate-400 italic">No aplicable</span>
                                     {% endif %}
                                 </td>
                                 <td class="text-right">
-                                    <a href="{{ url_for('cambiar_estado', id=u.id) }}" class="btn btn-ghost btn-xs rounded-xl hover:bg-gray-100">
+                                    <a href="{{ url_for('cambiar_estado', id=u.id) }}" class="btn btn-ghost btn-xs rounded-xl hover:bg-slate-100 transition font-medium">
                                         {% if u.bloqueado %}
-                                            <i class="fas fa-unlock text-green-600"></i> Desbloquear
+                                            <i class="fas fa-unlock text-emerald-600 mr-1"></i> Desbloquear
                                         {% else %}
-                                            <i class="fas fa-lock text-red-500"></i> Bloquear
+                                            <i class="fas fa-lock text-rose-500 mr-1"></i> Bloquear
                                         {% endif %}
                                     </a>
                                 </td>
@@ -393,73 +457,84 @@
             </section>
 
             <!-- RESPALDOS Y RECUPERACIÓN -->
-            <section class="card-modern p-6 mb-8 w-full">
-                <h3 class="section-title mb-4">
+            <section class="card-modern p-6 md:p-8 mb-8 w-full">
+                <h3 class="section-title mb-6">
                     <i class="fas fa-database"></i> Respaldos y Recuperación
                 </h3>
-                <div class="flex flex-wrap items-center gap-3 mb-4">
-                    <a href="{{ url_for('respaldo_manual') }}" class="btn-primary-ut flex items-center gap-2">
-                        <i class="fas fa-cloud-upload-alt"></i> Crear Respaldo
+                
+                <div class="flex flex-wrap items-center gap-3 mb-6">
+                    <a href="{{ url_for('respaldo_manual') }}" class="btn-primary-ut">
+                        <i class="fas fa-cloud-upload-alt"></i> Crear Respaldo Manual
                     </a>
-                    <a href="{{ url_for('reporte_general_pdf') }}" class="btn btn-ghost border border-[#CCEBE8] rounded-xl hover:bg-[#E6F7F5]">
-                        <i class="fas fa-file-pdf text-red-500"></i> Reporte General PDF
+                    <a href="{{ url_for('reporte_general_pdf') }}" class="btn btn-ghost bg-slate-50 border border-slate-200 rounded-xl hover:bg-slate-100 text-slate-700 font-medium">
+                        <i class="fas fa-file-pdf text-red-500 mr-1"></i> Reporte General PDF
                     </a>
                 </div>
 
-                <form method="POST" action="{{ url_for('config_respaldos') }}" class="flex flex-wrap items-center gap-3 bg-[#f9fafb] p-4 rounded-xl mb-4 w-full">
-                    <label class="flex items-center gap-2 text-sm font-medium">
+                <form method="POST" action="{{ url_for('config_respaldos') }}" class="flex flex-wrap items-center gap-4 bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6 w-full">
+                    <label class="flex items-center gap-3 text-sm font-semibold text-slate-700 cursor-pointer">
                         <input type="checkbox" name="activo" class="toggle toggle-sm toggle-success" {{ 'checked' if cfg.activo else '' }} />
-                        Respaldo automático
+                        Respaldo Automático
                     </label>
                     <div class="flex items-center gap-2">
-                        <input type="number" name="intervalo" class="input-modern w-20 py-1 px-2 text-sm" min="1" value="{{ cfg.intervalo_horas }}" />
-                        <span class="text-sm text-gray-500">horas</span>
+                        <span class="text-sm text-slate-500">Cada</span>
+                        <input type="number" name="intervalo" class="input-modern w-20 text-center py-1 px-2 text-sm" min="1" value="{{ cfg.intervalo_horas }}" />
+                        <span class="text-sm text-slate-500">horas</span>
                     </div>
-                    <button class="btn btn-sm bg-white border border-[#CCEBE8] rounded-xl hover:bg-[#E6F7F5]">
-                        <i class="fas fa-save"></i> Guardar
+                    <button class="btn btn-sm bg-white border border-slate-200 rounded-xl hover:bg-slate-100 text-slate-700 font-medium">
+                        <i class="fas fa-save mr-1"></i> Guardar Configuración
                     </button>
                 </form>
 
-                <h4 class="font-semibold text-sm text-gray-600 mb-2">Respaldos disponibles</h4>
+                <h4 class="font-semibold text-sm text-slate-600 mb-3 flex items-center gap-2">
+                    <i class="fas fa-history text-slate-400"></i> Respaldos Disponibles
+                </h4>
                 <div class="flex flex-wrap gap-2">
                     {% for r in respaldos %}
-                    <div class="badge bg-[#E6F7F5] text-[#0E7C70] px-3 py-2 rounded-full text-sm flex items-center gap-2">
-                        <i class="fas fa-archive"></i> {{ r }}
-                        <a href="{{ url_for('restaurar', nombre=r) }}" class="text-red-500 hover:text-red-700 transition" onclick="return confirm('¿Restaurar este respaldo? Se perderán los datos actuales.')">
+                    <div class="badge-ut py-2 px-3.5 rounded-xl text-xs flex items-center gap-3">
+                        <i class="fas fa-archive"></i>
+                        <span>{{ r }}</span>
+                        <a href="{{ url_for('restaurar', nombre=r) }}" class="text-red-500 hover:text-red-700 transition" onclick="return confirm('¿Restaurar este respaldo? Se perderán los datos actuales.')" title="Restaurar este respaldo">
                             <i class="fas fa-undo-alt"></i>
                         </a>
                     </div>
                     {% else %}
-                    <span class="text-sm text-gray-400">No hay respaldos disponibles</span>
+                    <span class="text-sm text-slate-400 italic">No hay archivos de respaldo disponibles en el servidor.</span>
                     {% endfor %}
                 </div>
             </section>
 
-            <!-- AUDITORÍA -->
-            <section class="card-modern p-6 w-full">
-                <h3 class="section-title mb-4">
-                    <i class="fas fa-clipboard-list"></i> Auditoría de Acciones
+            <!-- AUDITORÍA DE ACCIONES -->
+            <section class="card-modern p-6 md:p-8 w-full">
+                <h3 class="section-title mb-6">
+                    <i class="fas fa-clipboard-list"></i> Auditoría del Sistema
                 </h3>
-                <div class="overflow-x-auto w-full">
-                    <table class="table-modern w-full text-sm">
+                <div class="overflow-x-auto w-full rounded-xl border border-slate-200">
+                    <table class="table-modern w-full">
                         <thead>
                             <tr>
                                 <th>Fecha</th>
                                 <th>Usuario</th>
-                                <th>Acción</th>
-                                <th>IP</th>
+                                <th>Acción Realizada</th>
+                                <th>Dirección IP</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for a in auditoria %}
                             <tr>
-                                <td class="whitespace-nowrap">{{ a.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
-                                <td>{{ a.usuario }}</td>
-                                <td><span class="bg-slate-100 px-2.5 py-1 rounded-full text-xs font-mono">{{ a.accion }}</span></td>
-                                <td class="font-mono text-xs">{{ a.ip }}</td>
+                                <td class="whitespace-nowrap text-xs text-slate-500 font-medium">{{ a.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td class="font-semibold text-slate-800">{{ a.usuario }}</td>
+                                <td>
+                                    <span class="bg-slate-100 border border-slate-200 px-2.5 py-1 rounded-lg text-xs font-mono text-slate-700">
+                                        {{ a.accion }}
+                                    </span>
+                                </td>
+                                <td class="font-mono text-xs text-slate-500">{{ a.ip }}</td>
                             </tr>
                             {% else %}
-                            <tr><td colspan="4" class="text-center text-gray-400 py-4">No hay registros de auditoría</td></tr>
+                            <tr>
+                                <td colspan="4" class="text-center text-slate-400 py-6 italic">No hay registros de auditoría disponibles</td>
+                            </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -469,21 +544,40 @@
         </main>
     </div>
 
-    <!-- MENÚ LATERAL -->
+    <!-- MENÚ LATERAL (SIDEBAR) -->
     <div class="drawer-side z-50">
         <label for="menu-drawer" class="drawer-overlay"></label>
-        <aside class="bg-white w-64 h-full p-4 border-r border-[#eef2f6] flex flex-col">
-            <div class="flex items-center gap-2 mb-6 px-2">
-                <i class="fas fa-graduation-cap text-2xl text-[#0E7C70]"></i>
-                <span class="text-lg font-bold text-[#0E7C70] tracking-tight">Tutorías</span>
+        <aside class="bg-white w-64 h-full p-6 border-r border-slate-200 flex flex-col justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-8 px-2">
+                    <div class="w-10 h-10 rounded-xl bg-[#E6F7F5] flex items-center justify-center">
+                        <i class="fas fa-graduation-cap text-xl text-[#0E7C70]"></i>
+                    </div>
+                    <span class="text-xl font-bold text-[#0E7C70] tracking-tight">Tutorías UT</span>
+                </div>
+                
+                <ul class="sidebar-menu">
+                    <li>
+                        <a href="{{ url_for('panel_coordinador') }}" class="active">
+                            <i class="fas fa-home"></i> Inicio
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('reportes') }}">
+                            <i class="fas fa-chart-bar"></i> Estadísticas
+                        </a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('reporte_general_pdf') }}">
+                            <i class="fas fa-file-pdf"></i> Reporte PDF
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <ul class="sidebar-menu flex-1">
-                <li><a href="{{ url_for('panel_coordinador') }}" class="active"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a href="{{ url_for('reportes') }}"><i class="fas fa-chart-bar"></i> Estadísticas</a></li>
-                <li><a href="{{ url_for('reporte_general_pdf') }}"><i class="fas fa-file-pdf"></i> Reporte PDF</a></li>
-            </ul>
-            <div class="border-t border-[#eef2f6] pt-4 mt-2 text-xs text-gray-400 px-2">
-                <i class="fas fa-shield-alt mr-1"></i> Acceso restringido
+
+            <div class="border-t border-slate-100 pt-4 text-xs text-slate-400 px-2 flex items-center gap-2">
+                <i class="fas fa-shield-alt text-[#0E7C70]"></i> 
+                <span>Acceso Coordinador</span>
             </div>
         </aside>
     </div>
