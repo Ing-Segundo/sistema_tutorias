@@ -82,14 +82,12 @@
             background-attachment: fixed;
         }
 
-        /* Glassmorphism ligero */
         .glass-panel {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
@@ -105,12 +103,10 @@
             background: #94A3B8;
         }
 
-        /* Transiciones fluidas */
         .ui-transition {
             transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Indicador activo de Sidebar */
         .nav-item-active {
             background-color: var(--brand-light);
             color: var(--brand-primary);
@@ -127,7 +123,6 @@
             border-radius: 0 4px 4px 0;
         }
 
-        /* Input Date customization */
         input[type="date"]::-webkit-calendar-picker-indicator {
             cursor: pointer;
             opacity: 0.5;
@@ -137,7 +132,6 @@
             opacity: 1;
         }
 
-        /* Botón primario SAAS */
         .btn-saas-primary {
             background-color: var(--brand-primary);
             color: #ffffff;
@@ -155,7 +149,6 @@
             transform: translateY(0);
         }
 
-        /* Botón de detalle */
         .btn-info-ut {
             background-color: #F0FDF4;
             color: var(--brand-sec);
@@ -171,7 +164,6 @@
             border-color: rgba(21, 128, 61, 0.3);
         }
 
-        /* Responsive UI fixes */
         @media (max-width: 1023px) {
             .drawer-side aside {
                 width: 280px;
@@ -224,15 +216,15 @@
             {% with m = get_flashed_messages(with_categories=true) %}
                 {% if m %}
                     {% for categoria, mensaje in m %}
-                    <div class="p-4 rounded-xl border ui-transition shadow-saas-sm flex items-start gap-3 {% if categoria == 'success' %}bg-emerald-50/90 border-emerald-200 text-emerald-900{% elif categoria in ['error', 'danger'] %}bg-rose-50/90 border-rose-200 text-rose-900{% else %}bg-amber-50/90 border-amber-200 text-amber-900{% endif %}">
-                        <div class="p-1 rounded-md {% if categoria == 'success' %}bg-emerald-100 text-emerald-700{% elif categoria in ['error', 'danger'] %}bg-rose-100 text-rose-700{% else %}bg-amber-100 text-amber-700{% endif %} flex-shrink-0 mt-0.5">
+                    <div class="p-4 rounded-xl border ui-transition shadow-saas-sm flex items-center gap-3 {% if categoria == 'success' %}bg-emerald-50/90 border-emerald-200 text-emerald-900{% elif categoria in ['error', 'danger'] %}bg-rose-50/90 border-rose-200 text-rose-900{% else %}bg-amber-50/90 border-amber-200 text-amber-900{% endif %}">
+                        <div class="p-1.5 rounded-md {% if categoria == 'success' %}bg-emerald-100 text-emerald-700{% elif categoria in ['error', 'danger'] %}bg-rose-100 text-rose-700{% else %}bg-amber-100 text-amber-700{% endif %} flex-shrink-0">
                             {% if categoria == 'success' %}
                                 <i data-lucide="check-circle-2" class="w-4 h-4"></i>
                             {% else %}
                                 <i data-lucide="alert-triangle" class="w-4 h-4"></i>
                             {% endif %}
                         </div>
-                        <div class="text-sm font-medium leading-relaxed pt-0.5">
+                        <div class="text-sm font-medium leading-normal">
                             {{ mensaje }}
                         </div>
                     </div>
