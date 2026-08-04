@@ -41,7 +41,8 @@
             background: white;
             border-bottom: 1px solid #e9edf2;
             box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            padding: 0.5rem 1.5rem;
+            padding: 0.75rem 1.5rem;
+            width: 100%;
         }
 
         /* Tarjetas */
@@ -51,11 +52,11 @@
             border: 1px solid #eef2f6;
             box-shadow: var(--sombra-suave);
             transition: all 0.25s ease;
+            width: 100%;
         }
 
         .card-modern:hover {
             box-shadow: var(--sombra-media);
-            transform: translateY(-2px);
         }
 
         /* Títulos de sección */
@@ -94,20 +95,24 @@
             background: var(--verde-suave);
             color: var(--verde-ut);
             border-radius: 2rem;
-            padding: 0.25rem 1rem;
+            padding: 0.25rem 0.75rem;
             font-weight: 500;
             font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
         }
         .badge-danger-light {
             background: #fee2e2;
             color: #b91c1c;
             border-radius: 2rem;
-            padding: 0.25rem 1rem;
+            padding: 0.25rem 0.75rem;
             font-weight: 500;
             font-size: 0.75rem;
+            display: inline-flex;
+            align-items: center;
         }
 
-        /* Inputs y selects mejorados */
+        /* Inputs y selects */
         .input-modern {
             background: #f9fafb;
             border: 1px solid #e2e8f0;
@@ -121,9 +126,6 @@
             box-shadow: 0 0 0 3px rgba(14, 124, 112, 0.12);
             background: white;
             outline: none;
-        }
-        .input-modern::placeholder {
-            color: #94a3b8;
         }
 
         .select-modern {
@@ -146,9 +148,12 @@
         }
 
         /* Tabla */
+        .table-modern {
+            width: 100%;
+            border-collapse: collapse;
+        }
         .table-modern thead {
             background: #f1f5f9;
-            border-radius: 0.75rem 0.75rem 0 0;
         }
         .table-modern thead th {
             font-weight: 600;
@@ -158,6 +163,7 @@
             font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.03em;
+            text-align: left;
         }
         .table-modern tbody td {
             padding: 0.75rem 1rem;
@@ -176,26 +182,27 @@
             border: 1px solid #eef2f6;
             box-shadow: var(--sombra-suave);
             transition: all 0.2s ease;
+            width: 100%;
         }
         .stat-card:hover {
-            transform: translateY(-3px);
+            transform: translateY(-2px);
             box-shadow: var(--sombra-media);
         }
         .stat-number {
-            font-size: 2.25rem;
+            font-size: 2rem;
             font-weight: 700;
             color: var(--verde-ut);
             line-height: 1.2;
         }
         .stat-label {
-            font-size: 0.9rem;
+            font-size: 0.875rem;
             color: var(--texto-sec);
             font-weight: 500;
         }
         .stat-icon {
-            font-size: 2rem;
-            color: var(--verde-suave);
-            opacity: 0.7;
+            font-size: 1.75rem;
+            color: var(--verde-ut);
+            opacity: 0.6;
         }
 
         /* Sidebar */
@@ -226,38 +233,26 @@
             border-right: 3px solid var(--verde-ut);
         }
 
-        /* Botón toggle menú */
         .drawer-toggle-label {
             cursor: pointer;
             font-size: 1.25rem;
             padding: 0.25rem 0.5rem;
             border-radius: 0.5rem;
-            transition: background 0.2s;
-        }
-        .drawer-toggle-label:hover {
-            background: #f1f5f9;
         }
 
-        /* Ajustes responsivos */
-        @media (max-width: 768px) {
-            .stat-number { font-size: 1.75rem; }
-            .card-modern { padding: 1rem; }
-        }
-
-        /* Scroll suave */
         html { scroll-behavior: smooth; }
     </style>
 </head>
-<body>
+<body class="bg-slate-50 min-h-screen">
 
-<div class="drawer lg:drawer-open">
+<div class="drawer lg:drawer-open min-h-screen">
     <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
 
     <!-- CONTENIDO PRINCIPAL -->
-    <div class="drawer-content flex flex-col">
+    <div class="drawer-content flex flex-col w-full min-w-0">
 
         <!-- BARRA SUPERIOR -->
-        <header class="navbar-custom flex items-center justify-between">
+        <header class="navbar-custom flex items-center justify-between sticky top-0 z-30">
             <div class="flex items-center gap-3">
                 <label for="menu-drawer" class="drawer-toggle-label lg:hidden">
                     <i class="fas fa-bars text-[#0E7C70]"></i>
@@ -266,7 +261,7 @@
                     <i class="fas fa-graduation-cap mr-2"></i>Panel Coordinador
                 </span>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-3">
                 <span class="text-sm text-gray-500 hidden sm:inline">Bienvenido</span>
                 <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 text-red-700 border-0 hover:bg-red-100 rounded-xl transition">
                     <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
@@ -275,12 +270,12 @@
         </header>
 
         <!-- CUERPO -->
-        <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
+        <main class="flex-1 p-4 md:p-8 w-full max-w-full">
 
             <!-- Mensajes flash -->
             {% with m = get_flashed_messages(with_categories=true) %}
                 {% if m %}
-                    <div class="alert alert-{{ m[0][0] }} mb-4 rounded-xl shadow-sm border-0">
+                    <div class="alert alert-{{ m[0][0] }} mb-6 rounded-xl shadow-sm border-0 w-full">
                         <i class="fas fa-{{ 'check-circle' if m[0][0] == 'success' else 'exclamation-triangle' }} mr-2"></i>
                         {{ m[0][1] }}
                     </div>
@@ -288,18 +283,18 @@
             {% endwith %}
 
             <!-- TARJETAS DE ESTADÍSTICAS -->
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-8 w-full">
                 <div class="stat-card flex items-center justify-between">
                     <div>
                         <div class="stat-number">{{ usuarios|selectattr('tipo','equalto','alumno')|list|length }}</div>
-                        <div class="stat-label">Alumnos</div>
+                        <div class="stat-label">Alumnos Registrados</div>
                     </div>
                     <i class="fas fa-user-graduate stat-icon"></i>
                 </div>
                 <div class="stat-card flex items-center justify-between">
                     <div>
                         <div class="stat-number">{{ usuarios|selectattr('tipo','equalto','tutor')|list|length }}</div>
-                        <div class="stat-label">Tutores</div>
+                        <div class="stat-label">Tutores Activos</div>
                     </div>
                     <i class="fas fa-chalkboard-teacher stat-icon"></i>
                 </div>
@@ -313,11 +308,11 @@
             </section>
 
             <!-- CREAR USUARIO -->
-            <section class="card-modern p-5 md:p-6 mb-6">
+            <section class="card-modern p-6 mb-8 w-full">
                 <h3 class="section-title mb-4">
                     <i class="fas fa-user-plus"></i> Crear Nuevo Usuario
                 </h3>
-                <form method="POST" action="{{ url_for('crear_usuario') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+                <form method="POST" action="{{ url_for('crear_usuario') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 w-full">
                     <select name="tipo" class="select-modern" required>
                         <option value="">Rol</option>
                         <option value="alumno">Alumno</option>
@@ -327,75 +322,79 @@
                     <input type="text" name="credencial" class="input-modern" placeholder="Credencial" required />
                     <input type="text" name="nombre" class="input-modern" placeholder="Nombre completo" required />
                     <input type="text" name="contrasena" class="input-modern" placeholder="Contraseña" required />
-                    <button class="btn-primary-ut flex items-center justify-center gap-2">
+                    <button class="btn-primary-ut flex items-center justify-center gap-2 h-full">
                         <i class="fas fa-save"></i> Crear
                     </button>
                 </form>
             </section>
 
             <!-- ADMINISTRAR USUARIOS -->
-            <section class="card-modern p-5 md:p-6 mb-6 overflow-x-auto">
+            <section class="card-modern p-6 mb-8 w-full">
                 <h3 class="section-title mb-4">
                     <i class="fas fa-users-cog"></i> Administrar Usuarios
                 </h3>
-                <table class="table-modern w-full text-sm">
-                    <thead>
-                        <tr>
-                            <th>Rol</th>
-                            <th>Credencial</th>
-                            <th>Nombre</th>
-                            <th>Estado</th>
-                            <th>Asignar Tutor</th>
-                            <th>Acción</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for u in usuarios %}
-                        <tr>
-                            <td><span class="badge bg-gray-100 text-gray-700 px-3 py-1 rounded-full text-xs font-semibold">{{ u.tipo|upper }}</span></td>
-                            <td class="font-mono text-xs">{{ u.credencial }}</td>
-                            <td>{{ u.nombre_completo }}</td>
-                            <td>
-                                {% if u.bloqueado %}
-                                    <span class="badge-danger-light"><i class="fas fa-lock mr-1"></i>Bloqueado</span>
-                                {% else %}
-                                    <span class="badge-success-light"><i class="fas fa-check-circle mr-1"></i>Activo</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if u.tipo == 'alumno' and u.perfil_alumno %}
-                                <form method="POST" action="{{ url_for('asignar_tutor', id_alumno=u.perfil_alumno.id) }}" class="flex flex-wrap items-center gap-1">
-                                    <select name="id_tutor" class="select-modern text-xs py-1 px-2 w-28" required>
-                                        <option value="">Asignar</option>
-                                        {% for t in usuarios %}
-                                            {% if t.tipo == 'tutor' %}
-                                                <option value="{{ t.id }}">{{ t.nombre_completo }}</option>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </select>
-                                    <button class="btn btn-ghost btn-xs text-[#0E7C70] hover:bg-[#E6F7F5] rounded-xl border border-[#CCEBE8]">
-                                        <i class="fas fa-arrow-right"></i>
-                                    </button>
-                                </form>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{{ url_for('cambiar_estado', id=u.id) }}" class="btn btn-ghost btn-xs rounded-xl hover:bg-gray-100">
+                <div class="overflow-x-auto w-full">
+                    <table class="table-modern w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th>Rol</th>
+                                <th>Credencial</th>
+                                <th>Nombre</th>
+                                <th>Estado</th>
+                                <th>Asignar Tutor</th>
+                                <th class="text-right">Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for u in usuarios %}
+                            <tr>
+                                <td><span class="badge bg-slate-100 text-slate-700 px-3 py-1 rounded-full text-xs font-semibold">{{ u.tipo|upper }}</span></td>
+                                <td class="font-mono text-xs">{{ u.credencial }}</td>
+                                <td class="font-medium">{{ u.nombre_completo }}</td>
+                                <td>
                                     {% if u.bloqueado %}
-                                        <i class="fas fa-unlock text-green-600"></i> Desbloquear
+                                        <span class="badge-danger-light"><i class="fas fa-lock mr-1.5"></i>Bloqueado</span>
                                     {% else %}
-                                        <i class="fas fa-lock text-red-500"></i> Bloquear
+                                        <span class="badge-success-light"><i class="fas fa-check-circle mr-1.5"></i>Activo</span>
                                     {% endif %}
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </td>
+                                <td>
+                                    {% if u.tipo == 'alumno' and u.perfil_alumno %}
+                                    <form method="POST" action="{{ url_for('asignar_tutor', id_alumno=u.perfil_alumno.id) }}" class="flex items-center gap-2">
+                                        <select name="id_tutor" class="select-modern text-xs py-1 px-2 w-36" required>
+                                            <option value="">Seleccionar</option>
+                                            {% for t in usuarios %}
+                                                {% if t.tipo == 'tutor' %}
+                                                    <option value="{{ t.id }}">{{ t.nombre_completo }}</option>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </select>
+                                        <button class="btn btn-ghost btn-xs text-[#0E7C70] hover:bg-[#E6F7F5] rounded-xl border border-[#CCEBE8]">
+                                            <i class="fas fa-arrow-right"></i>
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                        <span class="text-xs text-gray-400">N/A</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-right">
+                                    <a href="{{ url_for('cambiar_estado', id=u.id) }}" class="btn btn-ghost btn-xs rounded-xl hover:bg-gray-100">
+                                        {% if u.bloqueado %}
+                                            <i class="fas fa-unlock text-green-600"></i> Desbloquear
+                                        {% else %}
+                                            <i class="fas fa-lock text-red-500"></i> Bloquear
+                                        {% endif %}
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
             <!-- RESPALDOS Y RECUPERACIÓN -->
-            <section class="card-modern p-5 md:p-6 mb-6">
+            <section class="card-modern p-6 mb-8 w-full">
                 <h3 class="section-title mb-4">
                     <i class="fas fa-database"></i> Respaldos y Recuperación
                 </h3>
@@ -408,12 +407,12 @@
                     </a>
                 </div>
 
-                <form method="POST" action="{{ url_for('config_respaldos') }}" class="flex flex-wrap items-center gap-3 bg-[#f9fafb] p-3 rounded-xl mb-4">
+                <form method="POST" action="{{ url_for('config_respaldos') }}" class="flex flex-wrap items-center gap-3 bg-[#f9fafb] p-4 rounded-xl mb-4 w-full">
                     <label class="flex items-center gap-2 text-sm font-medium">
                         <input type="checkbox" name="activo" class="toggle toggle-sm" {{ 'checked' if cfg.activo else '' }} />
                         Respaldo automático
                     </label>
-                    <div class="flex items-center gap-1">
+                    <div class="flex items-center gap-2">
                         <input type="number" name="intervalo" class="input-modern w-20 py-1 px-2 text-sm" min="1" value="{{ cfg.intervalo_horas }}" />
                         <span class="text-sm text-gray-500">horas</span>
                     </div>
@@ -425,45 +424,47 @@
                 <h4 class="font-semibold text-sm text-gray-600 mb-2">Respaldos disponibles</h4>
                 <div class="flex flex-wrap gap-2">
                     {% for r in respaldos %}
-                    <div class="badge bg-[#E6F7F5] text-[#0E7C70] px-3 py-2 rounded-full text-sm flex items-center gap-1">
+                    <div class="badge bg-[#E6F7F5] text-[#0E7C70] px-3 py-2 rounded-full text-sm flex items-center gap-2">
                         <i class="fas fa-archive"></i> {{ r }}
-                        <a href="{{ url_for('restaurar', nombre=r) }}" class="ml-1 text-red-500 hover:text-red-700 transition" onclick="return confirm('¿Restaurar este respaldo? Se perderán los datos actuales.')">
+                        <a href="{{ url_for('restaurar', nombre=r) }}" class="text-red-500 hover:text-red-700 transition" onclick="return confirm('¿Restaurar este respaldo? Se perderán los datos actuales.')">
                             <i class="fas fa-undo-alt"></i>
                         </a>
                     </div>
                     {% else %}
-                    <span class="text-sm text-gray-400">No hay respaldos</span>
+                    <span class="text-sm text-gray-400">No hay respaldos disponibles</span>
                     {% endfor %}
                 </div>
             </section>
 
             <!-- AUDITORÍA -->
-            <section class="card-modern p-5 md:p-6 overflow-x-auto">
+            <section class="card-modern p-6 w-full">
                 <h3 class="section-title mb-4">
                     <i class="fas fa-clipboard-list"></i> Auditoría de Acciones
                 </h3>
-                <table class="table-modern w-full text-sm">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Usuario</th>
-                            <th>Acción</th>
-                            <th>IP</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for a in auditoria %}
-                        <tr>
-                            <td class="whitespace-nowrap">{{ a.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
-                            <td>{{ a.usuario }}</td>
-                            <td><span class="bg-gray-100 px-2 py-0.5 rounded-full text-xs">{{ a.accion }}</span></td>
-                            <td class="font-mono text-xs">{{ a.ip }}</td>
-                        </tr>
-                        {% else %}
-                        <tr><td colspan="4" class="text-center text-gray-400 py-4">No hay registros de auditoría</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="overflow-x-auto w-full">
+                    <table class="table-modern w-full text-sm">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>Usuario</th>
+                                <th>Acción</th>
+                                <th>IP</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for a in auditoria %}
+                            <tr>
+                                <td class="whitespace-nowrap">{{ a.fecha.strftime('%d/%m/%Y %H:%M') }}</td>
+                                <td>{{ a.usuario }}</td>
+                                <td><span class="bg-slate-100 px-2.5 py-1 rounded-full text-xs font-mono">{{ a.accion }}</span></td>
+                                <td class="font-mono text-xs">{{ a.ip }}</td>
+                            </tr>
+                            {% else %}
+                            <tr><td colspan="4" class="text-center text-gray-400 py-4">No hay registros de auditoría</td></tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
         </main>
