@@ -1,315 +1,316 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inicio de Sesión | Sistema de Tutorías</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio de Sesión · Sistema de Tutorías</title>
 
+    <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
 
+    <!-- Tailwind CSS + DaisyUI -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+    
+    <!-- Font Awesome 6 Pro/Free -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
 
     <style>
-        :root{
-            --verde-ut:#0E7C70;
-            --verde-sec:#15803D;
-            --verde-acento:#86D977;
-            --verde-claro:#F0FDF4;
-            --verde-suave:#E6F7F5;
-            --texto:#1E293B;
-            --texto-sec:#64748B;
-            --borde:#D8F1ED;
-            --shadow:0 12px 40px rgba(14,124,112,.12);
-            --shadow-hover:0 18px 45px rgba(14,124,112,.18);
+        :root {
+            --verde-ut: #0E7C70;
+            --verde-ut-dark: #0B6359;
+            --verde-sec: #15803D;
+            --verde-suave: #E6F7F5;
+            --verde-claro: #F0FDF4;
+            --texto-principal: #0F172A;
+            --texto-secundario: #475569;
+            --texto-muted: #94A3B8;
+            --borde-suave: #E2E8F0;
+            --sombra-card: 0 20px 40px -15px rgba(14, 124, 112, 0.07), 0 0 15px 0 rgba(0, 0, 0, 0.03);
+            --sombra-card-hover: 0 25px 50px -12px rgba(14, 124, 112, 0.15);
+            --radius-main: 1.25rem;
         }
 
-        *{
-            margin:0;
-            padding:0;
-            box-sizing:border-box;
-            font-family:'Inter',sans-serif;
-            color: var(--texto);
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #F8FAFC;
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(134, 217, 119, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(14, 124, 112, 0.08) 0px, transparent 50%);
+            color: var(--texto-principal);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        body{
-            min-height:100vh;
-            background:
-            radial-gradient(circle at top right,rgba(134,217,119,.20),transparent 28%),
-            radial-gradient(circle at bottom left,rgba(14,124,112,.12),transparent 35%),
-            linear-gradient(135deg,#F8FFFC,#EEFDF8,#E6F7F5);
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            padding:30px;
-            overflow-y:auto;
-        }
-
-        .login-card{
-            width:100%;
-            max-width:470px;
-            background:white;
-            border-radius:28px;
-            padding:42px;
-            box-shadow:var(--shadow);
-            border:1px solid var(--borde);
-            position:relative;
-            z-index:10;
-            margin:20px 0;
-            transition: box-shadow 0.3s ease;
+        /* Card Container UI */
+        .login-card {
+            background: #FFFFFF;
+            border-radius: var(--radius-main);
+            border: 1px solid var(--borde-suave);
+            box-shadow: var(--sombra-card);
+            transition: box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         .login-card:hover {
-            box-shadow: var(--shadow-hover);
+            box-shadow: var(--sombra-card-hover);
         }
 
-        .logo{
-            width:88px;
-            height:88px;
-            margin:0 auto 20px;
-            border-radius:50%;
-            background:linear-gradient(135deg,var(--verde-ut),var(--verde-sec));
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            box-shadow: 0 8px 20px rgba(14, 124, 112, 0.2);
-        }
-
-        .logo i{
-            font-size:42px;
-            color:white;
-        }
-
-        h1{
-            text-align:center;
-            font-size:31px;
-            font-weight:800;
-            color:var(--verde-ut);
-            letter-spacing: -0.02em;
-        }
-
-        .subtitulo{
-            text-align:center;
-            color:var(--texto-sec);
-            margin:8px 0 25px;
-            font-size: 15px;
-        }
-
-        .alert-custom{
-            padding: 12px 16px;
-            border-radius: 14px;
-            font-size: 14px;
-            font-weight: 500;
-            margin-bottom: 22px;
+        /* Avatar Brand Badge */
+        .brand-logo-container {
+            width: 4.5rem;
+            height: 4.5rem;
+            border-radius: 1.25rem;
+            background: linear-gradient(135deg, var(--verde-ut), var(--verde-sec));
             display: flex;
             align-items: center;
-            gap: 10px;
+            justify-content: center;
+            box-shadow: 0 10px 25px -5px rgba(14, 124, 112, 0.3);
+            margin: 0 auto 1.5rem auto;
         }
 
-        .alert-error{
-            background-color: #FEF2F2;
-            border: 1px solid #FCA5A5;
-            color: #991B1B;
-        }
-
-        .alert-error i, .alert-error span {
-            color: #991B1B;
-        }
-
-        .alert-success{
-            background-color: #F0FDF4;
-            border: 1px solid #86EFAC;
-            color: #166534;
-        }
-
-        .alert-success i, .alert-success span {
-            color: #166534;
-        }
-
-        .input-group{
-            margin-bottom:20px;
-        }
-
-        .input-group label{
-            display:block;
-            margin-bottom:8px;
-            font-weight:600;
-            font-size: 14px;
-            color: var(--texto);
-        }
-
-        .input-custom{
-            width:100%;
-            display:flex;
-            align-items:center;
-            background:#F8FFFD;
-            border:2px solid #E6F7F5;
-            border-radius:16px;
-            padding:12px 16px;
+        /* Focus & Form State Accessibility Tokens */
+        .input-group-custom {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background-color: #F8FAFC;
+            border: 1.5px solid var(--borde-suave);
+            border-radius: 0.875rem;
             transition: all 0.2s ease;
         }
 
-        .input-custom:focus-within {
+        .input-group-custom:focus-within {
             border-color: var(--verde-ut);
-            background: white;
-            box-shadow: 0 0 0 4px rgba(14, 124, 112, 0.1);
+            background-color: #FFFFFF;
+            box-shadow: 0 0 0 4px rgba(14, 124, 112, 0.12);
         }
 
-        .input-custom i{
-            color:var(--verde-ut);
-            margin-right:12px;
-            font-size: 18px;
+        .input-group-custom input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 0.875rem 1rem 0.875rem 2.75rem;
+            font-size: 0.9375rem;
+            color: var(--texto-principal);
+            font-weight: 500;
         }
 
-        .input-custom input{
-            width:100%;
-            border:none;
-            outline:none;
-            background:none;
-            font-size: 15px;
-            color: var(--texto);
+        .input-group-custom input::placeholder {
+            color: var(--texto-muted);
         }
 
-        .input-custom input::placeholder {
-            color: #94A3B8;
+        .input-icon-left {
+            position: absolute;
+            left: 1rem;
+            color: var(--verde-ut);
+            font-size: 1.125rem;
+            pointer-events: none;
         }
 
-        .btn-login{
-            width:100%;
-            margin-top:12px;
-            padding:14px;
-            border:none;
-            border-radius:16px;
-            background:linear-gradient(135deg,var(--verde-ut),var(--verde-sec));
-            color:white;
-            font-size:16px;
-            font-weight:700;
-            cursor:pointer;
-            display:flex;
-            align-items:center;
-            justify-content:center;
-            gap:8px;
-            transition: all 0.25s ease;
+        .input-toggle-btn {
+            position: absolute;
+            right: 0.875rem;
+            background: transparent;
+            border: none;
+            color: var(--texto-secundario);
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 1rem;
+            transition: color 0.15s ease;
         }
 
-        .btn-login i {
-            color: white;
+        .input-toggle-btn:hover {
+            color: var(--verde-ut);
         }
 
-        .btn-login:hover {
+        /* Primary Button Tokens */
+        .btn-submit-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--verde-ut), var(--verde-ut-dark));
+            color: #FFFFFF;
+            font-weight: 600;
+            font-size: 0.9375rem;
+            padding: 0.875rem 1.5rem;
+            border-radius: 0.875rem;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.625rem;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 14px 0 rgba(14, 124, 112, 0.25);
+        }
+
+        .btn-submit-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 8px 20px rgba(14, 124, 112, 0.3);
-            opacity: 0.95;
+            box-shadow: 0 6px 20px 0 rgba(14, 124, 112, 0.35);
+            background: linear-gradient(135deg, #0f887b, var(--verde-ut));
         }
 
-        .btn-login:active {
+        .btn-submit-primary:active {
             transform: translateY(0);
+            box-shadow: 0 2px 8px 0 rgba(14, 124, 112, 0.2);
         }
 
-        .footer-login{
-            margin-top:28px;
-            text-align:center;
-            font-size:13px;
-            color:var(--texto-sec);
+        .btn-submit-primary:focus-visible {
+            outline: 2px solid var(--verde-ut);
+            outline-offset: 2px;
         }
 
-        .footer-login span{
-            display:block;
-            margin-top:4px;
-            color:var(--verde-ut);
-            font-weight:600;
+        /* Custom Alert Enterprise */
+        .alert-enterprise {
+            padding: 0.875rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
         }
 
-        @media(max-width:600px){
-            body{
-                padding:15px;
-                align-items:flex-start;
-            }
+        .alert-enterprise-error {
+            background-color: #FEF2F2;
+            border: 1px solid #FEE2E2;
+            color: #991B1B;
+        }
 
-            .login-card{
-                padding:30px 22px;
-                border-radius:22px;
-                margin:20px 0;
-            }
-
-            h1{
-                font-size:25px;
-            }
-
-            .logo{
-                width:75px;
-                height:75px;
-            }
-
-            .logo i{
-                font-size:34px;
-            }
+        .alert-enterprise-success {
+            background-color: #F0FDF4;
+            border: 1px solid #DCFCE7;
+            color: #166534;
         }
     </style>
 </head>
+<body class="p-4 sm:p-6 md:p-8">
 
-<body>
-
-<div class="login-card">
-
-    <div class="logo">
-        <i class="bi bi-mortarboard-fill"></i>
-    </div>
-
-    <h1>Sistema de Tutorías</h1>
-
-    <p class="subtitulo">
-        Universidad Tecnológica de Nayarit
-    </p>
-
-    <!-- MENSAJE DE ERROR / FLASH -->
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, message in messages %}
-          <div class="alert-custom {% if category == 'error' %}alert-error{% else %}alert-success{% endif %}">
-            <i class="bi {% if category == 'error' %}bi-exclamation-triangle-fill{% else %}bi-check-circle-fill{% endif %}"></i>
-            <span>{{ message }}</span>
-          </div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
-
-    <form method="POST" action="{{ url_for('login') }}" autocomplete="off">
-
-        <div class="input-group">
-            <label for="credencial">Credencial</label>
-            <div class="input-custom">
-                <i class="bi bi-person-fill"></i>
-                <input type="text" id="credencial" name="credencial" required placeholder="Escribe tu credencial">
+    <main class="w-full max-w-[440px] mx-auto">
+        
+        <!-- LOGIN CARD -->
+        <div class="login-card p-6 sm:p-10">
+            
+            <!-- BRAND HEADER -->
+            <div class="text-center">
+                <div class="brand-logo-container">
+                    <i class="fas fa-graduation-cap text-3xl text-white"></i>
+                </div>
+                <h1 class="text-2xl font-bold tracking-tight text-slate-900">
+                    Sistema de Tutorías
+                </h1>
+                <p class="text-sm font-medium text-slate-500 mt-1 mb-8">
+                    Universidad Tecnológica de Nayarit
+                </p>
             </div>
+
+            <!-- MENSAJE DE ERROR / FLASH -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+              {% if messages %}
+                {% for category, message in messages %}
+                  <div class="alert-enterprise {% if category == 'error' %}alert-enterprise-error{% else %}alert-enterprise-success{% endif %}" role="alert" aria-live="polite">
+                    <i class="fas {% if category == 'error' %}fa-exclamation-circle text-red-600{% else %}fa-check-circle text-emerald-600{% endif %} text-base flex-shrink-0"></i>
+                    <span class="leading-tight">{{ message }}</span>
+                  </div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <!-- FORMULARIO DE ACCESO -->
+            <form method="POST" action="{{ url_for('login') }}" autocomplete="on" class="space-y-5">
+                
+                <!-- CAMPO CREDENCIAL -->
+                <div>
+                    <label for="credencial" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
+                        Credencial / Usuario
+                    </label>
+                    <div class="input-group-custom">
+                        <i class="fas fa-id-card input-icon-left"></i>
+                        <input 
+                            type="text" 
+                            id="credencial" 
+                            name="credencial" 
+                            required 
+                            placeholder="Ej. 20241010"
+                            autocomplete="username"
+                        />
+                    </div>
+                </div>
+
+                <!-- CAMPO CONTRASEÑA -->
+                <div>
+                    <label for="contrasena" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
+                        Contraseña
+                    </label>
+                    <div class="input-group-custom">
+                        <i class="fas fa-lock input-icon-left"></i>
+                        <input 
+                            type="password" 
+                            id="contrasena" 
+                            name="contrasena" 
+                            required 
+                            placeholder="••••••••••••"
+                            autocomplete="current-password"
+                        />
+                        <button 
+                            type="button" 
+                            id="togglePassword" 
+                            class="input-toggle-btn" 
+                            aria-label="Mostrar u ocultar contraseña"
+                            tabindex="-1"
+                        >
+                            <i class="fas fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- BOTÓN SUBMIT -->
+                <div class="pt-2">
+                    <button class="btn-submit-primary" type="submit">
+                        <i class="fas fa-sign-in-alt text-sm"></i>
+                        <span>Iniciar Sesión</span>
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- FOOTER LEGAL -->
+            <footer class="mt-8 pt-6 border-t border-slate-100 text-center">
+                <p class="text-xs text-slate-400 font-medium">
+                    Sistema Integral de Tutorías
+                </p>
+                <p class="text-xs font-semibold text-[#0E7C70] mt-0.5">
+                    Universidad Tecnológica de Nayarit
+                </p>
+            </footer>
+
         </div>
 
-        <div class="input-group">
-            <label for="contrasena">Contraseña</label>
-            <div class="input-custom">
-                <i class="bi bi-lock-fill"></i>
-                <input type="password" id="contrasena" name="contrasena" required placeholder="Escribe tu contraseña">
-            </div>
-        </div>
+    </main>
 
-        <button class="btn-login" type="submit">
-            <i class="bi bi-box-arrow-in-right"></i>
-            Iniciar Sesión
-        </button>
+    <!-- JS PARA VISIBILIDAD DE CONTRASEÑA -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const togglePasswordBtn = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('contrasena');
+            const toggleIcon = document.getElementById('toggleIcon');
 
-    </form>
-
-    <div class="footer-login">
-        Sistema Integral de Tutorías
-        <span>
-            Universidad Tecnológica de Nayarit
-        </span>
-    </div>
-
-</div>
+            if (togglePasswordBtn && passwordInput && toggleIcon) {
+                togglePasswordBtn.addEventListener('click', function() {
+                    const isPassword = passwordInput.getAttribute('type') === 'password';
+                    passwordInput.setAttribute('type', isPassword ? 'text' : 'password');
+                    
+                    toggleIcon.classList.toggle('fa-eye', !isPassword);
+                    toggleIcon.classList.toggle('fa-eye-slash', isPassword);
+                });
+            }
+        });
+    </script>
 
 </body>
 </html>
