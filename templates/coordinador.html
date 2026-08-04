@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,12 +7,11 @@
     <!-- Tailwind + DaisyUI -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
-    <!-- Font Awesome 6 (gratis) -->
+    <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
     <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-        /* Variables y estilos base */
         :root {
             --verde-ut: #0E7C70;
             --verde-sec: #15803D;
@@ -409,7 +408,7 @@
 
                 <form method="POST" action="{{ url_for('config_respaldos') }}" class="flex flex-wrap items-center gap-3 bg-[#f9fafb] p-4 rounded-xl mb-4 w-full">
                     <label class="flex items-center gap-2 text-sm font-medium">
-                        <input type="checkbox" name="activo" class="toggle toggle-sm" {{ 'checked' if cfg.activo else '' }} />
+                        <input type="checkbox" name="activo" class="toggle toggle-sm toggle-success" {{ 'checked' if cfg.activo else '' }} />
                         Respaldo automático
                     </label>
                     <div class="flex items-center gap-2">
