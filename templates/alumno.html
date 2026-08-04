@@ -1,384 +1,510 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="h-full bg-[#F7FAFC]">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Panel Alumno · Sistema de Tutorías</title>
-    <!-- Tailwind + DaisyUI -->
+
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#E6F7F5',
+                            100: '#CCEBE8',
+                            500: '#0E7C70',
+                            600: '#0C6B61',
+                            700: '#0A5A52',
+                        },
+                        sec: {
+                            500: '#15803D',
+                            600: '#166534',
+                        },
+                        accent: '#86D977',
+                        slate: {
+                            800: '#1E293B',
+                            500: '#64748B',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'saas-sm': '0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 3px 0 rgba(0, 0, 0, 0.02)',
+                        'saas-card': '0 0 0 1px rgba(229, 231, 235, 0.8), 0 4px 12px -2px rgba(14, 124, 112, 0.03)',
+                        'saas-hover': '0 0 0 1px rgba(14, 124, 112, 0.25), 0 12px 24px -4px rgba(14, 124, 112, 0.08)',
+                        'glow': '0 0 16px rgba(14, 124, 112, 0.15)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- DaisyUI -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
-    <!-- Font Awesome 6 (gratis) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
     <style>
-        /* Variables y estilos base (heredados del coordinador/tutor) */
         :root {
-            --verde-ut: #0E7C70;
-            --verde-sec: #15803D;
-            --verde-suave: #E6F7F5;
-            --verde-claro: #F0FDF4;
-            --texto-principal: #1E293B;
-            --texto-sec: #64748B;
-            --borde-suave: #CCEBE8;
-            --sombra-suave: 0 8px 24px rgba(14, 124, 112, 0.08);
-            --sombra-media: 0 12px 32px rgba(14, 124, 112, 0.12);
-            --radius: 1.25rem;
+            --brand-primary: #0E7C70;
+            --brand-hover: #0C6B61;
+            --brand-sec: #15803D;
+            --brand-accent: #86D977;
+            --brand-light: #E6F7F5;
+            --bg-main: #F7FAFC;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #E5E7EB;
         }
 
         * {
-            font-family: 'Inter', sans-serif;
-            color: var(--texto-principal);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
         body {
-            background: #f8fafc;
-            min-height: 100vh;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            background-image: 
+                radial-gradient(circle at 100% 0%, rgba(14, 124, 112, 0.03) 0%, transparent 40%),
+                radial-gradient(circle at 0% 100%, rgba(134, 217, 119, 0.04) 0%, transparent 40%);
+            background-attachment: fixed;
         }
 
-        /* Navbar superior */
-        .navbar-custom {
-            background: white;
-            border-bottom: 1px solid #e9edf2;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            padding: 0.5rem 1.5rem;
+        /* Glassmorphism ligero */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
         }
 
-        /* Tarjetas */
-        .card-modern {
-            background: white;
-            border-radius: var(--radius);
-            border: 1px solid #eef2f6;
-            box-shadow: var(--sombra-suave);
-            transition: all 0.25s ease;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
         }
-        .card-modern:hover {
-            box-shadow: var(--sombra-media);
-            transform: translateY(-2px);
+        ::-webkit-scrollbar-track {
+            background: transparent;
         }
-
-        /* Títulos de sección */
-        .section-title {
-            font-weight: 700;
-            font-size: 1.125rem;
-            color: var(--verde-ut);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        ::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 9999px;
         }
-        .section-title i {
-            font-size: 1.1rem;
-            color: var(--verde-sec);
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
         }
 
-        /* Botón primario */
-        .btn-primary-ut {
-            background: var(--verde-ut);
-            color: white;
-            border-radius: 0.75rem;
-            font-weight: 500;
-            transition: all 0.25s ease;
-            border: none;
-            padding: 0.5rem 1.25rem;
-        }
-        .btn-primary-ut:hover {
-            background: var(--verde-sec);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(14, 124, 112, 0.2);
-            color: white;
+        /* Transiciones fluidas */
+        .ui-transition {
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Badges personalizados */
-        .badge-success-light {
-            background: var(--verde-suave);
-            color: var(--verde-ut);
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-        .badge-warning-light {
-            background: #FFFBEB;
-            color: #B45309;
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-        .badge-info-light {
-            background: #EFF6FF;
-            color: #1D4ED8;
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-        .badge-secondary-light {
-            background: #f1f5f9;
-            color: #475569;
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-
-        /* Inputs y selects mejorados */
-        .input-modern {
-            background: #f9fafb;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.75rem;
-            padding: 0.5rem 1rem;
-            transition: all 0.2s ease;
-            width: 100%;
-        }
-        .input-modern:focus {
-            border-color: var(--verde-ut);
-            box-shadow: 0 0 0 3px rgba(14, 124, 112, 0.12);
-            background: white;
-            outline: none;
-        }
-        .input-modern::placeholder {
-            color: #94a3b8;
-        }
-
-        /* Tabla */
-        .table-modern thead {
-            background: #f1f5f9;
-            border-radius: 0.75rem 0.75rem 0 0;
-        }
-        .table-modern thead th {
+        /* Indicador activo de Sidebar */
+        .nav-item-active {
+            background-color: var(--brand-light);
+            color: var(--brand-primary);
             font-weight: 600;
-            color: #1e293b;
-            padding: 0.75rem 1rem;
-            border-bottom: 2px solid #e2e8f0;
-            font-size: 0.85rem;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
         }
-        .table-modern tbody td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
-        .table-modern tbody tr:hover {
-            background-color: #f8fafc;
+        .nav-item-active::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 25%;
+            height: 50%;
+            width: 3px;
+            background-color: var(--brand-primary);
+            border-radius: 0 4px 4px 0;
         }
 
-        /* Sidebar */
-        .sidebar-menu a {
-            border-radius: 0.75rem;
-            padding: 0.6rem 1rem;
-            margin: 0.2rem 0;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: #334155;
-        }
-        .sidebar-menu a i {
-            width: 1.25rem;
-            text-align: center;
-            font-size: 1rem;
-        }
-        .sidebar-menu a:hover {
-            background: var(--verde-suave);
-            color: var(--verde-ut);
-        }
-        .sidebar-menu a.active {
-            background: var(--verde-suave);
-            color: var(--verde-ut);
-            font-weight: 600;
-            border-right: 3px solid var(--verde-ut);
-        }
-
-        /* Botón toggle menú */
-        .drawer-toggle-label {
+        /* Input Date customization */
+        input[type="date"]::-webkit-calendar-picker-indicator {
             cursor: pointer;
-            font-size: 1.25rem;
-            padding: 0.25rem 0.5rem;
+            opacity: 0.5;
+            transition: opacity 0.2s;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator:hover {
+            opacity: 1;
+        }
+
+        /* Botón primario SAAS */
+        .btn-saas-primary {
+            background-color: var(--brand-primary);
+            color: #ffffff;
+            font-weight: 500;
             border-radius: 0.5rem;
-            transition: background 0.2s;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
         }
-        .drawer-toggle-label:hover {
-            background: #f1f5f9;
+        .btn-saas-primary:hover {
+            background-color: var(--brand-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(14, 124, 112, 0.25);
+        }
+        .btn-saas-primary:active {
+            transform: translateY(0);
         }
 
-        /* Ajustes responsivos */
-        @media (max-width: 768px) {
-            .card-modern { padding: 1rem; }
+        /* Botón de detalle */
+        .btn-info-ut {
+            background-color: #F0FDF4;
+            color: var(--brand-sec);
+            border: 1px solid rgba(21, 128, 61, 0.15);
+            border-radius: 0.375rem;
+            font-weight: 500;
+            padding: 0.375rem 0.75rem;
+            transition: all 0.15s ease;
+        }
+        .btn-info-ut:hover {
+            background-color: #DCFCE7;
+            color: #166534;
+            border-color: rgba(21, 128, 61, 0.3);
         }
 
-        /* Scroll suave */
-        html { scroll-behavior: smooth; }
+        /* Responsive UI fixes */
+        @media (max-width: 1023px) {
+            .drawer-side aside {
+                width: 280px;
+            }
+        }
     </style>
 </head>
-<body>
+<body class="h-full overflow-x-hidden">
 
-<div class="drawer lg:drawer-open">
+<div class="drawer lg:drawer-open min-h-screen">
     <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
 
     <!-- CONTENIDO PRINCIPAL -->
-    <div class="drawer-content flex flex-col">
+    <div class="drawer-content flex flex-col min-w-0 bg-[#F7FAFC]">
 
-        <!-- BARRA SUPERIOR -->
-        <header class="navbar-custom flex items-center justify-between">
+        <!-- BARRA SUPERIOR (NAVBAR) -->
+        <header class="sticky top-0 z-30 h-16 glass-panel border-b border-[#E5E7EB] px-4 lg:px-8 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <label for="menu-drawer" class="drawer-toggle-label lg:hidden">
-                    <i class="fas fa-bars text-[#0E7C70]"></i>
+                <label for="menu-drawer" class="lg:hidden cursor-pointer p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 ui-transition">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
                 </label>
-                <span class="text-xl font-bold text-[#0E7C70] tracking-tight">
-                    <i class="fas fa-user-graduate mr-2"></i>Panel Alumno
-                </span>
+                
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 hidden sm:inline-block">Plataforma</span>
+                    <span class="text-slate-300 hidden sm:inline-block">/</span>
+                    <h1 class="text-sm md:text-base font-semibold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="layout-dashboard" class="w-4 h-4 text-brand-500"></i>
+                        Panel Alumno
+                    </h1>
+                </div>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-500 hidden sm:inline">Bienvenido</span>
-                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 text-red-700 border-0 hover:bg-red-100 rounded-xl transition">
-                    <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
+
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100/80 border border-slate-200/60 text-xs font-medium text-slate-600">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Bienvenido</span>
+                </div>
+
+                <a href="{{ url_for('salir') }}" class="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-rose-700 bg-rose-50/80 hover:bg-rose-100/80 border border-rose-200/60 rounded-lg ui-transition focus:outline-none focus:ring-2 focus:ring-rose-500/20">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span class="hidden xs:inline">Cerrar Sesión</span>
                 </a>
             </div>
         </header>
 
-        <!-- CUERPO -->
-        <main class="flex-1 p-4 md:p-6 max-w-6xl mx-auto w-full">
+        <!-- CUERPO PRINCIPAL -->
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
 
-            <!-- Mensajes flash -->
+            <!-- MENSAJES FLASH -->
             {% with m = get_flashed_messages(with_categories=true) %}
                 {% if m %}
-                    <div class="alert alert-{{ m[0][0] }} mb-4 rounded-xl shadow-sm border-0">
-                        <i class="fas fa-{{ 'check-circle' if m[0][0] == 'success' else 'exclamation-triangle' }} mr-2"></i>
-                        {{ m[0][1] }}
+                    {% for categoria, mensaje in m %}
+                    <div class="p-4 rounded-xl border ui-transition shadow-saas-sm flex items-start gap-3 {% if categoria == 'success' %}bg-emerald-50/90 border-emerald-200 text-emerald-900{% elif categoria in ['error', 'danger'] %}bg-rose-50/90 border-rose-200 text-rose-900{% else %}bg-amber-50/90 border-amber-200 text-amber-900{% endif %}">
+                        <div class="p-1 rounded-md {% if categoria == 'success' %}bg-emerald-100 text-emerald-700{% elif categoria in ['error', 'danger'] %}bg-rose-100 text-rose-700{% else %}bg-amber-100 text-amber-700{% endif %} flex-shrink-0 mt-0.5">
+                            {% if categoria == 'success' %}
+                                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                            {% else %}
+                                <i data-lucide="alert-triangle" class="w-4 h-4"></i>
+                            {% endif %}
+                        </div>
+                        <div class="text-sm font-medium leading-relaxed pt-0.5">
+                            {{ mensaje }}
+                        </div>
                     </div>
+                    {% endfor %}
                 {% endif %}
             {% endwith %}
 
-            <!-- MIS DATOS (perfil del alumno) -->
-            <section class="card-modern p-5 md:p-6 mb-6">
-                <h3 class="section-title mb-4">
-                    <i class="fas fa-id-card"></i> Mis Datos
-                </h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-sm"><strong>Nombre:</strong> {{ alumno.usuario.nombre_completo }}</p>
-                        <p class="text-sm mt-2"><strong>Tutor Asignado:</strong> 
-                            {% if alumno.tutor %}
-                                <span class="badge bg-[#E6F7F5] text-[#0E7C70] px-3 py-1 rounded-full text-xs font-semibold">{{ alumno.tutor.nombre_completo }}</span>
-                            {% else %}
-                                <span class="badge bg-gray-100 text-gray-500 px-3 py-1 rounded-full text-xs">Sin asignar</span>
-                            {% endif %}
-                        </p>
+            <!-- SECCIÓN: MIS DATOS -->
+            <section class="bg-white rounded-2xl border border-[#E5E7EB] shadow-saas-card hover:shadow-saas-hover ui-transition overflow-hidden">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                            <i data-lucide="user-check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-slate-800">Mis Datos Académicos</h2>
+                            <p class="text-xs text-slate-500">Información general de perfil y asignación</p>
+                        </div>
                     </div>
-                    <div>
-                        <p class="text-sm"><strong>Rendimiento:</strong> 
-                            <span class="badge bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-xs font-semibold">{{ alumno.rendimiento or 'No registrado' }}</span>
-                        </p>
-                        <div class="mt-4">
-                            <a href="{{ url_for('reporte_alumno_pdf') }}" class="btn-primary-ut text-sm flex items-center gap-2 inline-flex">
-                                <i class="fas fa-file-pdf"></i> Descargar mis tutorías (PDF)
+                </div>
+
+                <div class="p-5 sm:p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- Campo: Nombre -->
+                    <div class="bg-slate-50/60 p-4 rounded-xl border border-slate-200/60 flex flex-col justify-between">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1">Nombre Completo</span>
+                        <p class="text-sm font-semibold text-slate-800 leading-snug">{{ alumno.usuario.nombre_completo }}</p>
+                    </div>
+
+                    <!-- Campo: Tutor -->
+                    <div class="bg-slate-50/60 p-4 rounded-xl border border-slate-200/60 flex flex-col justify-between">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Tutor Asignado</span>
+                        <div>
+                            {% if alumno.tutor %}
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-brand-50 text-brand-700 border border-brand-100">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
+                                    {{ alumno.tutor.nombre_completo }}
+                                </span>
+                            {% else %}
+                                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-500 border border-slate-200">
+                                    <i data-lucide="user-x" class="w-3 h-3"></i> Sin asignar
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Campo: Rendimiento & Acciones -->
+                    <div class="bg-slate-50/60 p-4 rounded-xl border border-slate-200/60 md:col-span-2 lg:col-span-1 flex flex-col justify-between gap-3">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Rendimiento</span>
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                                {{ alumno.rendimiento or 'No registrado' }}
+                            </span>
+                        </div>
+                        <div class="pt-2 border-t border-slate-200/50">
+                            <a href="{{ url_for('reporte_alumno_pdf') }}" class="w-full inline-flex items-center justify-center gap-2 px-3.5 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg ui-transition shadow-saas-sm hover:border-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-500/20">
+                                <i data-lucide="file-text" class="w-4 h-4 text-rose-600"></i>
+                                Descargar mis tutorías (PDF)
                             </a>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- SOLICITAR NUEVA TUTORÍA -->
-            <section class="card-modern p-5 md:p-6 mb-6">
-                <h3 class="section-title mb-4">
-                    <i class="fas fa-plus-circle"></i> Solicitar Nueva Tutoría
-                </h3>
-                <form method="POST" action="{{ url_for('solicitar_tutoria') }}" class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    <div>
-                        <label for="fecha" class="sr-only">Fecha</label>
-                        <input type="date" name="fecha" id="fecha" class="input-modern" required />
+            <!-- SECCIÓN: SOLICITAR NUEVA TUTORÍA -->
+            <section class="bg-white rounded-2xl border border-[#E5E7EB] shadow-saas-card hover:shadow-saas-hover ui-transition">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                            <i data-lucide="calendar-plus" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-slate-800">Solicitar Nueva Tutoría</h2>
+                            <p class="text-xs text-slate-500">Completa los campos para agendar una nueva sesión</p>
+                        </div>
                     </div>
-                    <div>
-                        <label for="tema" class="sr-only">Tema</label>
-                        <input type="text" name="tema" id="tema" class="input-modern" placeholder="Escribe el tema" required />
-                    </div>
-                    <button class="btn-primary-ut flex items-center justify-center gap-2">
-                        <i class="fas fa-paper-plane"></i> Solicitar
-                    </button>
-                </form>
+                </div>
+
+                <div class="p-5 sm:p-6">
+                    <form method="POST" action="{{ url_for('solicitar_tutoria') }}" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+                        <div class="md:col-span-4 space-y-1.5">
+                            <label for="fecha" class="block text-xs font-semibold text-slate-700">
+                                Fecha Programada <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="relative rounded-lg shadow-saas-sm">
+                                <input type="date" name="fecha" id="fecha" required 
+                                    class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 ui-transition outline-none" />
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-5 space-y-1.5">
+                            <label for="tema" class="block text-xs font-semibold text-slate-700">
+                                Tema o Asunto <span class="text-rose-500">*</span>
+                            </label>
+                            <div class="relative rounded-lg shadow-saas-sm">
+                                <input type="text" name="tema" id="tema" placeholder="Escribe el tema o motivo..." required 
+                                    class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 ui-transition outline-none" />
+                            </div>
+                        </div>
+
+                        <div class="md:col-span-3">
+                            <button type="submit" class="w-full h-10 btn-saas-primary inline-flex items-center justify-center gap-2 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                                <i data-lucide="send" class="w-4 h-4"></i>
+                                <span>Enviar Solicitud</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </section>
 
-            <!-- MIS TUTORÍAS -->
-            <section class="card-modern p-5 md:p-6 overflow-x-auto">
-                <h3 class="section-title mb-4">
-                    <i class="fas fa-list-ul"></i> Mis Tutorías
-                </h3>
-                <table class="table-modern w-full text-sm">
-                    <thead>
-                        <tr>
-                            <th>Fecha</th>
-                            <th>Tema</th>
-                            <th>Estado</th>
-                            <th>Observaciones</th>
-                            <th>Acceso</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for t in tutorias %}
-                        <tr>
-                            <td class="whitespace-nowrap">{{ t.fecha.strftime('%d/%m/%Y') }}</td>
-                            <td>{{ t.tema }}</td>
-                            <td>
-                                {% if t.estado == 'Solicitada' %}
-                                    <span class="badge-warning-light"><i class="fas fa-hourglass-half mr-1"></i>Solicitada</span>
-                                {% elif t.estado == 'Realizada' %}
-                                    <span class="badge-success-light"><i class="fas fa-check-circle mr-1"></i>Realizada</span>
-                                {% elif t.estado == 'En proceso' %}
-                                    <span class="badge-info-light"><i class="fas fa-spinner mr-1"></i>En proceso</span>
-                                {% elif t.estado == 'Asignada por tutor' %}
-                                    <span class="badge-secondary-light"><i class="fas fa-user-check mr-1"></i>Asignada</span>
-                                {% else %}
-                                    <span class="badge-secondary-light"><i class="fas fa-tag mr-1"></i>{{ t.estado }}</span>
-                                {% endif %}
-                            </td>
-                            <td>{{ t.observaciones or 'Sin observaciones' }}</td>
-                            <td>
-                                {% if t.estado in ['Asignada por tutor', 'En proceso', 'Realizada'] %}
-                                    <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="btn-info-ut btn-xs flex items-center gap-1">
-                                        <i class="fas fa-eye"></i> Ver Detalle
-                                    </a>
-                                {% else %}
-                                    <span class="text-xs text-gray-400">—</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="5" class="text-center py-6 text-gray-400">
-                                <i class="fas fa-inbox mr-2"></i> No tienes tutorías registradas
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <!-- SECCIÓN: HISTORIAL DE TUTORÍAS -->
+            <section class="bg-white rounded-2xl border border-[#E5E7EB] shadow-saas-card hover:shadow-saas-hover ui-transition overflow-hidden">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                            <i data-lucide="history" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-slate-800">Mis Tutorías Registradas</h2>
+                            <p class="text-xs text-slate-500">Histórico completo de solicitudes y estados</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm border-collapse">
+                        <thead>
+                            <tr class="bg-slate-50/80 border-b border-slate-200/80 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                                <th scope="col" class="py-3.5 px-6">Fecha</th>
+                                <th scope="col" class="py-3.5 px-6">Tema</th>
+                                <th scope="col" class="py-3.5 px-6">Estado</th>
+                                <th scope="col" class="py-3.5 px-6">Observaciones</th>
+                                <th scope="col" class="py-3.5 px-6 text-right">Acceso</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            {% for t in tutorias %}
+                            <tr class="hover:bg-slate-50/70 ui-transition group">
+                                <td class="py-4 px-6 whitespace-nowrap font-medium text-slate-800">
+                                    <div class="flex items-center gap-2">
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-500 ui-transition"></i>
+                                        <span>{{ t.fecha.strftime('%d/%m/%Y') }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 px-6 text-slate-700 max-w-xs truncate font-normal">
+                                    {{ t.tema }}
+                                </td>
+                                <td class="py-4 px-6 whitespace-nowrap">
+                                    {% if t.estado == 'Solicitada' %}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                            Solicitada
+                                        </span>
+                                    {% elif t.estado == 'Realizada' %}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                            Realizada
+                                        </span>
+                                    {% elif t.estado == 'En proceso' %}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
+                                            En proceso
+                                        </span>
+                                    {% elif t.estado == 'Asignada por tutor' %}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-200/60">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                                            Asignada
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                            {{ t.estado }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-4 px-6 text-slate-500 text-xs max-w-sm truncate">
+                                    {{ t.observaciones or 'Sin observaciones' }}
+                                </td>
+                                <td class="py-4 px-6 whitespace-nowrap text-right">
+                                    {% if t.estado in ['Asignada por tutor', 'En proceso', 'Realizada'] %}
+                                        <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="btn-info-ut inline-flex items-center gap-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                                            <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                            <span>Ver Detalle</span>
+                                        </a>
+                                    {% else %}
+                                        <span class="text-xs text-slate-300 font-mono">—</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="py-12 text-center text-slate-400">
+                                    <div class="flex flex-col items-center justify-center gap-2">
+                                        <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
+                                            <i data-lucide="inbox" class="w-6 h-6"></i>
+                                        </div>
+                                        <p class="text-sm font-medium text-slate-600">No tienes tutorías registradas</p>
+                                        <p class="text-xs text-slate-400">Las tutorías que solicites aparecerán listadas aquí.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
         </main>
     </div>
 
-    <!-- MENÚ LATERAL -->
+    <!-- MENÚ LATERAL (SIDEBAR) -->
     <div class="drawer-side z-50">
-        <label for="menu-drawer" class="drawer-overlay"></label>
-        <aside class="bg-white w-64 h-full p-4 border-r border-[#eef2f6] flex flex-col">
-            <div class="flex items-center gap-2 mb-6 px-2">
-                <i class="fas fa-user-graduate text-2xl text-[#0E7C70]"></i>
-                <span class="text-lg font-bold text-[#0E7C70] tracking-tight">Tutorías</span>
+        <label for="menu-drawer" class="drawer-overlay bg-slate-900/20 backdrop-blur-sm"></label>
+        <aside class="bg-white w-72 h-full border-r border-[#E5E7EB] flex flex-col justify-between p-4 shadow-saas-sm">
+            <div class="space-y-6">
+                <!-- LOGO & BRANDING -->
+                <div class="flex items-center gap-3 px-3 py-2 border-b border-slate-100 pb-4">
+                    <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-base font-bold text-slate-800 tracking-tight leading-none">Tutorías EDU</span>
+                        <span class="text-[10px] font-semibold text-brand-500 tracking-wider uppercase mt-1">Portal Estudiantil</span>
+                    </div>
+                </div>
+
+                <!-- MENU ITEMS -->
+                <nav class="space-y-1">
+                    <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Navegación</span>
+                    
+                    <a href="{{ url_for('panel_alumno') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-slate-700 hover:bg-slate-50 hover:text-brand-500 ui-transition group nav-item-active">
+                        <i data-lucide="home" class="w-4 h-4"></i>
+                        <span>Inicio</span>
+                    </a>
+
+                    <a href="{{ url_for('reporte_alumno_pdf') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-500 ui-transition group">
+                        <i data-lucide="file-text" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 ui-transition"></i>
+                        <span>Reporte PDF</span>
+                    </a>
+
+                    <a href="{{ url_for('reportes_alumno') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm text-slate-600 hover:bg-slate-50 hover:text-brand-500 ui-transition group">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 ui-transition"></i>
+                        <span>Mis Reportes</span>
+                    </a>
+                </nav>
             </div>
-            <ul class="sidebar-menu flex-1">
-                <li><a href="{{ url_for('panel_alumno') }}" class="active"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a href="{{ url_for('reporte_alumno_pdf') }}"><i class="fas fa-file-pdf"></i> Reporte PDF</a></li>
-                <li><a href="{{ url_for('reportes_alumno') }}"><i class="fas fa-chart-pie"></i> Mis Reportes</a></li>
-            </ul>
-            <div class="border-t border-[#eef2f6] pt-4 mt-2 text-xs text-gray-400 px-2">
-                <i class="fas fa-shield-alt mr-1"></i> Acceso restringido
+
+            <!-- FOOTER DEL SIDEBAR -->
+            <div class="pt-4 border-t border-slate-100 space-y-3">
+                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-xs">
+                        {{ alumno.usuario.nombre_completo[0] if alumno.usuario.nombre_completo else 'A' }}
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-xs font-semibold text-slate-800 truncate">{{ alumno.usuario.nombre_completo }}</span>
+                        <span class="text-[10px] text-slate-400 truncate">Alumno Activo</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 px-2 text-[11px] text-slate-400">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
+                    <span>Acceso de Alumno Seguro</span>
+                </div>
             </div>
         </aside>
     </div>
 
 </div>
+
+<!-- Lucide Icons initialization script -->
+<script>
+    lucide.createIcons();
+</script>
 
 </body>
 </html>
