@@ -1,466 +1,398 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reportes Generales · Sistema de Tutorías</title>
-    <!-- Tailwind + DaisyUI -->
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+    <!-- Tailwind CSS + DaisyUI -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+
     <!-- Font Awesome 6 -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
+
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
     <style>
-        /* Variables y estilos base (heredados de los paneles) */
         :root {
             --verde-ut: #0E7C70;
-            --verde-sec: #15803D;
+            --verde-ut-dark: #0B6359;
             --verde-suave: #E6F7F5;
-            --verde-claro: #F0FDF4;
-            --texto-principal: #1E293B;
-            --texto-sec: #64748B;
-            --borde-suave: #CCEBE8;
-            --sombra-suave: 0 8px 24px rgba(14, 124, 112, 0.08);
-            --sombra-media: 0 12px 32px rgba(14, 124, 112, 0.12);
-            --radius: 1.25rem;
-        }
-
-        * {
-            font-family: 'Inter', sans-serif;
-            color: var(--texto-principal);
         }
 
         body {
-            background: #f8fafc;
-            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #F8FAFC;
+            color: #0F172A;
         }
 
-        /* Navbar superior */
-        .navbar-custom {
-            background: white;
-            border-bottom: 1px solid #e9edf2;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            padding: 0.5rem 1.5rem;
-        }
-
-        /* Tarjetas */
-        .card-modern {
-            background: white;
-            border-radius: var(--radius);
-            border: 1px solid #eef2f6;
-            box-shadow: var(--sombra-suave);
-            transition: all 0.25s ease;
-        }
-        .card-modern:hover {
-            box-shadow: var(--sombra-media);
-            transform: translateY(-2px);
-        }
-
-        /* Títulos de sección */
-        .section-title {
-            font-weight: 700;
-            font-size: 1.125rem;
-            color: var(--verde-ut);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .section-title i {
-            font-size: 1.1rem;
-            color: var(--verde-sec);
-        }
-
-        /* Botón primario */
-        .btn-primary-ut {
+        /* Accessibity Skip Link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
             background: var(--verde-ut);
             color: white;
-            border-radius: 0.75rem;
-            font-weight: 500;
-            transition: all 0.25s ease;
-            border: none;
-            padding: 0.5rem 1.25rem;
+            padding: 8px;
+            z-index: 100;
+            transition: top 0.2s ease;
         }
-        .btn-primary-ut:hover {
-            background: var(--verde-sec);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(14, 124, 112, 0.2);
-            color: white;
+        .skip-link:focus {
+            top: 0;
         }
 
-        /* Badges personalizados */
-        .badge-success-light {
-            background: var(--verde-suave);
-            color: var(--verde-ut);
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-        .badge-warning-light {
-            background: #FFFBEB;
-            color: #B45309;
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-        .badge-info-light {
-            background: #EFF6FF;
-            color: #1D4ED8;
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-        .badge-secondary-light {
-            background: #f1f5f9;
-            color: #475569;
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
+        /* Estilos de Tarjeta */
+        .card-analytics {
+            background: #FFFFFF;
+            border-radius: 1rem;
+            border: 1px solid #E2E8F0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
         }
 
-        /* Sidebar */
-        .sidebar-menu a {
-            border-radius: 0.75rem;
-            padding: 0.6rem 1rem;
-            margin: 0.2rem 0;
-            font-weight: 500;
-            transition: all 0.2s ease;
+        .card-analytics:hover {
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
+        }
+
+        /* Sidebar Styling */
+        .sidebar-link {
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            color: #334155;
+            padding: 0.65rem 1rem;
+            border-radius: 0.75rem;
+            font-weight: 500;
+            color: #475569;
+            transition: all 0.2s ease;
         }
-        .sidebar-menu a i {
-            width: 1.25rem;
-            text-align: center;
-            font-size: 1rem;
-        }
-        .sidebar-menu a:hover {
-            background: var(--verde-suave);
+
+        .sidebar-link:hover {
+            background-color: var(--verde-suave);
             color: var(--verde-ut);
         }
-        .sidebar-menu a.active {
-            background: var(--verde-suave);
+
+        .sidebar-link.active {
+            background-color: var(--verde-suave);
             color: var(--verde-ut);
             font-weight: 600;
             border-right: 3px solid var(--verde-ut);
         }
 
-        /* Botón toggle menú */
-        .drawer-toggle-label {
-            cursor: pointer;
-            font-size: 1.25rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.5rem;
-            transition: background 0.2s;
+        .sidebar-link:focus-visible {
+            outline: 2px solid var(--verde-ut);
+            outline-offset: 2px;
         }
-        .drawer-toggle-label:hover {
-            background: #f1f5f9;
-        }
-
-        /* Tarjetas de estadísticas */
-        .stat-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.25rem 1.5rem;
-            border: 1px solid #eef2f6;
-            box-shadow: var(--sombra-suave);
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--sombra-media);
-        }
-        .stat-number {
-            font-size: 2.25rem;
-            font-weight: 700;
-            line-height: 1.2;
-        }
-        .stat-number.green {
-            color: var(--verde-ut);
-        }
-        .stat-number.amber {
-            color: #D97706;
-        }
-        .stat-number.blue {
-            color: #2563EB;
-        }
-        .stat-number.purple {
-            color: #7C3AED;
-        }
-        .stat-number.red {
-            color: #DC2626;
-        }
-        .stat-number.indigo {
-            color: #4F46E5;
-        }
-        .stat-number.teal {
-            color: #0D9488;
-        }
-        .stat-number.rose {
-            color: #E11D48;
-        }
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--texto-sec);
-            font-weight: 500;
-            margin-top: 0.25rem;
-        }
-        .stat-icon {
-            font-size: 2rem;
-            color: var(--verde-suave);
-            opacity: 0.7;
-            margin-bottom: 0.5rem;
-        }
-
-        /* Ajustes responsivos */
-        @media (max-width: 768px) {
-            .card-modern { padding: 1rem; }
-            .stat-number { font-size: 1.75rem; }
-        }
-
-        /* Scroll suave */
-        html { scroll-behavior: smooth; }
     </style>
 </head>
-<body>
+<body class="min-h-screen flex flex-col">
 
-<div class="drawer lg:drawer-open">
-    <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
+    <a href="#main-content" class="skip-link">Saltar al contenido principal</a>
 
-    <!-- CONTENIDO PRINCIPAL -->
-    <div class="drawer-content flex flex-col">
+    <div class="drawer lg:drawer-open flex-1">
+        <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
 
-        <!-- BARRA SUPERIOR -->
-        <header class="navbar-custom flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <label for="menu-drawer" class="drawer-toggle-label lg:hidden">
-                    <i class="fas fa-bars text-[#0E7C70]"></i>
-                </label>
-                <span class="text-xl font-bold text-[#0E7C70] tracking-tight">
-                    <i class="fas fa-chart-pie mr-2"></i>Reportes Generales
-                </span>
-            </div>
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-500 hidden sm:inline">Coordinador</span>
-                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 text-red-700 border-0 hover:bg-red-100 rounded-xl transition">
-                    <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
-                </a>
-            </div>
-        </header>
+        <!-- CONTENIDO PRINCIPAL -->
+        <div class="drawer-content flex flex-col min-h-screen">
 
-        <!-- CUERPO -->
-        <main class="flex-1 p-4 md:p-6 max-w-7xl mx-auto w-full">
-
-            <!-- MÓDULO 1: GESTIÓN DE TUTORÍAS -->
-            <section class="mb-8">
-                <h3 class="section-title mb-4">
-                    <i class="fas fa-calendar-check"></i> Gestión de Tutorías
-                </h3>
-
-                <!-- Tarjetas de estadísticas de tutorías -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
-                        <div class="stat-number green">{{ total_tutorias }}</div>
-                        <div class="stat-label">Total</div>
+            <!-- BARRA SUPERIOR NAV -->
+            <header class="bg-white border-b border-slate-200 sticky top-0 z-30 px-4 sm:px-6 py-3">
+                <div class="flex items-center justify-between max-w-7xl mx-auto w-full">
+                    <div class="flex items-center gap-3">
+                        <label for="menu-drawer" class="btn btn-square btn-ghost btn-sm lg:hidden text-slate-700" aria-label="Abrir navegación">
+                            <i class="fas fa-bars text-lg"></i>
+                        </label>
+                        <h1 class="text-lg sm:text-xl font-bold text-slate-900 flex items-center gap-2">
+                            <i class="fas fa-chart-pie text-[#0E7C70]"></i>
+                            <span>Reportes Generales</span>
+                        </h1>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-hourglass-half"></i></div>
-                        <div class="stat-number amber">{{ solicitadas }}</div>
-                        <div class="stat-label">Solicitadas</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                        <div class="stat-number blue">{{ confirmadas }}</div>
-                        <div class="stat-label">Confirmadas</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-user-check"></i></div>
-                        <div class="stat-number purple">{{ asignadas }}</div>
-                        <div class="stat-label">Asignadas</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-check-double"></i></div>
-                        <div class="stat-number green">{{ realizadas }}</div>
-                        <div class="stat-label">Realizadas</div>
+                    <div class="flex items-center gap-3">
+                        <span class="badge badge-lg bg-emerald-50 text-[#0E7C70] border-emerald-200 font-semibold hidden sm:inline-flex">
+                            Coordinador
+                        </span>
+                        <a href="{{ url_for('salir') }}" class="btn btn-sm btn-outline border-red-200 text-red-600 hover:bg-red-50 hover:border-red-300 rounded-lg gap-2">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span class="hidden sm:inline">Cerrar Sesión</span>
+                        </a>
                     </div>
                 </div>
+            </header>
 
-                <!-- Gráfica de tutorías -->
-                <div class="card-modern p-5 md:p-6 max-w-2xl mx-auto">
-                    <canvas id="graficaTutorias" class="w-full h-auto"></canvas>
+            <!-- CONTENIDO DE REPORTES -->
+            <main id="main-content" class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-8">
+
+                <!-- GRID DE 2 COLUMNAS PARA MÓDULOS EN ESCRITORIO -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+                    <!-- MÓDULO 1: GESTIÓN DE TUTORÍAS -->
+                    <section aria-labelledby="heading-tutorias" class="flex flex-col space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+                            <i class="fas fa-calendar-check text-[#0E7C70] text-xl"></i>
+                            <h2 id="heading-tutorias" class="text-lg font-bold text-slate-900">
+                                Gestión de Tutorías
+                            </h2>
+                        </div>
+
+                        <!-- Tarjetas Métricas -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Total</span>
+                                    <i class="fas fa-calendar-alt text-emerald-600"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-slate-900">{{ total_tutorias }}</span>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Solicitadas</span>
+                                    <i class="fas fa-hourglass-half text-amber-500"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-amber-600">{{ solicitadas }}</span>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Confirmadas</span>
+                                    <i class="fas fa-check-circle text-blue-500"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-blue-600">{{ confirmadas }}</span>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Asignadas</span>
+                                    <i class="fas fa-user-check text-purple-500"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-purple-600">{{ asignadas }}</span>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between col-span-2 sm:col-span-1">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Realizadas</span>
+                                    <i class="fas fa-check-double text-[#0E7C70]"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-[#0E7C70]">{{ realizadas }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Gráfica de Tutorías -->
+                        <div class="card-analytics p-5 flex-1 flex flex-col justify-center">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Estado de Sesiones</h3>
+                            <div class="relative w-full h-64">
+                                <canvas id="graficaTutorias"></canvas>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- MÓDULO 2: GESTIÓN DE USUARIOS -->
+                    <section aria-labelledby="heading-usuarios" class="flex flex-col space-y-4">
+                        <div class="flex items-center gap-2 border-b border-slate-200 pb-3">
+                            <i class="fas fa-users-cog text-[#0E7C70] text-xl"></i>
+                            <h2 id="heading-usuarios" class="text-lg font-bold text-slate-900">
+                                Gestión de Usuarios
+                            </h2>
+                        </div>
+
+                        <!-- Tarjetas Métricas -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Alumnos</span>
+                                    <i class="fas fa-user-graduate text-indigo-500"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-indigo-600">{{ total_alumnos }}</span>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Tutores</span>
+                                    <i class="fas fa-chalkboard-teacher text-teal-500"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-teal-600">{{ total_tutores }}</span>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Coordinadores</span>
+                                    <i class="fas fa-user-tie text-rose-500"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-rose-600">{{ total_coordinadores }}</span>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Activos</span>
+                                    <i class="fas fa-user-check text-emerald-500"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-emerald-600">{{ activos }}</span>
+                            </div>
+
+                            <div class="bg-white p-3.5 rounded-xl border border-slate-200 flex flex-col justify-between col-span-2 sm:col-span-1">
+                                <div class="flex items-center justify-between text-slate-400 mb-1">
+                                    <span class="text-xs font-semibold uppercase">Bloqueados</span>
+                                    <i class="fas fa-user-lock text-red-500"></i>
+                                </div>
+                                <span class="text-2xl font-bold text-red-600">{{ bloqueados }}</span>
+                            </div>
+                        </div>
+
+                        <!-- Gráfica de Usuarios -->
+                        <div class="card-analytics p-5 flex-1 flex flex-col justify-center">
+                            <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-4">Distribución por Rol</h3>
+                            <div class="relative w-full h-64">
+                                <canvas id="graficaUsuarios"></canvas>
+                            </div>
+                        </div>
+                    </section>
+
                 </div>
-            </section>
 
-            <!-- MÓDULO 2: GESTIÓN DE USUARIOS -->
-            <section class="mb-8">
-                <h3 class="section-title mb-4">
-                    <i class="fas fa-users-cog"></i> Gestión de Usuarios
-                </h3>
+            </main>
+        </div>
 
-                <!-- Tarjetas de estadísticas de usuarios -->
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
-                        <div class="stat-number indigo">{{ total_alumnos }}</div>
-                        <div class="stat-label">Alumnos</div>
+        <!-- BARRA LATERAL (SIDEBAR) -->
+        <div class="drawer-side z-40">
+            <label for="menu-drawer" class="drawer-overlay" aria-label="Cerrar menú"></label>
+            <aside class="bg-white w-64 h-full p-4 border-r border-slate-200 flex flex-col justify-between">
+                <div>
+                    <!-- LOGO INSTITUCIONAL -->
+                    <div class="flex items-center gap-3 px-2 py-4 mb-4 border-b border-slate-100">
+                        <div class="w-10 h-10 rounded-xl bg-[#0E7C70] flex items-center justify-center text-white font-bold text-lg shadow-sm">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <div>
+                            <span class="text-base font-bold text-slate-900 block leading-tight">Tutorías</span>
+                            <span class="text-xs text-slate-500 font-medium">Panel de Control</span>
+                        </div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                        <div class="stat-number teal">{{ total_tutores }}</div>
-                        <div class="stat-label">Tutores</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
-                        <div class="stat-number rose">{{ total_coordinadores }}</div>
-                        <div class="stat-label">Coordinadores</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-user-check"></i></div>
-                        <div class="stat-number green">{{ activos }}</div>
-                        <div class="stat-label">Activos</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-icon"><i class="fas fa-user-lock"></i></div>
-                        <div class="stat-number red">{{ bloqueados }}</div>
-                        <div class="stat-label">Bloqueados</div>
-                    </div>
+
+                    <!-- MENÚ DE NAVEGACIÓN -->
+                    <nav aria-label="Navegación principal">
+                        <ul class="space-y-1">
+                            <li>
+                                <a href="{{ url_for('panel_coordinador') }}" class="sidebar-link">
+                                    <i class="fas fa-home w-5 text-center"></i>
+                                    <span>Inicio</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('reportes') }}" class="sidebar-link active" aria-current="page">
+                                    <i class="fas fa-chart-bar w-5 text-center"></i>
+                                    <span>Estadísticas</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url_for('reporte_general_pdf') }}" class="sidebar-link">
+                                    <i class="fas fa-file-pdf w-5 text-center"></i>
+                                    <span>Reporte PDF</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
                 </div>
 
-                <!-- Gráfica de usuarios -->
-                <div class="card-modern p-5 md:p-6 max-w-2xl mx-auto">
-                    <canvas id="graficaUsuarios" class="w-full h-auto"></canvas>
+                <div class="border-t border-slate-100 pt-4 px-2 text-xs text-slate-400 flex items-center gap-2 font-medium">
+                    <i class="fas fa-shield-alt text-[#0E7C70]"></i>
+                    <span>Acceso Restringido</span>
                 </div>
-            </section>
-
-        </main>
+            </aside>
+        </div>
     </div>
 
-    <!-- MENÚ LATERAL -->
-    <div class="drawer-side z-50">
-        <label for="menu-drawer" class="drawer-overlay"></label>
-        <aside class="bg-white w-64 h-full p-4 border-r border-[#eef2f6] flex flex-col">
-            <div class="flex items-center gap-2 mb-6 px-2">
-                <i class="fas fa-graduation-cap text-2xl text-[#0E7C70]"></i>
-                <span class="text-lg font-bold text-[#0E7C70] tracking-tight">Tutorías</span>
-            </div>
-            <ul class="sidebar-menu flex-1">
-                <li><a href="{{ url_for('panel_coordinador') }}"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a href="{{ url_for('reportes') }}" class="active"><i class="fas fa-chart-bar"></i> Estadísticas</a></li>
-                <li><a href="{{ url_for('reporte_general_pdf') }}"><i class="fas fa-file-pdf"></i> Reporte PDF</a></li>
-            </ul>
-            <div class="border-t border-[#eef2f6] pt-4 mt-2 text-xs text-gray-400 px-2">
-                <i class="fas fa-shield-alt mr-1"></i> Acceso restringido
-            </div>
-        </aside>
-    </div>
-</div>
+    <!-- CONFIGURACIÓN DE CHART.JS -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            Chart.defaults.font.family = "'Inter', system-ui, -apple-system, sans-serif";
+            Chart.defaults.color = '#64748B';
 
-<!-- SCRIPTS DE CHART.JS -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Gráfica de tutorías (barras)
-        const ctx1 = document.getElementById('graficaTutorias').getContext('2d');
-        new Chart(ctx1, {
-            type: 'bar',
-            data: {
-                labels: ['Solicitadas', 'Confirmadas', 'Asignadas', 'Realizadas'],
-                datasets: [{
-                    label: 'Cantidad',
-                    data: [{{ solicitadas }}, {{ confirmadas }}, {{ asignadas }}, {{ realizadas }}],
-                    backgroundColor: ['#F59E0B', '#3B82F6', '#8B5CF6', '#0E7C70'],
-                    borderRadius: 8,
-                    borderSkipped: false
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: { display: false },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.dataset.label || '';
-                                let value = context.parsed.y || 0;
-                                return label + ': ' + value;
-                            }
-                        }
-                    }
+            // Gráfica de Tutorías (Barras)
+            const ctx1 = document.getElementById('graficaTutorias').getContext('2d');
+            new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Solicitadas', 'Confirmadas', 'Asignadas', 'Realizadas'],
+                    datasets: [{
+                        data: [{{ solicitadas }}, {{ confirmadas }}, {{ asignadas }}, {{ realizadas }}],
+                        backgroundColor: ['#F59E0B', '#3B82F6', '#8B5CF6', '#0E7C70'],
+                        borderRadius: 6,
+                        maxBarThickness: 40
+                    }]
                 },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            precision: 0,
-                            font: { family: 'Inter', size: 12 }
-                        },
-                        grid: { color: '#E2E8F0' }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0F172A',
+                            padding: 10,
+                            cornerRadius: 6
+                        }
                     },
-                    x: {
-                        grid: { display: false },
-                        ticks: {
-                            font: { family: 'Inter', size: 13, weight: '500' }
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { precision: 0 },
+                            grid: { color: '#F1F5F9' }
+                        },
+                        x: {
+                            grid: { display: false }
                         }
                     }
                 }
-            }
-        });
+            });
 
-        // Gráfica de usuarios (pastel)
-        const ctx2 = document.getElementById('graficaUsuarios').getContext('2d');
-        new Chart(ctx2, {
-            type: 'pie',
-            data: {
-                labels: ['Alumnos', 'Tutores', 'Coordinadores'],
-                datasets: [{
-                    data: [{{ total_alumnos }}, {{ total_tutores }}, {{ total_coordinadores }}],
-                    backgroundColor: ['#6366F1', '#14B8A6', '#F43F5E'],
-                    borderWidth: 0,
-                    hoverOffset: 10
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            padding: 20,
-                            font: {
-                                family: 'Inter',
-                                size: 13,
-                                weight: '500'
-                            },
-                            color: '#1E293B'
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                let label = context.label || '';
-                                let value = context.parsed || 0;
-                                let total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                let percentage = total > 0 ? Math.round((value / total) * 100) : 0;
-                                return label + ': ' + value + ' (' + percentage + '%)';
+            // Gráfica de Usuarios (Doughnut en lugar de Pie completo para mayor balance visual)
+            const ctx2 = document.getElementById('graficaUsuarios').getContext('2d');
+            new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Alumnos', 'Tutores', 'Coordinadores'],
+                    datasets: [{
+                        data: [{{ total_alumnos }}, {{ total_tutores }}, {{ total_coordinadores }}],
+                        backgroundColor: ['#6366F1', '#14B8A6', '#F43F5E'],
+                        borderWidth: 2,
+                        borderColor: '#FFFFFF'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '65%',
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 16,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: '#0F172A',
+                            padding: 10,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    let value = context.parsed || 0;
+                                    let total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    let percentage = total > 0 ? Math.round((value / total) * 100) : 0;
+                                    return ` ${context.label}: ${value} (${percentage}%)`;
+                                }
                             }
                         }
                     }
                 }
-            }
+            });
         });
-    });
-</script>
-
+    </script>
 </body>
 </html>
