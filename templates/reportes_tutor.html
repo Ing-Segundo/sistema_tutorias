@@ -1,363 +1,524 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reportes de Tutor · Sistema de Tutorías</title>
-    <!-- Tailwind + DaisyUI -->
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+    
+    <!-- Tailwind CSS + DaisyUI -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
-    <!-- Font Awesome 6 -->
+    
+    <!-- Font Awesome 6 Pro/Free -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    <!-- Google Fonts: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
-    <!-- Chart.js -->
+    
+    <!-- Chart.js Engine -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
     <style>
-        /* Variables y estilos base (heredados de los paneles) */
         :root {
             --verde-ut: #0E7C70;
+            --verde-ut-hover: #0B6359;
             --verde-sec: #15803D;
             --verde-suave: #E6F7F5;
             --verde-claro: #F0FDF4;
-            --texto-principal: #1E293B;
-            --texto-sec: #64748B;
-            --borde-suave: #CCEBE8;
-            --sombra-suave: 0 8px 24px rgba(14, 124, 112, 0.08);
-            --sombra-media: 0 12px 32px rgba(14, 124, 112, 0.12);
-            --radius: 1.25rem;
-        }
-
-        * {
-            font-family: 'Inter', sans-serif;
-            color: var(--texto-principal);
+            --texto-principal: #0F172A;
+            --texto-sec: #475569;
+            --borde-suave: #E2E8F0;
+            --sombra-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --sombra-card: 0 4px 20px -2px rgba(14, 124, 112, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+            --sombra-hover: 0 12px 28px -4px rgba(14, 124, 112, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
+            --radius-card: 1rem;
         }
 
         body {
-            background: #f8fafc;
-            min-height: 100vh;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #F8FAFC;
+            color: var(--texto-principal);
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Navbar superior */
+        /* Navbar Layout */
         .navbar-custom {
-            background: white;
-            border-bottom: 1px solid #e9edf2;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-            padding: 0.5rem 1.5rem;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--borde-suave);
         }
 
-        /* Tarjetas */
+        /* Card System UI */
         .card-modern {
-            background: white;
-            border-radius: var(--radius);
-            border: 1px solid #eef2f6;
-            box-shadow: var(--sombra-suave);
-            transition: all 0.25s ease;
+            background: #FFFFFF;
+            border-radius: var(--radius-card);
+            border: 1px solid var(--borde-suave);
+            box-shadow: var(--sombra-card);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         }
+        
         .card-modern:hover {
-            box-shadow: var(--sombra-media);
+            box-shadow: var(--sombra-hover);
             transform: translateY(-2px);
         }
 
-        /* Títulos de sección */
-        .section-title {
-            font-weight: 700;
-            font-size: 1.125rem;
-            color: var(--verde-ut);
+        /* KPI Metric Cards */
+        .stat-card {
+            background: #FFFFFF;
+            border-radius: var(--radius-card);
+            padding: 1.25rem 1.5rem;
+            border: 1px solid var(--borde-suave);
+            box-shadow: var(--sombra-card);
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--sombra-hover);
+        }
+
+        .stat-icon-wrapper {
+            width: 2.75rem;
+            height: 2.75rem;
+            border-radius: 0.75rem;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-        }
-        .section-title i {
-            font-size: 1.1rem;
-            color: var(--verde-sec);
+            justify-content: center;
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
         }
 
-        /* Botón primario */
-        .btn-primary-ut {
-            background: var(--verde-ut);
-            color: white;
-            border-radius: 0.75rem;
-            font-weight: 500;
-            transition: all 0.25s ease;
-            border: none;
-            padding: 0.5rem 1.25rem;
-        }
-        .btn-primary-ut:hover {
-            background: var(--verde-sec);
-            transform: translateY(-1px);
-            box-shadow: 0 6px 16px rgba(14, 124, 112, 0.2);
-            color: white;
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1;
+            color: var(--texto-principal);
         }
 
-        /* Badges personalizados */
-        .badge-success-light {
-            background: var(--verde-suave);
-            color: var(--verde-ut);
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-        .badge-warning-light {
-            background: #FFFBEB;
-            color: #B45309;
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-        .badge-info-light {
-            background: #EFF6FF;
-            color: #1D4ED8;
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-        .badge-secondary-light {
-            background: #f1f5f9;
-            color: #475569;
-            border-radius: 2rem;
-            padding: 0.25rem 1rem;
-            font-weight: 500;
-            font-size: 0.75rem;
-        }
-
-        /* Tabla */
-        .table-modern thead {
-            background: #f1f5f9;
-            border-radius: 0.75rem 0.75rem 0 0;
-        }
-        .table-modern thead th {
+        .stat-label {
+            font-size: 0.8125rem;
+            color: var(--texto-sec);
             font-weight: 600;
-            color: #1e293b;
-            padding: 0.75rem 1rem;
-            border-bottom: 2px solid #e2e8f0;
-            font-size: 0.85rem;
             text-transform: uppercase;
-            letter-spacing: 0.03em;
-        }
-        .table-modern tbody td {
-            padding: 0.75rem 1rem;
-            border-bottom: 1px solid #f1f5f9;
-            vertical-align: middle;
-        }
-        .table-modern tbody tr:hover {
-            background-color: #f8fafc;
+            letter-spacing: 0.05em;
+            margin-top: 0.5rem;
         }
 
-        /* Sidebar */
+        /* Headings & Section UI */
+        .section-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--texto-principal);
+            display: flex;
+            align-items: center;
+            gap: 0.625rem;
+            letter-spacing: -0.01em;
+        }
+
+        .section-title i {
+            color: var(--verde-ut);
+        }
+
+        /* Badge Enterprise Tokens */
+        .badge-base {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.375rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            line-height: 1;
+        }
+
+        .badge-success-light { background: #DCFCE7; color: #15803D; border: 1px solid #BBF7D0; }
+        .badge-warning-light { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
+        .badge-info-light { background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD; }
+        .badge-secondary-light { background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
+
+        /* Data Tables Modernization */
+        .table-modern {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .table-modern thead th {
+            background: #F8FAFC;
+            font-weight: 600;
+            color: var(--texto-sec);
+            padding: 0.875rem 1.25rem;
+            border-bottom: 1px solid var(--borde-suave);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .table-modern tbody td {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid #F1F5F9;
+            vertical-align: middle;
+            color: var(--texto-principal);
+            font-size: 0.875rem;
+        }
+
+        .table-modern tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-modern tbody tr {
+            transition: background-color 0.15s ease;
+        }
+
+        .table-modern tbody tr:hover {
+            background-color: #F8FAFC;
+        }
+
+        /* Sidebar Navigation UI */
         .sidebar-menu a {
-            border-radius: 0.75rem;
-            padding: 0.6rem 1rem;
-            margin: 0.2rem 0;
+            border-radius: 0.625rem;
+            padding: 0.625rem 0.875rem;
+            margin: 0.125rem 0;
             font-weight: 500;
-            transition: all 0.2s ease;
+            font-size: 0.875rem;
+            transition: all 0.15s ease;
             display: flex;
             align-items: center;
             gap: 0.75rem;
-            color: #334155;
+            color: #475569;
         }
+
         .sidebar-menu a i {
             width: 1.25rem;
             text-align: center;
-            font-size: 1rem;
+            font-size: 0.95rem;
+            color: #64748B;
+            transition: color 0.15s ease;
         }
+
         .sidebar-menu a:hover {
             background: var(--verde-suave);
             color: var(--verde-ut);
         }
+
+        .sidebar-menu a:hover i {
+            color: var(--verde-ut);
+        }
+
         .sidebar-menu a.active {
             background: var(--verde-suave);
             color: var(--verde-ut);
             font-weight: 600;
-            border-right: 3px solid var(--verde-ut);
         }
 
-        /* Botón toggle menú */
+        .sidebar-menu a.active i {
+            color: var(--verde-ut);
+        }
+
         .drawer-toggle-label {
             cursor: pointer;
-            font-size: 1.25rem;
-            padding: 0.25rem 0.5rem;
+            font-size: 1.125rem;
+            padding: 0.5rem;
             border-radius: 0.5rem;
             transition: background 0.2s;
-        }
-        .drawer-toggle-label:hover {
-            background: #f1f5f9;
-        }
-
-        /* Tarjetas de estadísticas */
-        .stat-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.25rem 1.5rem;
-            border: 1px solid #eef2f6;
-            box-shadow: var(--sombra-suave);
-            transition: all 0.2s ease;
-            text-align: center;
-        }
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--sombra-media);
-        }
-        .stat-number {
-            font-size: 2.25rem;
-            font-weight: 700;
-            color: var(--verde-ut);
-            line-height: 1.2;
-        }
-        .stat-number.amber {
-            color: #D97706;
-        }
-        .stat-label {
-            font-size: 0.9rem;
             color: var(--texto-sec);
-            font-weight: 500;
-            margin-top: 0.25rem;
-        }
-        .stat-icon {
-            font-size: 2rem;
-            color: var(--verde-suave);
-            opacity: 0.7;
-            margin-bottom: 0.5rem;
         }
 
-        /* Ajustes responsivos */
-        @media (max-width: 768px) {
-            .card-modern { padding: 1rem; }
-            .stat-number { font-size: 1.75rem; }
+        .drawer-toggle-label:hover {
+            background: #F1F5F9;
+            color: var(--texto-principal);
         }
 
-        /* Scroll suave */
         html { scroll-behavior: smooth; }
     </style>
 </head>
-<body>
+<body class="antialiased">
 
 <div class="drawer lg:drawer-open">
     <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
 
     <!-- CONTENIDO PRINCIPAL -->
-    <div class="drawer-content flex flex-col">
+    <div class="drawer-content flex flex-col min-h-screen">
 
         <!-- BARRA SUPERIOR -->
-        <header class="navbar-custom flex items-center justify-between">
+        <header class="navbar-custom sticky top-0 z-30 flex items-center justify-between px-4 lg:px-8 py-3">
             <div class="flex items-center gap-3">
-                <label for="menu-drawer" class="drawer-toggle-label lg:hidden">
-                    <i class="fas fa-bars text-[#0E7C70]"></i>
+                <label for="menu-drawer" class="drawer-toggle-label lg:hidden" aria-label="Abrir menú">
+                    <i class="fas fa-bars"></i>
                 </label>
-                <span class="text-xl font-bold text-[#0E7C70] tracking-tight">
-                    <i class="fas fa-chart-pie mr-2"></i>Mis Reportes
-                </span>
+                <div class="flex items-center gap-2.5">
+                    <div class="w-8 h-8 rounded-lg bg-[#0E7C70]/10 flex items-center justify-center">
+                        <i class="fas fa-chart-pie text-[#0E7C70] text-sm"></i>
+                    </div>
+                    <span class="text-lg font-bold text-slate-800 tracking-tight">
+                        Mis Reportes
+                    </span>
+                </div>
             </div>
-            <div class="flex items-center gap-2">
-                <span class="text-sm text-gray-500 hidden sm:inline">Bienvenido</span>
-                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 text-red-700 border-0 hover:bg-red-100 rounded-xl transition">
-                    <i class="fas fa-sign-out-alt mr-1"></i> Cerrar Sesión
+            
+            <div class="flex items-center gap-4">
+                <span class="text-xs font-medium text-slate-500 hidden sm:inline-block bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+                    <i class="fas fa-circle text-emerald-500 text-[8px] mr-1.5"></i>Sesión Activa
+                </span>
+                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 hover:bg-red-100 text-red-600 border-red-200/60 rounded-xl transition-all duration-200 gap-2 font-medium normal-case">
+                    <i class="fas fa-sign-out-alt text-xs"></i>
+                    <span>Cerrar Sesión</span>
                 </a>
             </div>
         </header>
 
-        <!-- CUERPO -->
-        <main class="flex-1 p-4 md:p-6 max-w-6xl mx-auto w-full">
+        <!-- CUERPO DE PÁGINA -->
+        <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
 
-            <!-- TARJETAS DE ESTADÍSTICAS -->
-            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <!-- METRICAS Y KPIS -->
+            <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                
+                <!-- Card 1 -->
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-user-graduate"></i></div>
+                    <div class="flex items-center justify-between">
+                        <span class="stat-label">Alumnos Asignados</span>
+                        <div class="stat-icon-wrapper bg-teal-50 text-[#0E7C70]">
+                            <i class="fas fa-user-graduate"></i>
+                        </div>
+                    </div>
                     <div class="stat-number">{{ alumnos }}</div>
-                    <div class="stat-label">Alumnos Asignados</div>
+                    <p class="text-xs text-slate-400 mt-2 font-medium">Estudiantes bajo tutoría</p>
                 </div>
+
+                <!-- Card 2 -->
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-calendar-alt"></i></div>
+                    <div class="flex items-center justify-between">
+                        <span class="stat-label">Total Tutorías</span>
+                        <div class="stat-icon-wrapper bg-blue-50 text-blue-600">
+                            <i class="fas fa-calendar-alt"></i>
+                        </div>
+                    </div>
                     <div class="stat-number">{{ total }}</div>
-                    <div class="stat-label">Total Tutorías</div>
+                    <p class="text-xs text-slate-400 mt-2 font-medium">Histórico acumulado</p>
                 </div>
+
+                <!-- Card 3 -->
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
-                    <div class="stat-number">{{ realizadas }}</div>
-                    <div class="stat-label">Realizadas</div>
+                    <div class="flex items-center justify-between">
+                        <span class="stat-label">Realizadas</span>
+                        <div class="stat-icon-wrapper bg-emerald-50 text-emerald-600">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number text-emerald-600">{{ realizadas }}</div>
+                    <p class="text-xs text-slate-400 mt-2 font-medium">Concluidas con éxito</p>
                 </div>
+
+                <!-- Card 4 -->
                 <div class="stat-card">
-                    <div class="stat-icon"><i class="fas fa-clock"></i></div>
-                    <div class="stat-number amber">{{ pendientes }}</div>
-                    <div class="stat-label">Pendientes</div>
+                    <div class="flex items-center justify-between">
+                        <span class="stat-label">Pendientes</span>
+                        <div class="stat-icon-wrapper bg-amber-50 text-amber-600">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                    </div>
+                    <div class="stat-number text-amber-600">{{ pendientes }}</div>
+                    <p class="text-xs text-slate-400 mt-2 font-medium">Requieren atención</p>
                 </div>
+
             </section>
 
-            <!-- GRÁFICA -->
-            <section class="card-modern p-5 md:p-6 mb-6 max-w-lg mx-auto">
-                <h3 class="section-title justify-center mb-4">
-                    <i class="fas fa-chart-bar"></i> Estado de mis Tutorías
-                </h3>
-                <canvas id="graficaTutor" class="w-full h-auto"></canvas>
+            <!-- ANALÍTICA VISUAL Y GRÁFICAS -->
+            <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                <!-- Gráfica Principal -->
+                <div class="card-modern p-5 md:p-6 lg:col-span-2 flex flex-col justify-between">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                        <h3 class="section-title">
+                            <i class="fas fa-chart-bar"></i> Distribución de Tutorías
+                        </h3>
+                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Métricas de Rendimiento</span>
+                    </div>
+                    <div class="relative w-full h-[280px] sm:h-[320px] flex items-center justify-center">
+                        <canvas id="graficaTutor"></canvas>
+                    </div>
+                </div>
+
+                <!-- Resumen de Proporción -->
+                <div class="card-modern p-5 md:p-6 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
+                            <h3 class="section-title">
+                                <i class="fas fa-pie-chart"></i> Proporción
+                            </h3>
+                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Estatus</span>
+                        </div>
+                        <p class="text-xs text-slate-500 mb-6 leading-relaxed">
+                            Resumen porcentual de las tutorías completadas frente a los compromisos pendientes programados.
+                        </p>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1.5">
+                                <span class="text-slate-600">Completadas</span>
+                                <span class="text-[#0E7C70]">
+                                    {% if total > 0 %}
+                                        {{ ((realizadas / total) * 100)|round(1) }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-[#0E7C70] h-full rounded-full transition-all duration-500" 
+                                     style="width: {% if total > 0 %}{{ ((realizadas / total) * 100)|round(1) }}{% else %}0{% endif %}%"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between text-xs font-semibold mb-1.5">
+                                <span class="text-slate-600">Pendientes</span>
+                                <span class="text-amber-500">
+                                    {% if total > 0 %}
+                                        {{ ((pendientes / total) * 100)|round(1) }}%
+                                    {% else %}
+                                        0%
+                                    {% endif %}
+                                </span>
+                            </div>
+                            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
+                                <div class="bg-amber-400 h-full rounded-full transition-all duration-500" 
+                                     style="width: {% if total > 0 %}{{ ((pendientes / total) * 100)|round(1) }}{% else %}0{% endif %}%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center text-xs text-slate-400">
+                        <span>Actualizado automáticamente</span>
+                        <i class="fas fa-sync-alt text-slate-300"></i>
+                    </div>
+                </div>
+
             </section>
 
             <!-- TABLA DE DETALLE -->
-            <section class="card-modern p-5 md:p-6 overflow-x-auto">
-                <h3 class="section-title mb-4">
-                    <i class="fas fa-list-ul"></i> Detalle de tutorías a mi cargo
-                </h3>
-                <table class="table-modern w-full text-sm">
-                    <thead>
-                        <tr>
-                            <th>Alumno</th>
-                            <th>Fecha</th>
-                            <th>Tema</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for t in tutorias %}
-                        <tr>
-                            <td>{{ t.alumno.usuario.nombre_completo }}</td>
-                            <td class="whitespace-nowrap">{{ t.fecha.strftime('%d/%m/%Y') }}</td>
-                            <td>{{ t.tema }}</td>
-                            <td>
-                                {% if t.estado == 'Solicitada' %}
-                                    <span class="badge-warning-light"><i class="fas fa-hourglass-half mr-1"></i>Solicitada</span>
-                                {% elif t.estado == 'Realizada' %}
-                                    <span class="badge-success-light"><i class="fas fa-check-circle mr-1"></i>Realizada</span>
-                                {% elif t.estado == 'En proceso' %}
-                                    <span class="badge-info-light"><i class="fas fa-spinner mr-1"></i>En proceso</span>
-                                {% elif t.estado == 'Asignada por tutor' %}
-                                    <span class="badge-secondary-light"><i class="fas fa-user-check mr-1"></i>Asignada</span>
-                                {% else %}
-                                    <span class="badge-secondary-light"><i class="fas fa-tag mr-1"></i>{{ t.estado }}</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% else %}
-                        <tr>
-                            <td colspan="4" class="text-center py-6 text-gray-400">
-                                <i class="fas fa-inbox mr-2"></i> No hay tutorías registradas
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+            <section class="card-modern overflow-hidden">
+                <div class="p-5 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <h3 class="section-title">
+                        <i class="fas fa-list-ul"></i> Detalle de Tutorías a mi Cargo
+                    </h3>
+                    <span class="text-xs font-medium text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200/80 self-start sm:self-auto">
+                        Registros Totales: {{ tutorias|length }}
+                    </span>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="table-modern">
+                        <thead>
+                            <tr>
+                                <th>Alumno</th>
+                                <th>Fecha</th>
+                                <th>Tema</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for t in tutorias %}
+                            <tr>
+                                <td class="font-semibold text-slate-800">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
+                                            {{ t.alumno.usuario.nombre_completo[0] }}
+                                        </div>
+                                        <span>{{ t.alumno.usuario.nombre_completo }}</span>
+                                    </div>
+                                </td>
+                                <td class="whitespace-nowrap font-medium text-slate-500">
+                                    <i class="far fa-calendar text-slate-400 mr-1.5"></i>{{ t.fecha.strftime('%d/%m/%Y') }}
+                                </td>
+                                <td class="max-w-xs truncate text-slate-600">{{ t.tema }}</td>
+                                <td>
+                                    {% if t.estado == 'Solicitada' %}
+                                        <span class="badge-base badge-warning-light"><i class="fas fa-hourglass-half"></i>Solicitada</span>
+                                    {% elif t.estado == 'Realizada' %}
+                                        <span class="badge-base badge-success-light"><i class="fas fa-check-circle"></i>Realizada</span>
+                                    {% elif t.estado == 'En proceso' %}
+                                        <span class="badge-base badge-info-light"><i class="fas fa-spinner fa-spin"></i>En proceso</span>
+                                    {% elif t.estado == 'Asignada por tutor' %}
+                                        <span class="badge-base badge-secondary-light"><i class="fas fa-user-check"></i>Asignada</span>
+                                    {% else %}
+                                        <span class="badge-base badge-secondary-light"><i class="fas fa-tag"></i>{{ t.estado }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center py-12 text-slate-400">
+                                    <div class="max-w-xs mx-auto space-y-3">
+                                        <div class="w-12 h-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto text-slate-300">
+                                            <i class="fas fa-inbox text-xl"></i>
+                                        </div>
+                                        <p class="text-sm font-medium text-slate-500">No hay tutorías registradas</p>
+                                        <p class="text-xs text-slate-400">Las tutorías asignadas aparecerán listadas en esta sección.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </section>
 
         </main>
     </div>
 
-    <!-- MENÚ LATERAL -->
+    <!-- MENÚ LATERAL (SIDEBAR) -->
     <div class="drawer-side z-50">
-        <label for="menu-drawer" class="drawer-overlay"></label>
-        <aside class="bg-white w-64 h-full p-4 border-r border-[#eef2f6] flex flex-col">
-            <div class="flex items-center gap-2 mb-6 px-2">
-                <i class="fas fa-chalkboard-teacher text-2xl text-[#0E7C70]"></i>
-                <span class="text-lg font-bold text-[#0E7C70] tracking-tight">Tutorías</span>
+        <label for="menu-drawer" class="drawer-overlay" aria-label="Cerrar menú"></label>
+        <aside class="bg-white w-72 h-full p-5 border-r border-slate-200/80 flex flex-col justify-between">
+            <div>
+                <!-- Brand Header -->
+                <div class="flex items-center gap-3 px-2 mb-8">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0E7C70] to-[#15803D] flex items-center justify-center text-white shadow-md shadow-[#0E7C70]/20">
+                        <i class="fas fa-chalkboard-teacher text-lg"></i>
+                    </div>
+                    <div>
+                        <span class="text-base font-bold text-slate-800 tracking-tight block leading-none">Sistema Tutorías</span>
+                        <span class="text-[11px] font-medium text-slate-400">UT Nayarit</span>
+                    </div>
+                </div>
+
+                <!-- Navigation Links -->
+                <nav>
+                    <p class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Navegación</p>
+                    <ul class="sidebar-menu space-y-1">
+                        <li>
+                            <a href="{{ url_for('panel_tutor') }}">
+                                <i class="fas fa-home"></i> 
+                                <span>Inicio</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('reporte_tutor_pdf') }}">
+                                <i class="fas fa-file-pdf"></i> 
+                                <span>Reporte PDF</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="{{ url_for('reportes_tutor') }}" class="active">
+                                <i class="fas fa-chart-pie"></i> 
+                                <span>Mis Reportes</span>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
-            <ul class="sidebar-menu flex-1">
-                <li><a href="{{ url_for('panel_tutor') }}"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a href="{{ url_for('reporte_tutor_pdf') }}"><i class="fas fa-file-pdf"></i> Reporte PDF</a></li>
-                <li><a href="{{ url_for('reportes_tutor') }}" class="active"><i class="fas fa-chart-pie"></i> Mis Reportes</a></li>
-            </ul>
-            <div class="border-t border-[#eef2f6] pt-4 mt-2 text-xs text-gray-400 px-2">
-                <i class="fas fa-shield-alt mr-1"></i> Acceso restringido
+
+            <!-- Footer Sidebar Info -->
+            <div class="border-t border-slate-100 pt-4 text-xs text-slate-400 px-2 flex items-center gap-2">
+                <i class="fas fa-shield-alt text-slate-300"></i>
+                <span>Módulo de Tutor ver. 2.4</span>
             </div>
         </aside>
     </div>
@@ -366,7 +527,20 @@
 <!-- SCRIPTS DE CHART.JS -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const ctx = document.getElementById('graficaTutor').getContext('2d');
+        const canvas = document.getElementById('graficaTutor');
+        if (!canvas) return;
+        
+        const ctx = canvas.getContext('2d');
+        
+        // Dynamic Gradients
+        const gradientRealizadas = ctx.createLinearGradient(0, 0, 0, 300);
+        gradientRealizadas.addColorStop(0, '#0E7C70');
+        gradientRealizadas.addColorStop(1, '#15803D');
+
+        const gradientPendientes = ctx.createLinearGradient(0, 0, 0, 300);
+        gradientPendientes.addColorStop(0, '#F59E0B');
+        gradientPendientes.addColorStop(1, '#D97706');
+
         new Chart(ctx, {
             type: 'bar',
             data: {
@@ -374,24 +548,34 @@
                 datasets: [{
                     label: 'Cantidad',
                     data: [{{ realizadas }}, {{ pendientes }}],
-                    backgroundColor: ['#0E7C70', '#F59E0B'],
-                    borderRadius: 8,
-                    borderSkipped: false
+                    backgroundColor: [gradientRealizadas, gradientPendientes],
+                    borderRadius: 10,
+                    borderSkipped: false,
+                    barThickness: 48,
+                    maxBarThickness: 56
                 }]
             },
             options: {
                 responsive: true,
-                maintainAspectRatio: true,
+                maintainAspectRatio: false,
+                animation: {
+                    duration: 1000,
+                    easing: 'easeOutQuart'
+                },
                 plugins: {
                     legend: {
                         display: false
                     },
                     tooltip: {
+                        backgroundColor: '#0F172A',
+                        titleFont: { family: 'Inter', size: 13, weight: '600' },
+                        bodyFont: { family: 'Inter', size: 12 },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: false,
                         callbacks: {
                             label: function(context) {
-                                let label = context.dataset.label || '';
-                                let value = context.parsed.y || 0;
-                                return label + ': ' + value;
+                                return ` Total: ${context.parsed.y} tutorías`;
                             }
                         }
                     }
@@ -401,13 +585,15 @@
                         beginAtZero: true,
                         ticks: {
                             precision: 0,
+                            color: '#64748B',
                             font: {
                                 family: 'Inter',
-                                size: 12
+                                size: 11
                             }
                         },
                         grid: {
-                            color: '#E2E8F0'
+                            color: '#F1F5F9',
+                            drawBorder: false
                         }
                     },
                     x: {
@@ -415,10 +601,11 @@
                             display: false
                         },
                         ticks: {
+                            color: '#334155',
                             font: {
                                 family: 'Inter',
-                                size: 13,
-                                weight: '500'
+                                size: 12,
+                                weight: '600'
                             }
                         }
                     }
