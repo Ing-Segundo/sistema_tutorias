@@ -1,97 +1,79 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tutoría Individual - Sistema de Tutorías</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- DaisyUI CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <!-- Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            600: '#0d9488',
+                            700: '#0e7c70',
+                            800: '#115e59',
+                            900: '#134e4a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     <style>
-        :root {
-            --verde-ut: #0E7C70;
-            --verde-sec: #15803D;
-            --verde-suave: #E6F7F5;
-            --verde-claro: #F0FDF4;
-            --texto-principal: #1E293B;
-            --texto-sec: #64748B;
-            --borde-suave: #CCEBE8;
-            --sombra-suave: 0 8px 24px rgba(14, 124, 112, 0.12);
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
         }
-        * { font-family: 'Inter', sans-serif; color: var(--texto-principal); }
-        body { background-color: var(--verde-claro); min-height: 100vh; }
-
-        .contenedor { max-width: 900px; }
-        .ficha { background: white; border: 1px solid var(--borde-suave); border-radius: 16px; overflow: hidden; box-shadow: var(--sombra-suave); }
-        .ficha-titulo { text-align: center; padding: 1.25rem 1rem; border-bottom: 2px solid var(--verde-ut); }
-        .ficha-titulo h1 { color: var(--verde-ut); font-weight: 700; font-size: 1.25rem; }
-        .ficha-titulo h2 { color: var(--texto-sec); font-weight: 600; font-size: 1rem; margin-top: 2px; }
-
-        .fila { display: grid; border-bottom: 1px solid var(--borde-suave); }
-        .fila:last-child { border-bottom: none; }
-        .fila-2 { grid-template-columns: 1fr 1fr; }
-        .fila-3 { grid-template-columns: 1fr 1fr 1fr; }
-
-        .celda { border-right: 1px solid var(--borde-suave); padding: 0.6rem 0.9rem; display: flex; align-items: center; gap: 0.5rem; }
-        .celda:last-child { border-right: none; }
-
-        .etiqueta { font-weight: 600; font-size: 0.95rem; color: var(--verde-ut); text-transform: uppercase; }
-
-        .campo {
-            border: none;
-            border-bottom: 1px solid var(--borde-suave);
-            background: #ffffff !important;
-            color: #1E293B !important;
-            flex: 1;
-            padding: 0.25rem 0.4rem;
-            font-size: 1rem;
-        }
-        .campo:focus { outline: none; border-color: var(--verde-ut); }
-        .campo:disabled { background: #F9FAFB !important; opacity: 0.8; cursor: not-allowed; }
-
-        .motivo-titulo { background: var(--verde-suave); color: var(--verde-ut); font-weight: 700; font-size: 0.95rem; text-transform: uppercase; padding: 0.6rem 0.9rem; }
-
-        .motivo-grid { display: grid; grid-template-columns: repeat(3, 1fr); }
-        @media (max-width: 640px) { .motivo-grid { grid-template-columns: 1fr; } .fila-2, .fila-3 { grid-template-columns: 1fr; } }
-
-        .motivo-item { display: flex; align-items: center; gap: 0.5rem; padding: 0.55rem 0.9rem; border-right: 1px solid var(--borde-suave); border-bottom: 1px solid var(--borde-suave); font-size: 0.95rem; }
-        .motivo-item input { accent-color: var(--verde-ut); }
-        .motivo-item input:disabled { cursor: not-allowed; }
-
-        .bloque-titulo { background: var(--verde-suave); color: var(--verde-ut); font-weight: 700; font-size: 0.95rem; text-transform: uppercase; padding: 0.6rem 0.9rem; border-bottom: 1px solid var(--borde-suave); }
-        .bloque-texto {
-            width: 100%;
-            border: none;
-            padding: 0.9rem;
-            font-size: 1rem;
-            resize: vertical;
-            min-height: 100px;
-            background: #ffffff !important;
-            color: #1E293B !important;
-        }
-        .bloque-texto:focus { outline: none; }
-        .bloque-texto:disabled {
-            background: #F9FAFB !important;
-            color: #1E293B !important;
-            opacity: 0.8;
-            cursor: not-allowed;
-        }
-
-        .acciones { display: flex; justify-content: flex-end; gap: 0.75rem; padding: 1rem; background: var(--verde-claro); }
-        .btn-ut { background: var(--verde-ut); color: white; border-radius: 10px; font-weight: 600; padding: 0.5rem 1.5rem; transition: all 0.2s ease; }
-        .btn-ut:hover { background: var(--verde-sec); }
-        .btn-cancelar { background: white; color: var(--texto-sec); border: 1px solid var(--borde-suave); border-radius: 10px; font-weight: 600; padding: 0.5rem 1.5rem; transition: all 0.2s ease; }
-        .btn-cancelar:hover { background: var(--verde-suave); color: var(--verde-ut); }
     </style>
 </head>
-<body>
-    <div class="contenedor mx-auto p-4 md:p-8" style="padding-top: 2.5rem;">
-        <a href="javascript:history.back()" class="inline-flex items-center gap-1 mb-4 text-sm font-semibold" style="color: var(--verde-ut);">&larr; Volver</a>
+<body class="min-h-screen antialiased bg-slate-50 text-slate-900 py-6 px-4 sm:px-6 lg:px-8">
 
+    <div class="max-w-4xl mx-auto space-y-6">
+        
+        <!-- Navegación Superior -->
+        <div class="flex items-center justify-between">
+            <a href="javascript:history.back()" class="inline-flex items-center gap-2 text-sm font-semibold text-brand-700 hover:text-brand-800 transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-brand-700 rounded-md px-2 py-1">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Volver
+            </a>
+            
+            <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    {{ tutoria.estado or 'En proceso' }}
+                </span>
+            </div>
+        </div>
+
+        <!-- Alertas de Flash Mensajes -->
         {% with mensajes = get_flashed_messages(with_categories=true) %}
             {% if mensajes %}
                 {% set categoria, texto = mensajes[0] %}
-                <div class="alert alert-{{ categoria }} mb-4 rounded-xl">{{ texto }}</div>
+                <div role="alert" class="alert alert-{{ categoria }} shadow-sm border border-slate-200 rounded-xl bg-white text-slate-800 flex items-center gap-3 p-4">
+                    <svg class="w-5 h-5 text-brand-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <span class="text-sm font-medium">{{ texto }}</span>
+                </div>
             {% endif %}
         {% endwith %}
 
@@ -100,81 +82,122 @@
         {% set deshabilitar_observaciones = '' if (en_proceso and session.get('rol') == 'tutor') else 'disabled' %}
         {% set puede_guardar = session.get('rol') == 'tutor' and en_proceso %}
 
-        <form class="ficha" method="POST" action="{{ url_for('ver_tutoria_individual', id=tutoria.id) }}">
-            <div class="ficha-titulo">
-                <h1>UNIVERSIDAD TECNOLÓGICA DE NAYARIT</h1>
-                <h2>CONTROL Y SEGUIMIENTO DE TUTORÍAS INDIVIDUALES</h2>
-            </div>
-
-            <div class="fila fila-2">
-                <div class="celda">
-                    <span class="etiqueta">Carrera:</span>
-                    <input type="text" name="carrera" class="campo" value="{{ tutoria.carrera or '' }}" {{deshabilitado}}>
+        <!-- Formulario Contenedor Principal -->
+        <form class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden divide-y divide-slate-100" method="POST" action="{{ url_for('ver_tutoria_individual', id=tutoria.id) }}">
+            
+            <!-- Encabezado Institucional -->
+            <div class="p-6 bg-slate-900 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-brand-500">Universidad Tecnológica de Nayarit</span>
+                    <h1 class="text-xl font-bold tracking-tight text-white mt-0.5">Control y Seguimiento de Tutorías Individuales</h1>
                 </div>
-                <div class="celda">
-                    <span class="etiqueta">Grupo:</span>
-                    <input type="text" name="grupo" class="campo" value="{{ tutoria.grupo or '' }}" {{deshabilitado}}>
+                <div class="text-right hidden sm:block">
+                    <span class="text-xs text-slate-400 block">Folio de Registro</span>
+                    <span class="text-sm font-mono font-semibold text-slate-200">#{{ tutoria.id }}</span>
                 </div>
             </div>
 
-            <div class="fila">
-                <div class="celda">
-                    <span class="etiqueta">Alumno:</span>
-                    <input type="text" class="campo" value="{{ tutoria.alumno.usuario.nombre_completo }}" readonly style="background: var(--verde-claro);">
+            <!-- Sección 1: Información General -->
+            <div class="p-6 space-y-6">
+                <h2 class="text-xs font-bold uppercase tracking-wider text-slate-500">Información General</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="md:col-span-2 space-y-1.5">
+                        <label for="input-carrera" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Carrera</label>
+                        <input id="input-carrera" type="text" name="carrera" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 disabled:opacity-75 disabled:bg-slate-100 transition-all" value="{{ tutoria.carrera or '' }}" {{deshabilitado}}>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="input-grupo" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Grupo</label>
+                        <input id="input-grupo" type="text" name="grupo" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 disabled:opacity-75 disabled:bg-slate-100 transition-all" value="{{ tutoria.grupo or '' }}" {{deshabilitado}}>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-5">
+                    <div class="md:col-span-4 space-y-1.5">
+                        <label for="input-alumno" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Alumno</label>
+                        <input id="input-alumno" type="text" class="w-full px-3.5 py-2.5 bg-slate-100/80 border border-slate-200 rounded-lg text-sm text-slate-700 cursor-not-allowed font-medium" value="{{ tutoria.alumno.usuario.nombre_completo }}" readonly>
+                    </div>
+
+                    <div class="space-y-1.5 md:col-span-2">
+                        <label for="input-fecha" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Fecha</label>
+                        <input id="input-fecha" type="date" class="w-full px-3.5 py-2.5 bg-slate-100/80 border border-slate-200 rounded-lg text-sm text-slate-700 cursor-not-allowed font-medium" value="{{ tutoria.fecha.strftime('%Y-%m-%d') }}" readonly>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="input-hr-inicio" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Hora Inicio</label>
+                        <input id="input-hr-inicio" type="time" name="hr_inicio" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 disabled:opacity-75 disabled:bg-slate-100 transition-all" value="{{ tutoria.hr_inicio or '' }}" {{deshabilitado}}>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <label for="input-hr-salida" class="block text-xs font-semibold text-slate-700 uppercase tracking-wider">Hora Fin</label>
+                        <input id="input-hr-salida" type="time" name="hr_salida" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 disabled:opacity-75 disabled:bg-slate-100 transition-all" value="{{ tutoria.hr_salida or '' }}" {{deshabilitado}}>
+                    </div>
                 </div>
             </div>
 
-            <div class="fila fila-3">
-                <div class="celda">
-                    <span class="etiqueta">Fecha:</span>
-                    <input type="date" class="campo" value="{{ tutoria.fecha.strftime('%Y-%m-%d') }}" readonly style="background: var(--verde-claro);">
+            <!-- Sección 2: Motivos de la Tutoría -->
+            <div class="p-6 space-y-4 bg-slate-50/50">
+                <fieldset class="space-y-3">
+                    <legend class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">Motivo de la Tutoría</legend>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {% set motivos = tutoria.motivo.split(', ') if tutoria.motivo else [] %}
+                        {% set lista_motivos = [
+                            'Reprobación', 'Ausentismo', 'Problemas económicos', 
+                            'Indisciplina', 'Falta de atención', 'Problemas familiares', 
+                            'Impuntualidad', 'Falta de compromiso', 'Rendimiento bajo', 'Otros'
+                        ] %}
+
+                        {% for item in lista_motivos %}
+                        <label class="flex items-center gap-3 p-3 bg-white border border-slate-200 rounded-xl cursor-pointer hover:border-brand-500 hover:shadow-sm transition-all focus-within:ring-2 focus-within:ring-brand-600">
+                            <input type="checkbox" name="motivo" value="{{ item }}" class="w-4 h-4 text-brand-700 border-slate-300 rounded focus:ring-brand-600 accent-brand-700" {% if item in motivos %}checked{% endif %} {{deshabilitado}}>
+                            <span class="text-sm font-medium text-slate-700 select-none">{{ item }}</span>
+                        </label>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            </div>
+
+            <!-- Sección 3: Observaciones y Seguimiento -->
+            <div class="p-6 space-y-6">
+                <div class="space-y-1.5">
+                    <label for="puntos_relevantes" class="block text-xs font-bold uppercase tracking-wider text-slate-500">Puntos Relevantes</label>
+                    <textarea id="puntos_relevantes" name="puntos_relevantes" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 disabled:opacity-75 disabled:bg-slate-100 transition-all resize-y" placeholder="Escribe aquí los puntos tratados durante la sesión..." {{deshabilitado}}>{{ tutoria.puntos_relevantes or '' }}</textarea>
                 </div>
-                <div class="celda">
-                    <span class="etiqueta">Hora inicio:</span>
-                    <input type="time" name="hr_inicio" class="campo" value="{{ tutoria.hr_inicio or '' }}" {{deshabilitado}}>
+
+                <div class="space-y-1.5">
+                    <label for="compromisos" class="block text-xs font-bold uppercase tracking-wider text-slate-500">Compromisos y Acuerdos</label>
+                    <textarea id="compromisos" name="compromisos" rows="3" class="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-300 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 disabled:opacity-75 disabled:bg-slate-100 transition-all resize-y" placeholder="Escribe aquí los acuerdos acordados..." {{deshabilitado}}>{{ tutoria.compromisos or '' }}</textarea>
                 </div>
-                <div class="celda">
-                    <span class="etiqueta">Hora fin:</span>
-                    <input type="time" name="hr_salida" class="campo" value="{{ tutoria.hr_salida or '' }}" {{deshabilitado}}>
+
+                <div class="space-y-1.5">
+                    <label for="observaciones" class="block text-xs font-bold uppercase tracking-wider text-brand-700">Observaciones Finales del Tutor</label>
+                    <textarea id="observaciones" name="observaciones" rows="3" class="w-full px-3.5 py-2.5 bg-brand-50/30 border border-brand-200 rounded-xl text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 disabled:opacity-75 disabled:bg-slate-100 transition-all resize-y" placeholder="Espacio exclusivo para las observaciones finales..." {{deshabilitar_observaciones}}>{{ tutoria.observaciones or '' }}</textarea>
                 </div>
             </div>
 
-            <div class="motivo-titulo">Motivo de la tutoría</div>
-            <div class="motivo-grid">
-                {% set motivos = tutoria.motivo.split(', ') if tutoria.motivo else [] %}
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Reprobación" {% if 'Reprobación' in motivos %}checked{% endif %} {{deshabilitado}}> Reprobación</label>
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Ausentismo" {% if 'Ausentismo' in motivos %}checked{% endif %} {{deshabilitado}}> Ausentismo</label>
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Problemas económicos" {% if 'Problemas económicos' in motivos %}checked{% endif %} {{deshabilitado}}> Problemas económicos</label>
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Indisciplina" {% if 'Indisciplina' in motivos %}checked{% endif %} {{deshabilitado}}> Indisciplina</label>
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Falta de atención" {% if 'Falta de atención' in motivos %}checked{% endif %} {{deshabilitado}}> Falta de atención</label>
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Problemas familiares" {% if 'Problemas familiares' in motivos %}checked{% endif %} {{deshabilitado}}> Problemas familiares</label>
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Impuntualidad" {% if 'Impuntualidad' in motivos %}checked{% endif %} {{deshabilitado}}> Impuntualidad</label>
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Falta de compromiso" {% if 'Falta de compromiso' in motivos %}checked{% endif %} {{deshabilitado}}> Falta de compromiso</label>
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Rendimiento bajo" {% if 'Rendimiento bajo' in motivos %}checked{% endif %} {{deshabilitado}}> Rendimiento bajo</label>
-                <label class="motivo-item"><input type="checkbox" name="motivo" value="Otros" {% if 'Otros' in motivos %}checked{% endif %} {{deshabilitado}}> Otros</label>
-            </div>
+            <!-- Sección de Acciones -->
+            <div class="p-6 bg-slate-50 flex items-center justify-end gap-3">
+                <button type="button" onclick="history.back()" class="px-5 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-100 hover:text-slate-800 transition-all focus:outline-none focus:ring-2 focus:ring-slate-400">
+                    Volver
+                </button>
 
-            <div class="bloque-titulo">Puntos relevantes</div>
-            <textarea name="puntos_relevantes" class="bloque-texto" placeholder="Escribe aquí los puntos tratados..." {{deshabilitado}}>{{ tutoria.puntos_relevantes or '' }}</textarea>
-
-            <div class="bloque-titulo">Compromisos y acuerdos</div>
-            <textarea name="compromisos" class="bloque-texto" placeholder="Escribe aquí los acuerdos..." {{deshabilitado}}>{{ tutoria.compromisos or '' }}</textarea>
-
-            <!-- ✅ CAMPO DE OBSERVACIONES DEL TUTOR (SOLO ÉL LO EDITA) -->
-            <div class="bloque-titulo">Observaciones finales del Tutor</div>
-            <textarea name="observaciones" class="bloque-texto" placeholder="Espacio exclusivo para observaciones del tutor..." {{deshabilitar_observaciones}}>{{ tutoria.observaciones or '' }}</textarea>
-
-            <div class="acciones">
-                <button type="button" onclick="history.back()" class="btn-cancelar">Volver</button>
                 {% if tutoria.estado == 'En proceso' %}
                     {% if session.get('rol') == 'tutor' %}
-                        <button type="submit" class="btn-ut">Guardar y Finalizar</button>
+                        <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-brand-700 rounded-lg hover:bg-brand-800 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:ring-offset-2">
+                            Guardar y Finalizar
+                        </button>
                     {% else %}
-                        <button type="submit" class="btn-ut">Guardar mis comentarios</button>
+                        <button type="submit" class="px-5 py-2.5 text-sm font-semibold text-white bg-brand-700 rounded-lg hover:bg-brand-800 transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-600 focus:ring-offset-2">
+                            Guardar mis comentarios
+                        </button>
                     {% endif %}
                 {% endif %}
             </div>
+
         </form>
     </div>
+
 </body>
 </html>
