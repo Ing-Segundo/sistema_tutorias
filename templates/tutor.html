@@ -168,17 +168,24 @@
         <!-- CUERPO DE LA PÁGINA -->
         <main class="flex-1 p-4 md:p-8 max-w-7xl mx-auto w-full space-y-6">
 
-            <!-- Mensajes Flash -->
-            {% with m = get_flashed_messages(with_categories=true) %}
-                {% if m %}
-                    <div class="alert alert-{{ m[0][0] }} rounded-2xl shadow-sm border-0 flex items-center gap-3 p-4 bg-emerald-50 text-emerald-800 border-l-4 border-emerald-500">
-                        <i class="fas fa-{{ 'check-circle' if m[0][0] == 'success' else 'exclamation-circle' }} text-xl"></i>
-                        <span class="font-medium text-sm">{{ m[0][1] }}</span>
-                    </div>
+            <!-- Mensajes Flash con soporte dinámico de categorías -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="rounded-2xl p-4 flex items-center gap-3 border-l-4 text-sm font-medium shadow-sm transition-all
+                            {% if category == 'success' %} bg-emerald-50 text-emerald-800 border-emerald-500
+                            {% elif category in ['danger', 'error'] %} bg-rose-50 text-rose-800 border-rose-500
+                            {% elif category == 'warning' %} bg-amber-50 text-amber-800 border-amber-500
+                            {% else %} bg-blue-50 text-blue-800 border-blue-500 {% endif %}">
+                            
+                            <i class="fas {% if category == 'success' %}fa-check-circle{% elif category in ['danger', 'error'] %}fa-exclamation-circle{% elif category == 'warning' %}fa-exclamation-triangle{% else %}fa-info-circle{% endif %} text-xl"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                    {% endfor %}
                 {% endif %}
             {% endwith %}
 
-            <!-- CARDS RESUMEN / STATS (Añadido para enriquecer el panel) -->
+            <!-- CARDS RESUMEN / STATS -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div class="card-modern p-5 flex items-center gap-4">
                     <div class="w-12 h-12 rounded-2xl bg-teal-50 text-[#0E7C70] flex items-center justify-center text-xl font-bold">
@@ -280,8 +287,8 @@
 
                 <form method="POST" action="{{ url_for('crear_tutoria') }}" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                     <div>
-                        <label class="text-xs font-bold uppercase text-slate-400 block mb-1">Alumno</label>
-                        <select name="id_alumno" class="select-custom" required>
+                        <label for="id_alumno" class="text-xs font-bold uppercase text-slate-400 block mb-1">Alumno</label>
+                        <select id="id_alumno" name="id_alumno" class="select-custom" required>
                             <option value="" disabled selected>Selecciona alumno</option>
                             {% for a in alumnos %}
                                 <option value="{{ a.id }}">{{ a.usuario.nombre_completo }}</option>
@@ -290,13 +297,13 @@
                     </div>
 
                     <div>
-                        <label class="text-xs font-bold uppercase text-slate-400 block mb-1">Fecha</label>
-                        <input type="date" name="fecha" class="input-custom" required />
+                        <label for="fecha" class="text-xs font-bold uppercase text-slate-400 block mb-1">Fecha</label>
+                        <input type="date" id="fecha" name="fecha" class="input-custom" required />
                     </div>
 
                     <div>
-                        <label class="text-xs font-bold uppercase text-slate-400 block mb-1">Tema</label>
-                        <input type="text" name="tema" class="input-custom" placeholder="Ej. Repaso de Examen" required />
+                        <label for="tema" class="text-xs font-bold uppercase text-slate-400 block mb-1">Tema</label>
+                        <input type="text" id="tema" name="tema" class="input-custom" placeholder="Ej. Repaso de Examen" required />
                     </div>
 
                     <button type="submit" class="btn-ut h-11 flex items-center justify-center gap-2">
@@ -340,14 +347,18 @@
                                 <td class="py-3.5 px-4 font-semibold text-slate-700">
                                     <div class="flex items-center gap-2">
                                         <div class="w-7 h-7 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center text-xs font-bold">
-                                            {{ t.alumno.usuario.nombre_completo[0] }}
+                                            {{ t.alumno.usuario.nombre_completo.strip()[0] if t.alumno.usuario.nombre_completo else 'A' }}
                                         </div>
                                         <span>{{ t.alumno.usuario.nombre_completo }}</span>
                                     </div>
                                 </td>
                                 <td class="py-3.5 px-4 text-slate-500 whitespace-nowrap">
                                     <i class="far fa-calendar text-slate-400 mr-1.5"></i>
-                                    {{ t.fecha.strftime('%d/%m/%Y') }}
+                                    {% if t.fecha.strftime is defined %}
+                                        {{ t.fecha.strftime('%d/%m/%Y') }}
+                                    {% else %}
+                                        {{ t.fecha }}
+                                    {% endif %}
                                 </td>
                                 <td class="py-3.5 px-4 text-slate-600 max-w-xs truncate">
                                     {{ t.tema }}
