@@ -45,6 +45,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <style>
         :root {
             --brand-primary: #0E7C70;
@@ -81,7 +84,7 @@
                 </label>
                 
                 <div class="flex items-center gap-2">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 hidden sm:inline-block">Docencia</span>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 hidden sm:inline-block">Plataforma</span>
                     <span class="text-slate-300 hidden sm:inline-block">/</span>
                     <h1 class="text-sm md:text-base font-semibold text-slate-800 flex items-center gap-2">
                         <i data-lucide="presentation" class="w-4 h-4 text-brand-500"></i>
@@ -97,7 +100,7 @@
                     </div>
                     <div class="text-xs">
                         <p class="font-semibold text-slate-700 leading-tight">Bienvenido</p>
-                        <p class="text-[10px] text-slate-400 leading-tight">Tutor Academic</p>
+                        <p class="text-[10px] text-slate-400 leading-tight">Tutor Académico</p>
                     </div>
                 </div>
 
@@ -142,37 +145,93 @@
                         <i data-lucide="users" class="w-5 h-5"></i>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Alumnos Asignados</p>
-                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">{{ tutor.alumnos|length if tutor and tutor.alumnos else 0 }}</h4>
+                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total Alumnos</p>
+                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">{{ alumnos|length if alumnos else 0 }}</h4>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
                     <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="clock" class="w-5 h-5"></i>
+                        <i data-lucide="calendar" class="w-5 h-5"></i>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Solicitudes Pendientes</p>
-                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">
-                            {{ tutorias | selectattr("estado", "equalto", "Solicitada") | list | length if tutorias else 0 }}
-                        </h4>
+                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Tutorías Asignadas</p>
+                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">{{ tutorias|length if tutorias else 0 }}</h4>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
                     <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="check-circle-2" class="w-5 h-5"></i>
+                        <i data-lucide="activity" class="w-5 h-5"></i>
                     </div>
                     <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Tutorías Realizadas</p>
-                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">
-                            {{ tutorias | selectattr("estado", "equalto", "Realizada") | list | length if tutorias else 0 }}
-                        </h4>
+                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Estado Panel</p>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                            <span class="text-sm font-semibold text-emerald-700">Activo</span>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <!-- FORMULARIO: REGISTRAR / ASIGNAR TUTORÍA PUNTUAL -->
+            <!-- PERFIL TUTOR Y HORARIO -->
+            <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                            <i data-lucide="id-card" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-slate-800">Mis Datos</h2>
+                            <p class="text-xs text-slate-500">Información del tutor y configuración de horarios</p>
+                        </div>
+                    </div>
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-100">
+                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                        <span>Tutor Académico</span>
+                    </span>
+                </div>
+
+                <div class="p-5 sm:p-6">
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-end">
+                        <!-- Nombre -->
+                        <div class="lg:col-span-3">
+                            <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1.5">Nombre Completo</span>
+                            <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-200/60">
+                                <p class="text-sm font-semibold text-slate-800 truncate">{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else 'No asignado' }}</p>
+                            </div>
+                        </div>
+
+                        <!-- Formulario de Horario -->
+                        <form method="POST" action="{{ url_for('actualizar_horario') }}" class="lg:col-span-6 flex flex-col sm:flex-row items-end gap-3">
+                            <div class="w-full space-y-1.5">
+                                <label for="horario" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                                    Horario de atención
+                                </label>
+                                <div class="relative">
+                                    <i data-lucide="clock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+                                    <input type="text" name="horario" id="horario" value="{{ tutor.horario if tutor and tutor.horario else '' }}" placeholder="Ej. Lunes a Viernes 08:00-16:00" required 
+                                        class="w-full h-10 pl-10 pr-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                                </div>
+                            </div>
+                            <button type="submit" class="w-full sm:w-auto h-10 px-4 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-medium text-xs rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 shrink-0 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                                <i data-lucide="save" class="w-4 h-4"></i>
+                                <span>Actualizar</span>
+                            </button>
+                        </form>
+
+                        <!-- Descargar Reporte PDF -->
+                        <div class="lg:col-span-3">
+                            <a href="{{ url_for('reporte_tutor_pdf') }}" class="w-full h-10 px-4 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg transition-all shadow-sm hover:border-slate-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500/20">
+                                <i data-lucide="file-text" class="w-4 h-4 text-rose-600"></i>
+                                <span>Descargar Reporte PDF</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- FORMULARIO: ASIGNAR NUEVA TUTORÍA -->
             <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
                 <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <div class="flex items-center gap-2.5">
@@ -181,53 +240,53 @@
                         </div>
                         <div>
                             <h2 class="text-base font-semibold text-slate-800">Asignar Nueva Tutoría</h2>
-                            <p class="text-xs text-slate-500">Programa una sesión de trabajo directamente con un alumno de tu lista</p>
+                            <p class="text-xs text-slate-500">Agenda una sesión académica con un alumno asignado</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="p-5 sm:p-6">
-                    <form method="POST" action="{{ url_for('crear_tutoria_tutor') if 'crear_tutoria_tutor' in kwargs else '#' }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                        
+                    <form method="POST" action="{{ url_for('crear_tutoria') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                         <div class="space-y-1.5">
-                            <label for="alumno_id" class="block text-xs font-semibold text-slate-700">
+                            <label for="id_alumno" class="block text-xs font-semibold text-slate-700">
                                 Alumno <span class="text-rose-500">*</span>
                             </label>
-                            <select id="alumno_id" name="alumno_id" required class="w-full h-10 px-3 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none">
-                                <option value="" disabled selected>Selecciona un alumno...</option>
-                                {% if tutor and tutor.alumnos %}
-                                    {% for al in tutor.alumnos %}
-                                        <option value="{{ al.id }}">{{ al.usuario.nombre_completo if al.usuario else 'Alumno sin nombre' }}</option>
-                                    {% endfor %}
-                                {% endif %}
+                            <select id="id_alumno" name="id_alumno" required 
+                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none">
+                                <option value="" disabled selected>Selecciona alumno</option>
+                                {% for a in alumnos %}
+                                    <option value="{{ a.id }}">{{ a.usuario.nombre_completo if a.usuario else 'Sin nombre' }}</option>
+                                {% endfor %}
                             </select>
                         </div>
 
                         <div class="space-y-1.5">
                             <label for="fecha" class="block text-xs font-semibold text-slate-700">
-                                Fecha Programada <span class="text-rose-500">*</span>
+                                Fecha <span class="text-rose-500">*</span>
                             </label>
-                            <input type="date" id="fecha" name="fecha" required class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                            <input type="date" id="fecha" name="fecha" required 
+                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
                         </div>
 
                         <div class="space-y-1.5">
                             <label for="tema" class="block text-xs font-semibold text-slate-700">
-                                Tema / Motivo <span class="text-rose-500">*</span>
+                                Tema <span class="text-rose-500">*</span>
                             </label>
-                            <input type="text" id="tema" name="tema" placeholder="Ej. Revisión de avances" required class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                            <input type="text" id="tema" name="tema" placeholder="Ej. Repaso de Examen" required 
+                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
                         </div>
 
                         <div>
                             <button type="submit" class="w-full h-10 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-medium text-sm rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
-                                <i data-lucide="plus-circle" class="w-4 h-4"></i>
-                                <span>Agendar Tutoría</span>
+                                <i data-lucide="plus" class="w-4 h-4"></i>
+                                <span>Crear Tutoría</span>
                             </button>
                         </div>
                     </form>
                 </div>
             </section>
 
-            <!-- TABLA DE TUTORÍAS GESTIONADAS -->
+            <!-- TABLA DE TUTORÍAS -->
             <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
                 <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                     <div class="flex items-center gap-2.5">
@@ -235,12 +294,12 @@
                             <i data-lucide="list-checks" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <h2 class="text-base font-semibold text-slate-800">Gestión de Tutorías</h2>
-                            <p class="text-xs text-slate-500">Solicitudes recibidas y sesiones programadas</p>
+                            <h2 class="text-base font-semibold text-slate-800">Tutorías a mi Cargo</h2>
+                            <p class="text-xs text-slate-500">Listado y gestión de sesiones programadas</p>
                         </div>
                     </div>
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        {{ tutorias|length if tutorias else 0 }} Tutorías
+                        {{ tutorias|length if tutorias else 0 }} Registros
                     </span>
                 </div>
 
@@ -306,10 +365,36 @@
                                 </td>
                                 <td class="py-4 px-6 whitespace-nowrap text-right">
                                     <div class="flex items-center justify-end gap-1.5">
-                                        <a href="{{ url_for('ver_tutoria_individual', id=t.id) if 'ver_tutoria_individual' in kwargs else '#' }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-500/20">
-                                            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
-                                            <span>Gestionar</span>
-                                        </a>
+                                        {% if t.estado == 'Solicitada' %}
+                                            <a href="{{ url_for('aceptar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                                <span>Aceptar</span>
+                                            </a>
+                                            <a href="{{ url_for('form_editar_tutoria', id=t.id) }}" class="inline-flex items-center p-1 text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-500/20" title="Editar">
+                                                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if t.estado in ['Asignada por tutor', 'Confirmada'] %}
+                                            <a href="{{ url_for('iniciar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-brand-500 hover:bg-brand-600 border border-transparent rounded-lg transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20">
+                                                <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                                                <span>Iniciar</span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if t.estado in ['Asignada por tutor', 'En proceso', 'Realizada'] %}
+                                            <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+                                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                                <span>Ficha</span>
+                                            </a>
+                                        {% endif %}
+
+                                        {% if t.estado not in ['Asignada por tutor','En proceso','Realizada'] %}
+                                            <a href="{{ url_for('completar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                                                <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+                                                <span>Completar</span>
+                                            </a>
+                                        {% endif %}
                                     </div>
                                 </td>
                             </tr>
@@ -320,7 +405,8 @@
                                         <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
                                             <i data-lucide="inbox" class="w-6 h-6"></i>
                                         </div>
-                                        <p class="text-sm font-medium text-slate-600">No hay tutorías agendadas ni solicitadas</p>
+                                        <p class="text-sm font-medium text-slate-600">Sin tutorías pendientes</p>
+                                        <p class="text-xs text-slate-400">Las tutorías programadas aparecerán reflejadas en esta sección.</p>
                                     </div>
                                 </td>
                             </tr>
@@ -341,7 +427,7 @@
                 <!-- LOGO & BRANDING -->
                 <div class="flex items-center gap-3 px-3 py-2 border-b border-slate-100 pb-4">
                     <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-                        <i data-lucide="presentation" class="w-5 h-5"></i>
+                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
                     </div>
                     <div class="flex flex-col">
                         <span class="text-base font-bold text-slate-800 tracking-tight leading-none">Tutorías EDU</span>
@@ -353,19 +439,19 @@
                 <nav class="space-y-1">
                     <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Navegación</span>
                     
-                    <a href="{{ url_for('panel_tutor') if 'panel_tutor' in kwargs else '#' }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'panel_tutor' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
+                    <a href="{{ url_for('panel_tutor') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'panel_tutor' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
                         <i data-lucide="home" class="w-4 h-4 {% if request.endpoint != 'panel_tutor' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
                         <span>Inicio</span>
                     </a>
 
-                    <a href="{{ url_for('mis_alumnos_tutor') if 'mis_alumnos_tutor' in kwargs else '#' }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'mis_alumnos_tutor' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="users" class="w-4 h-4 {% if request.endpoint != 'mis_alumnos_tutor' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
-                        <span>Mis Alumnos</span>
+                    <a href="{{ url_for('reporte_tutor_pdf') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'reporte_tutor_pdf' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
+                        <i data-lucide="file-text" class="w-4 h-4 {% if request.endpoint != 'reporte_tutor_pdf' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
+                        <span>Reporte PDF</span>
                     </a>
 
-                    <a href="{{ url_for('mis_tutorias_tutor') if 'mis_tutorias_tutor' in kwargs else '#' }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'mis_tutorias_tutor' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="calendar" class="w-4 h-4 {% if request.endpoint != 'mis_tutorias_tutor' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
-                        <span>Tutorías Agendadas</span>
+                    <a href="{{ url_for('reportes_tutor') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'reportes_tutor' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
+                        <i data-lucide="pie-chart" class="w-4 h-4 {% if request.endpoint != 'reportes_tutor' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
+                        <span>Mis Reportes</span>
                     </a>
                 </nav>
             </div>
@@ -376,41 +462,19 @@
                     <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-xs shrink-0">
                         {{ tutor.usuario.nombre_completo[0] if tutor and tutor.usuario and tutor.usuario.nombre_completo else 'T' }}
                     </div>
-                    <div class="flex flex-col min-w-0">
-                        <span class="text-xs font-semibold text-slate-800 truncate">{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else 'Tutor' }}</span>
-                        <span class="text-[10px] text-slate-400 truncate">Docente Activo</span>
+                    <div class="min-w-0 flex-1">
+                        <p class="text-xs font-semibold text-slate-800 truncate">{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else 'Tutor' }}</p>
+                        <p class="text-[10px] text-slate-400 truncate">Docente / Tutor</p>
                     </div>
-                </div>
-
-                <div class="flex items-center gap-1.5 px-2 text-[11px] text-slate-400">
-                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
-                    <span>Acceso de Tutor Seguro</span>
                 </div>
             </div>
         </aside>
     </div>
-
 </div>
 
-<!-- Lucide Icons & Initializer Script -->
-<script src="https://unpkg.com/lucide@latest"></script>
+<!-- Scripts de Lucide Icons -->
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Inicializar Iconos
-        if (typeof lucide !== 'undefined') {
-            lucide.createIcons();
-        }
-
-        // Establecer fecha mínima respetando la zona horaria local
-        const fechaInput = document.getElementById("fecha");
-        if (fechaInput) {
-            const hoyLocal = new Date();
-            const year = hoyLocal.getFullYear();
-            const month = String(hoyLocal.getMonth() + 1).padStart(2, '0');
-            const day = String(hoyLocal.getDate()).padStart(2, '0');
-            fechaInput.setAttribute("min", `${year}-${month}-${day}`);
-        }
-    });
+    lucide.createIcons();
 </script>
 </body>
 </html>
