@@ -139,7 +139,6 @@
 
             <!-- SECCIÓN 1: INICIO Y USUARIOS -->
             <div id="sec-inicio" class="tab-content-section active space-y-6">
-                <!-- CARDS RESUMEN / STATS -->
                 <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
                         <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-500 border border-brand-100 flex items-center justify-center shrink-0">
@@ -342,7 +341,71 @@
                 </section>
             </div>
 
-            <!-- SECCIÓN 2: RESPALDOS -->
+            <!-- SECCIÓN 2: REPORTES PDF Y GENERACIÓN -->
+            <div id="sec-reportes" class="tab-content-section space-y-6">
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="file-text" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-800">Generación de Reportes PDF</h2>
+                                <p class="text-xs text-slate-500">Exporta informes generales o filtrados por tutoría y usuario en PDF</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 sm:p-6 space-y-6">
+                        <!-- BANNER DESCARGA RÁPIDA -->
+                        <div class="p-5 rounded-2xl bg-gradient-to-r from-brand-500 to-brand-700 text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
+                            <div class="space-y-1">
+                                <h3 class="font-bold text-base flex items-center gap-2">
+                                    <i data-lucide="file-check" class="w-5 h-5"></i>
+                                    Reporte General Consolidado
+                                </h3>
+                                <p class="text-xs text-brand-100">Descarga un documento PDF completo con todos los usuarios, tutorías y métricas del sistema.</p>
+                            </div>
+                            <a href="{{ url_for('reporte_general_pdf') if 'reporte_general_pdf' in kwargs else '#' }}" class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-brand-700 bg-white hover:bg-brand-50 rounded-xl transition-all shadow-sm shrink-0">
+                                <i data-lucide="download" class="w-4 h-4 text-rose-500"></i>
+                                <span>Descargar PDF General</span>
+                            </a>
+                        </div>
+
+                        <!-- FILTROS DE GENERACIÓN -->
+                        <div class="pt-2">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3">Reportes Personalizados</h4>
+                            <form method="GET" action="{{ url_for('reporte_general_pdf') if 'reporte_general_pdf' in kwargs else '#' }}" class="grid grid-cols-1 sm:grid-cols-3 gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-semibold text-slate-700">Filtrar por Tutor</label>
+                                    <select name="tutor_id" class="w-full h-9 px-3 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 focus:border-brand-500 outline-none">
+                                        <option value="">Todos los tutores</option>
+                                        {% for u in usuarios %}
+                                            {% if u.tipo == 'tutor' %}
+                                                <option value="{{ u.id }}">{{ u.nombre_completo }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="space-y-1.5">
+                                    <label class="block text-xs font-semibold text-slate-700">Fecha Inicial</label>
+                                    <input type="date" name="fecha_inicio" class="w-full h-9 px-3 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 focus:border-brand-500 outline-none" />
+                                </div>
+
+                                <div class="space-y-1.5 flex flex-col justify-end">
+                                    <button type="submit" class="w-full h-9 bg-brand-500 hover:bg-brand-600 text-white font-medium text-xs rounded-lg transition-all shadow-sm flex items-center justify-center gap-2">
+                                        <i data-lucide="filter" class="w-3.5 h-3.5"></i>
+                                        <span>Generar Reporte Filtrado</span>
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- SECCIÓN 3: RESPALDOS -->
             <div id="sec-respaldos" class="tab-content-section space-y-6">
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
                     <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
@@ -362,10 +425,6 @@
                             <a href="{{ url_for('respaldo_manual') if 'respaldo_manual' in kwargs else '#' }}" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-all shadow-sm hover:shadow">
                                 <i data-lucide="cloud-upload" class="w-4 h-4"></i>
                                 <span>Crear Respaldo Manual</span>
-                            </a>
-                            <a href="{{ url_for('reporte_general_pdf') if 'reporte_general_pdf' in kwargs else '#' }}" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg transition-all shadow-sm">
-                                <i data-lucide="file-text" class="w-4 h-4 text-rose-500"></i>
-                                <span>Reporte General PDF</span>
                             </a>
                         </div>
 
@@ -407,7 +466,7 @@
                 </section>
             </div>
 
-            <!-- SECCIÓN 3: AUDITORÍA -->
+            <!-- SECCIÓN 4: AUDITORÍA -->
             <div id="sec-auditoria" class="tab-content-section space-y-6">
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
                     <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
@@ -496,6 +555,11 @@
                         <span>Inicio</span>
                     </a>
 
+                    <a href="#sec-reportes" data-target="sec-reportes" data-title="Generación de Reportes PDF" class="menu-nav-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
+                        <i data-lucide="file-text" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
+                        <span>Reportes PDF</span>
+                    </a>
+
                     <a href="#sec-respaldos" data-target="sec-respaldos" data-title="Respaldos del Sistema" class="menu-nav-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
                         <i data-lucide="database" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
                         <span>Respaldos</span>
@@ -504,11 +568,6 @@
                     <a href="#sec-auditoria" data-target="sec-auditoria" data-title="Auditoría de Acciones" class="menu-nav-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
                         <i data-lucide="history" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
                         <span>Auditoría</span>
-                    </a>
-
-                    <a href="{{ url_for('reporte_general_pdf') if 'reporte_general_pdf' in kwargs else '#' }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
-                        <i data-lucide="file-text" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
-                        <span>Reporte PDF</span>
                     </a>
                 </nav>
             </div>
