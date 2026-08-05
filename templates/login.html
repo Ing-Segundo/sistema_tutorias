@@ -119,12 +119,34 @@
             outline: none;
             padding: 0.875rem 1rem 0.875rem 2.875rem;
             font-size: 0.9375rem;
-            color: var(--text-primary) !important;
+            color: #0F172A !important;
+            -webkit-text-fill-color: #0F172A !important;
             font-weight: 500;
+            opacity: 1 !important;
         }
-
+        
+        .dark .input-wrapper input {
+            color: #F8FAFC !important;
+            -webkit-text-fill-color: #F8FAFC !important;
+        }
+        
         .input-wrapper input::placeholder {
             color: var(--text-muted);
+        }
+        
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover,
+        input:-webkit-autofill:focus,
+        input:-webkit-autofill:active {
+            -webkit-text-fill-color: #0F172A !important;
+            transition: background-color 9999s ease-in-out 0s;
+        }
+        
+        .dark input:-webkit-autofill,
+        .dark input:-webkit-autofill:hover,
+        .dark input:-webkit-autofill:focus,
+        .dark input:-webkit-autofill:active {
+            -webkit-text-fill-color: #F8FAFC !important;
         }
 
         /* Interactive Elements Motion Design */
