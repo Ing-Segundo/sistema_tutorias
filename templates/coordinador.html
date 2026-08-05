@@ -46,10 +46,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
     <style>
-        :root {
-            --brand-primary: #0E7C70;
-            --brand-hover: #0C6B61;
-        }
         body {
             font-family: 'Inter', sans-serif;
             background-color: #F8FAFC;
@@ -62,6 +58,12 @@
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
+        }
+        .tab-content-section {
+            display: none;
+        }
+        .tab-content-section.active {
+            display: block;
         }
     </style>
 </head>
@@ -85,7 +87,7 @@
                     <span class="text-slate-300 hidden sm:inline-block">/</span>
                     <h1 class="text-sm md:text-base font-semibold text-slate-800 flex items-center gap-2">
                         <i data-lucide="shield-check" class="w-4 h-4 text-brand-500"></i>
-                        Panel Coordinador
+                        <span id="current-page-title">Inicio y Usuarios</span>
                     </h1>
                 </div>
             </div>
@@ -135,333 +137,336 @@
                 {% endif %}
             {% endwith %}
 
-            <!-- CARDS RESUMEN / STATS -->
-            <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
-                    <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-500 border border-brand-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Alumnos</p>
-                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">
-                            {{ usuarios|selectattr('tipo','equalto','alumno')|list|length if usuarios else 0 }}
-                        </h4>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
-                    <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="presentation" class="w-5 h-5"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Tutores</p>
-                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">
-                            {{ usuarios|selectattr('tipo','equalto','tutor')|list|length if usuarios else 0 }}
-                        </h4>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
-                    <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="calendar-check-2" class="w-5 h-5"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Tutorías Totales</p>
-                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">
-                            {{ tutorias|length if tutorias else 0 }}
-                        </h4>
-                    </div>
-                </div>
-            </section>
-
-            <!-- FORMULARIO: CREAR NUEVO USUARIO -->
-            <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
-                            <i data-lucide="user-plus" class="w-5 h-5"></i>
+            <!-- SECCIÓN 1: INICIO Y USUARIOS -->
+            <div id="sec-inicio" class="tab-content-section active space-y-6">
+                <!-- CARDS RESUMEN / STATS -->
+                <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
+                        <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-500 border border-brand-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="graduation-cap" class="w-5 h-5"></i>
                         </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-slate-800">Crear Nuevo Usuario</h2>
-                            <p class="text-xs text-slate-500">Registra un nuevo alumno, tutor o coordinador en la plataforma</p>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Alumnos</p>
+                            <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">
+                                {{ usuarios|selectattr('tipo','equalto','alumno')|list|length if usuarios else 0 }}
+                            </h4>
                         </div>
                     </div>
-                </div>
 
-                <div class="p-5 sm:p-6">
-                    <form method="POST" action="{{ url_for('crear_usuario') if 'crear_usuario' in kwargs else '#' }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
-                        
-                        <div class="space-y-1.5">
-                            <label for="tipo" class="block text-xs font-semibold text-slate-700">Rol <span class="text-rose-500">*</span></label>
-                            <select id="tipo" name="tipo" required class="w-full h-10 px-3 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none">
-                                <option value="" disabled selected>Selecciona rol...</option>
-                                <option value="alumno">Alumno</option>
-                                <option value="tutor">Tutor</option>
-                                <option value="coordinador">Coordinador</option>
-                            </select>
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
+                        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="presentation" class="w-5 h-5"></i>
                         </div>
-
-                        <div class="space-y-1.5">
-                            <label for="credencial" class="block text-xs font-semibold text-slate-700">Credencial <span class="text-rose-500">*</span></label>
-                            <input type="text" id="credencial" name="credencial" placeholder="Matrícula / ID" required class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <label for="nombre" class="block text-xs font-semibold text-slate-700">Nombre Completo <span class="text-rose-500">*</span></label>
-                            <input type="text" id="nombre" name="nombre" placeholder="Nombre y Apellidos" required class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <label for="contrasena" class="block text-xs font-semibold text-slate-700">Contraseña <span class="text-rose-500">*</span></label>
-                            <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
-                        </div>
-
-                        <div>
-                            <button type="submit" class="w-full h-10 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-medium text-sm rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
-                                <i data-lucide="plus" class="w-4 h-4"></i>
-                                <span>Crear Usuario</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- TABLA DE ADMINISTRACIÓN DE USUARIOS -->
-            <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
-                            <i data-lucide="users" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-slate-800">Administrar Usuarios</h2>
-                            <p class="text-xs text-slate-500">Gestión de cuentas, bloqueo y asignación de tutores</p>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Tutores</p>
+                            <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">
+                                {{ usuarios|selectattr('tipo','equalto','tutor')|list|length if usuarios else 0 }}
+                            </h4>
                         </div>
                     </div>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        {{ usuarios|length if usuarios else 0 }} Registros
-                    </span>
-                </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm border-collapse min-w-[750px]">
-                        <thead>
-                            <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                                <th scope="col" class="py-3.5 px-6">Rol</th>
-                                <th scope="col" class="py-3.5 px-6">Credencial</th>
-                                <th scope="col" class="py-3.5 px-6">Nombre</th>
-                                <th scope="col" class="py-3.5 px-6">Estado</th>
-                                <th scope="col" class="py-3.5 px-6">Asignar Tutor</th>
-                                <th scope="col" class="py-3.5 px-6 text-right">Acción</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            {% for u in usuarios %}
-                            <tr class="hover:bg-slate-50/70 transition-colors group">
-                                <td class="py-4 px-6 whitespace-nowrap">
-                                    {% if u.tipo == 'alumno' %}
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200/60">
-                                            ALUMNO
-                                        </span>
-                                    {% elif u.tipo == 'tutor' %}
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                                            TUTOR
-                                        </span>
-                                    {% else %}
-                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200/60">
-                                            {{ u.tipo|upper }}
-                                        </span>
-                                    {% endif %}
-                                </td>
-                                <td class="py-4 px-6 font-mono text-xs text-slate-600 whitespace-nowrap">
-                                    {{ u.credencial }}
-                                </td>
-                                <td class="py-4 px-6 font-medium text-slate-800 whitespace-nowrap">
-                                    {{ u.nombre_completo }}
-                                </td>
-                                <td class="py-4 px-6 whitespace-nowrap">
-                                    {% if u.bloqueado %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/60">
-                                            <i data-lucide="lock" class="w-3 h-3"></i> Bloqueado
-                                        </span>
-                                    {% else %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                                            <i data-lucide="check-circle-2" class="w-3 h-3"></i> Activo
-                                        </span>
-                                    {% endif %}
-                                </td>
-                                <td class="py-4 px-6 whitespace-nowrap">
-                                    {% if u.tipo == 'alumno' and u.perfil_alumno %}
-                                    <form method="POST" action="{{ url_for('asignar_tutor', id_alumno=u.perfil_alumno.id) if 'asignar_tutor' in kwargs else '#' }}" class="flex items-center gap-1.5">
-                                        <select name="id_tutor" required class="h-8 text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 text-slate-700 focus:bg-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500/20 outline-none">
-                                            <option value="" disabled selected>Asignar tutor...</option>
-                                            {% for t in usuarios %}
-                                                {% if t.tipo == 'tutor' %}
-                                                    <option value="{{ t.id }}">{{ t.nombre_completo }}</option>
-                                                {% endif %}
-                                            {% endfor %}
-                                        </select>
-                                        <button type="submit" title="Guardar tutor" class="h-8 px-2 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200/80 rounded-lg transition-all flex items-center justify-center">
-                                            <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
-                                        </button>
-                                    </form>
-                                    {% else %}
-                                        <span class="text-xs text-slate-400 font-normal">—</span>
-                                    {% endif %}
-                                </td>
-                                <td class="py-4 px-6 whitespace-nowrap text-right">
-                                    <a href="{{ url_for('cambiar_estado', id=u.id) if 'cambiar_estado' in kwargs else '#' }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg transition-all border focus:outline-none {% if u.bloqueado %}text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200/80{% else %}text-rose-700 bg-rose-50 hover:bg-rose-100 border-rose-200/80{% endif %}">
-                                        {% if u.bloqueado %}
-                                            <i data-lucide="unlock" class="w-3.5 h-3.5"></i>
-                                            <span>Desbloquear</span>
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
+                        <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="calendar-check-2" class="w-5 h-5"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Tutorías Totales</p>
+                            <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">
+                                {{ tutorias|length if tutorias else 0 }}
+                            </h4>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FORMULARIO: CREAR NUEVO USUARIO -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="user-plus" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-800">Crear Nuevo Usuario</h2>
+                                <p class="text-xs text-slate-500">Registra un nuevo alumno, tutor o coordinador en la plataforma</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 sm:p-6">
+                        <form method="POST" action="{{ url_for('crear_usuario') if 'crear_usuario' in kwargs else '#' }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+                            <div class="space-y-1.5">
+                                <label for="tipo" class="block text-xs font-semibold text-slate-700">Rol <span class="text-rose-500">*</span></label>
+                                <select id="tipo" name="tipo" required class="w-full h-10 px-3 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none">
+                                    <option value="" disabled selected>Selecciona rol...</option>
+                                    <option value="alumno">Alumno</option>
+                                    <option value="tutor">Tutor</option>
+                                    <option value="coordinador">Coordinador</option>
+                                </select>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label for="credencial" class="block text-xs font-semibold text-slate-700">Credencial <span class="text-rose-500">*</span></label>
+                                <input type="text" id="credencial" name="credencial" placeholder="Matrícula / ID" required class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label for="nombre" class="block text-xs font-semibold text-slate-700">Nombre Completo <span class="text-rose-500">*</span></label>
+                                <input type="text" id="nombre" name="nombre" placeholder="Nombre y Apellidos" required class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label for="contrasena" class="block text-xs font-semibold text-slate-700">Contraseña <span class="text-rose-500">*</span></label>
+                                <input type="password" id="contrasena" name="contrasena" placeholder="••••••••" required class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                            </div>
+
+                            <div>
+                                <button type="submit" class="w-full h-10 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-medium text-sm rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>Crear Usuario</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- TABLA DE ADMINISTRACIÓN DE USUARIOS -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="users" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-800">Administrar Usuarios</h2>
+                                <p class="text-xs text-slate-500">Gestión de cuentas, bloqueo y asignación de tutores</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                            {{ usuarios|length if usuarios else 0 }} Registros
+                        </span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse min-w-[750px]">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                    <th scope="col" class="py-3.5 px-6">Rol</th>
+                                    <th scope="col" class="py-3.5 px-6">Credencial</th>
+                                    <th scope="col" class="py-3.5 px-6">Nombre</th>
+                                    <th scope="col" class="py-3.5 px-6">Estado</th>
+                                    <th scope="col" class="py-3.5 px-6">Asignar Tutor</th>
+                                    <th scope="col" class="py-3.5 px-6 text-right">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {% for u in usuarios %}
+                                <tr class="hover:bg-slate-50/70 transition-colors group">
+                                    <td class="py-4 px-6 whitespace-nowrap">
+                                        {% if u.tipo == 'alumno' %}
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-sky-50 text-sky-700 border border-sky-200/60">
+                                                ALUMNO
+                                            </span>
+                                        {% elif u.tipo == 'tutor' %}
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                                TUTOR
+                                            </span>
                                         {% else %}
-                                            <i data-lucide="lock" class="w-3.5 h-3.5"></i>
-                                            <span>Bloquear</span>
+                                            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-50 text-purple-700 border border-purple-200/60">
+                                                {{ u.tipo|upper }}
+                                            </span>
                                         {% endif %}
-                                    </a>
-                                </td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="6" class="py-12 text-center text-slate-400">
-                                    <div class="flex flex-col items-center justify-center gap-2">
-                                        <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
-                                            <i data-lucide="inbox" class="w-6 h-6"></i>
+                                    </td>
+                                    <td class="py-4 px-6 font-mono text-xs text-slate-600 whitespace-nowrap">
+                                        {{ u.credencial }}
+                                    </td>
+                                    <td class="py-4 px-6 font-medium text-slate-800 whitespace-nowrap">
+                                        {{ u.nombre_completo }}
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap">
+                                        {% if u.bloqueado %}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/60">
+                                                <i data-lucide="lock" class="w-3 h-3"></i> Bloqueado
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                                <i data-lucide="check-circle-2" class="w-3 h-3"></i> Activo
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap">
+                                        {% if u.tipo == 'alumno' and u.perfil_alumno %}
+                                        <form method="POST" action="{{ url_for('asignar_tutor', id_alumno=u.perfil_alumno.id) if 'asignar_tutor' in kwargs else '#' }}" class="flex items-center gap-1.5">
+                                            <select name="id_tutor" required class="h-8 text-xs bg-slate-50 border border-slate-200 rounded-lg px-2 text-slate-700 focus:bg-white focus:border-brand-500 focus:ring-1 focus:ring-brand-500/20 outline-none">
+                                                <option value="" disabled selected>Asignar tutor...</option>
+                                                {% for t in usuarios %}
+                                                    {% if t.tipo == 'tutor' %}
+                                                        <option value="{{ t.id }}">{{ t.nombre_completo }}</option>
+                                                    {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit" title="Guardar tutor" class="h-8 px-2 bg-brand-50 hover:bg-brand-100 text-brand-700 border border-brand-200/80 rounded-lg transition-all flex items-center justify-center">
+                                                <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                                            </button>
+                                        </form>
+                                        {% else %}
+                                            <span class="text-xs text-slate-400 font-normal">—</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap text-right">
+                                        <a href="{{ url_for('cambiar_estado', id=u.id) if 'cambiar_estado' in kwargs else '#' }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium rounded-lg transition-all border focus:outline-none {% if u.bloqueado %}text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border-emerald-200/80{% else %}text-rose-700 bg-rose-50 hover:bg-rose-100 border-rose-200/80{% endif %}">
+                                            {% if u.bloqueado %}
+                                                <i data-lucide="unlock" class="w-3.5 h-3.5"></i>
+                                                <span>Desbloquear</span>
+                                            {% else %}
+                                                <i data-lucide="lock" class="w-3.5 h-3.5"></i>
+                                                <span>Bloquear</span>
+                                            {% endif %}
+                                        </a>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="6" class="py-12 text-center text-slate-400">
+                                        <div class="flex flex-col items-center justify-center gap-2">
+                                            <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
+                                                <i data-lucide="inbox" class="w-6 h-6"></i>
+                                            </div>
+                                            <p class="text-sm font-medium text-slate-600">No hay usuarios registrados</p>
                                         </div>
-                                        <p class="text-sm font-medium text-slate-600">No hay usuarios registrados</p>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </section>
-
-            <!-- RESPALDOS Y RECUPERACIÓN -->
-            <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
-                            <i data-lucide="database" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-slate-800">Respaldos y Recuperación</h2>
-                            <p class="text-xs text-slate-500">Genera respaldos del sistema, automatiza copias o restaura versiones</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="p-5 sm:p-6 space-y-6">
-                    <!-- Botones de Acción Rápida -->
-                    <div class="flex flex-wrap items-center gap-3">
-                        <a href="{{ url_for('respaldo_manual') if 'respaldo_manual' in kwargs else '#' }}" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-all shadow-sm hover:shadow">
-                            <i data-lucide="cloud-upload" class="w-4 h-4"></i>
-                            <span>Crear Respaldo Manual</span>
-                        </a>
-                        <a href="{{ url_for('reporte_general_pdf') if 'reporte_general_pdf' in kwargs else '#' }}" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg transition-all shadow-sm">
-                            <i data-lucide="file-text" class="w-4 h-4 text-rose-500"></i>
-                            <span>Reporte General PDF</span>
-                        </a>
-                    </div>
-
-                    <!-- Configuración Automatizada -->
-                    <form method="POST" action="{{ url_for('config_respaldos') if 'config_respaldos' in kwargs else '#' }}" class="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
-                        <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
-                            <input type="checkbox" name="activo" class="toggle toggle-sm toggle-accent" {{ 'checked' if cfg and cfg.activo else '' }} />
-                            <span>Respaldo automático programado</span>
-                        </label>
-                        <div class="flex items-center gap-2 text-xs text-slate-600">
-                            <span>Cada</span>
-                            <input type="number" name="intervalo" min="1" value="{{ cfg.intervalo_horas if cfg else 24 }}" class="w-20 h-8 px-2.5 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 focus:border-brand-500 outline-none" />
-                            <span>horas</span>
-                        </div>
-                        <button type="submit" class="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200/80 rounded-lg transition-all">
-                            <i data-lucide="save" class="w-3.5 h-3.5"></i>
-                            <span>Guardar Configuración</span>
-                        </button>
-                    </form>
-
-                    <!-- Lista de Respaldos Disponibles -->
-                    <div class="space-y-2">
-                        <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Respaldos Disponibles</h4>
-                        <div class="flex flex-wrap gap-2">
-                            {% if respaldos %}
-                                {% for r in respaldos %}
-                                <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-50 border border-brand-100 text-brand-700 text-xs font-medium">
-                                    <i data-lucide="archive" class="w-3.5 h-3.5 text-brand-500"></i>
-                                    <span>{{ r }}</span>
-                                    <a href="{{ url_for('restaurar', nombre=r) if 'restaurar' in kwargs else '#' }}" aria-label="Restaurar este respaldo" class="text-rose-600 hover:text-rose-800 transition-colors ml-1 p-0.5 rounded hover:bg-rose-50" onclick="return confirm('¿Restaurar este respaldo? Se perderán los datos actuales no guardados.')">
-                                        <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
-                                    </a>
-                                </div>
+                                    </td>
+                                </tr>
                                 {% endfor %}
-                            {% else %}
-                                <span class="text-xs text-slate-400 italic">No existen archivos de respaldo generados aún.</span>
-                            {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- SECCIÓN 2: RESPALDOS -->
+            <div id="sec-respaldos" class="tab-content-section space-y-6">
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="database" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-800">Respaldos y Recuperación</h2>
+                                <p class="text-xs text-slate-500">Genera respaldos del sistema, automatiza copias o restaura versiones</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- AUDITORÍA DE ACCIONES -->
-            <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
-                            <i data-lucide="history" class="w-5 h-5"></i>
+                    <div class="p-5 sm:p-6 space-y-6">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <a href="{{ url_for('respaldo_manual') if 'respaldo_manual' in kwargs else '#' }}" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-white bg-brand-500 hover:bg-brand-600 rounded-lg transition-all shadow-sm hover:shadow">
+                                <i data-lucide="cloud-upload" class="w-4 h-4"></i>
+                                <span>Crear Respaldo Manual</span>
+                            </a>
+                            <a href="{{ url_for('reporte_general_pdf') if 'reporte_general_pdf' in kwargs else '#' }}" class="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg transition-all shadow-sm">
+                                <i data-lucide="file-text" class="w-4 h-4 text-rose-500"></i>
+                                <span>Reporte General PDF</span>
+                            </a>
                         </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-slate-800">Auditoría de Acciones</h2>
-                            <p class="text-xs text-slate-500">Registro cronológico de eventos e interacciones dentro de la plataforma</p>
-                        </div>
-                    </div>
-                </div>
 
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm border-collapse min-w-[650px]">
-                        <thead>
-                            <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                                <th scope="col" class="py-3.5 px-6">Fecha / Hora</th>
-                                <th scope="col" class="py-3.5 px-6">Usuario</th>
-                                <th scope="col" class="py-3.5 px-6">Acción Realizada</th>
-                                <th scope="col" class="py-3.5 px-6 font-mono">Dirección IP</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            {% for a in auditoria %}
-                            <tr class="hover:bg-slate-50/70 transition-colors">
-                                <td class="py-3.5 px-6 whitespace-nowrap text-xs text-slate-600 font-medium">
-                                    {{ a.fecha.strftime('%d/%m/%Y %H:%M') if a.fecha.strftime is defined else a.fecha }}
-                                </td>
-                                <td class="py-3.5 px-6 font-medium text-slate-800 whitespace-nowrap text-xs">
-                                    {{ a.usuario }}
-                                </td>
-                                <td class="py-3.5 px-6 text-xs text-slate-700">
-                                    <span class="inline-block px-2 py-0.5 bg-slate-100 text-slate-700 rounded border border-slate-200 font-mono text-[11px]">
-                                        {{ a.accion }}
-                                    </span>
-                                </td>
-                                <td class="py-3.5 px-6 whitespace-nowrap font-mono text-xs text-slate-400">
-                                    {{ a.ip }}
-                                </td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="4" class="py-12 text-center text-slate-400">
-                                    <div class="flex flex-col items-center justify-center gap-2">
-                                        <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
-                                            <i data-lucide="clipboard-x" class="w-6 h-6"></i>
-                                        </div>
-                                        <p class="text-sm font-medium text-slate-600">No hay registros de auditoría almacenados</p>
+                        <form method="POST" action="{{ url_for('config_respaldos') if 'config_respaldos' in kwargs else '#' }}" class="flex flex-wrap items-center gap-4 p-4 rounded-xl bg-slate-50 border border-slate-200/80">
+                            <label class="flex items-center gap-2 cursor-pointer text-xs font-semibold text-slate-700">
+                                <input type="checkbox" name="activo" class="toggle toggle-sm toggle-accent" {{ 'checked' if cfg and cfg.activo else '' }} />
+                                <span>Respaldo automático programado</span>
+                            </label>
+                            <div class="flex items-center gap-2 text-xs text-slate-600">
+                                <span>Cada</span>
+                                <input type="number" name="intervalo" min="1" value="{{ cfg.intervalo_horas if cfg else 24 }}" class="w-20 h-8 px-2.5 text-xs bg-white border border-slate-200 rounded-lg text-slate-800 focus:border-brand-500 outline-none" />
+                                <span>horas</span>
+                            </div>
+                            <button type="submit" class="inline-flex items-center gap-1.5 h-8 px-3 text-xs font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200/80 rounded-lg transition-all">
+                                <i data-lucide="save" class="w-3.5 h-3.5"></i>
+                                <span>Guardar Configuración</span>
+                            </button>
+                        </form>
+
+                        <div class="space-y-2">
+                            <h4 class="text-xs font-semibold uppercase tracking-wider text-slate-400">Respaldos Disponibles</h4>
+                            <div class="flex flex-wrap gap-2">
+                                {% if respaldos %}
+                                    {% for r in respaldos %}
+                                    <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-50 border border-brand-100 text-brand-700 text-xs font-medium">
+                                        <i data-lucide="archive" class="w-3.5 h-3.5 text-brand-500"></i>
+                                        <span>{{ r }}</span>
+                                        <a href="{{ url_for('restaurar', nombre=r) if 'restaurar' in kwargs else '#' }}" aria-label="Restaurar este respaldo" class="text-rose-600 hover:text-rose-800 transition-colors ml-1 p-0.5 rounded hover:bg-rose-50" onclick="return confirm('¿Restaurar este respaldo? Se perderán los datos actuales no guardados.')">
+                                            <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+                                        </a>
                                     </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                                    {% endfor %}
+                                {% else %}
+                                    <span class="text-xs text-slate-400 italic">No existen archivos de respaldo generados aún.</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- SECCIÓN 3: AUDITORÍA -->
+            <div id="sec-auditoria" class="tab-content-section space-y-6">
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="history" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-800">Auditoría de Acciones</h2>
+                                <p class="text-xs text-slate-500">Registro cronológico de eventos e interacciones dentro de la plataforma</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse min-w-[650px]">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                    <th scope="col" class="py-3.5 px-6">Fecha / Hora</th>
+                                    <th scope="col" class="py-3.5 px-6">Usuario</th>
+                                    <th scope="col" class="py-3.5 px-6">Acción Realizada</th>
+                                    <th scope="col" class="py-3.5 px-6 font-mono">Dirección IP</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {% for a in auditoria %}
+                                <tr class="hover:bg-slate-50/70 transition-colors">
+                                    <td class="py-3.5 px-6 whitespace-nowrap text-xs text-slate-600 font-medium">
+                                        {{ a.fecha.strftime('%d/%m/%Y %H:%M') if a.fecha.strftime is defined else a.fecha }}
+                                    </td>
+                                    <td class="py-3.5 px-6 font-medium text-slate-800 whitespace-nowrap text-xs">
+                                        {{ a.usuario }}
+                                    </td>
+                                    <td class="py-3.5 px-6 text-xs text-slate-700">
+                                        <span class="inline-block px-2 py-0.5 bg-slate-100 text-slate-700 rounded border border-slate-200 font-mono text-[11px]">
+                                            {{ a.accion }}
+                                        </span>
+                                    </td>
+                                    <td class="py-3.5 px-6 whitespace-nowrap font-mono text-xs text-slate-400">
+                                        {{ a.ip }}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="4" class="py-12 text-center text-slate-400">
+                                        <div class="flex flex-col items-center justify-center gap-2">
+                                            <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
+                                                <i data-lucide="clipboard-x" class="w-6 h-6"></i>
+                                            </div>
+                                            <p class="text-sm font-medium text-slate-600">No hay registros de auditoría almacenados</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
 
         </main>
     </div>
@@ -482,18 +487,23 @@
                     </div>
                 </div>
 
-                <!-- MENU ITEMS -->
-                <nav class="space-y-1">
+                <!-- MENU ITEMS INTERACTIVOS -->
+                <nav class="space-y-1" id="sidebar-menu">
                     <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Navegación</span>
                     
-                    <a href="{{ url_for('panel_coordinador') if 'panel_coordinador' in kwargs else '#' }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'panel_coordinador' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="home" class="w-4 h-4 {% if request.endpoint != 'panel_coordinador' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
+                    <a href="#sec-inicio" data-target="sec-inicio" data-title="Inicio y Usuarios" class="menu-nav-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group bg-brand-50 text-brand-500 font-semibold">
+                        <i data-lucide="home" class="w-4 h-4 transition-colors"></i>
                         <span>Inicio</span>
                     </a>
 
-                    <a href="{{ url_for('reportes') if 'reportes' in kwargs else '#' }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'reportes' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="bar-chart-3" class="w-4 h-4 {% if request.endpoint != 'reportes' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
-                        <span>Estadísticas</span>
+                    <a href="#sec-respaldos" data-target="sec-respaldos" data-title="Respaldos del Sistema" class="menu-nav-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
+                        <i data-lucide="database" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
+                        <span>Respaldos</span>
+                    </a>
+
+                    <a href="#sec-auditoria" data-target="sec-auditoria" data-title="Auditoría de Acciones" class="menu-nav-link relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
+                        <i data-lucide="history" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
+                        <span>Auditoría</span>
                     </a>
 
                     <a href="{{ url_for('reporte_general_pdf') if 'reporte_general_pdf' in kwargs else '#' }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
@@ -525,7 +535,7 @@
 
 </div>
 
-<!-- Lucide Icons & Initializer Script -->
+<!-- Lucide Icons & Tab Handler Script -->
 <script src="https://unpkg.com/lucide@latest"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
@@ -533,6 +543,55 @@
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
+
+        // Lógica de Pestañas / Navegación Interactiva
+        const navLinks = document.querySelectorAll('.menu-nav-link');
+        const sections = document.querySelectorAll('.tab-content-section');
+        const pageTitle = document.getElementById('current-page-title');
+        const drawerToggle = document.getElementById('menu-drawer');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function (e) {
+                const targetId = this.getAttribute('data-target');
+                if (!targetId) return;
+
+                e.preventDefault();
+
+                // 1. Ocultar todas las secciones
+                sections.forEach(sec => sec.classList.remove('active'));
+
+                // 2. Desactivar estilos en todos los links
+                navLinks.forEach(l => {
+                    l.classList.remove('bg-brand-50', 'text-brand-500', 'font-semibold');
+                    l.classList.add('text-slate-600');
+                    const icon = l.querySelector('i');
+                    if (icon) icon.classList.add('text-slate-400');
+                });
+
+                // 3. Mostrar la sección seleccionada
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.add('active');
+                }
+
+                // 4. Activar enlace seleccionado
+                this.classList.add('bg-brand-50', 'text-brand-500', 'font-semibold');
+                this.classList.remove('text-slate-600');
+                const activeIcon = this.querySelector('i');
+                if (activeIcon) activeIcon.classList.remove('text-slate-400');
+
+                // 5. Actualizar título en Navbar
+                const title = this.getAttribute('data-title');
+                if (title && pageTitle) {
+                    pageTitle.textContent = title;
+                }
+
+                // 6. Cerrar el menú drawer en dispositivos móviles
+                if (drawerToggle && drawerToggle.checked) {
+                    drawerToggle.checked = false;
+                }
+            });
+        });
     });
 </script>
 </body>
