@@ -392,28 +392,28 @@
                                                 </a>
                                             {% endif %}
 
-                                            {% if t.estado in ['Asignada por tutor', 'Confirmada'] %}
+                                            {% if t.estado in ['Asignada por el tutor', 'Asignada por tutor', 'Confirmada'] %}
                                                 <a href="{{ url_for('iniciar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-brand-500 hover:bg-brand-600 border border-transparent rounded-lg transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20">
                                                     <i data-lucide="play" class="w-3.5 h-3.5"></i>
                                                     <span>Iniciar</span>
                                                 </a>
                                             {% endif %}
 
-                                            {% if t.estado in ['Asignada por tutor', 'En proceso', 'Realizada'] %}
+                                            {% if t.estado in ['Asignada por el tutor', 'Asignada por tutor', 'En proceso', 'Realizada'] %}
                                                 <!-- VISTA HTML DE LA FICHA -->
                                                 <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-sky-500/20" title="Ver HTML">
                                                     <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                                                     <span>Ficha</span>
                                                 </a>
                                                 
-                                                <!-- NUEVO: DESCARGA DIRECTA DE LA FICHA EN PDF -->
+                                                <!-- DESCARGA DIRECTA DE LA FICHA EN PDF -->
                                                 <a href="{{ url_for('descargar_ficha_tutoria_pdf', id=t.id) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/20" title="Descargar PDF">
                                                     <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
                                                     <span>PDF</span>
                                                 </a>
                                             {% endif %}
 
-                                            {% if t.estado not in ['Asignada por tutor','En proceso','Realizada'] %}
+                                            {% if t.estado not in ['Asignada por el tutor', 'Asignada por tutor', 'En proceso', 'Realizada'] %}
                                                 <a href="{{ url_for('completar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
                                                     <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
                                                     <span>Completar</span>
@@ -709,26 +709,27 @@
 <script>
     // 1. Obtener la lista real de alumnos asignados al tutor actual provenientes de Jinja2 (SQLAlchemy)
     const alumnosReales = [
-        {% for a in alumnos %}
-        {
-            id: {{ a.id }},
-            matricula: "{{ a.usuario.credencial if a.usuario else 'SIN-MATRICULA' }}",
-            nombre: "{{ a.usuario.nombre_completo if a.usuario else 'Sin nombre' }}",
-            rendimiento: "{{ a.rendimiento or 'Sin registro' }}",
-            // Se calcula el estatus según si tiene tutorías registradas
-            tutoriasCount: {{ a.lista_tutorias|length if a.lista_tutorias else 0 }},
-            realizadasCount: {{ a.lista_tutorias|selectattr('estado', 'equalto', 'Realizada')|list|length if a.lista_tutorias else 0 }}
-        }{% if not loop.last %},{% endif %}
-        {% endfor %}
+        {% if alumnos %}
+            {% for a in alumnos %}
+            {
+                id: {{ a.id }},
+                matricula: {{ (a.usuario.credencial if a.usuario else 'SIN-MATRICULA')|tojson }},
+                nombre: {{ (a.usuario.nombre_completo if a.usuario else 'Sin nombre')|tojson }},
+                rendimiento: {{ (a.rendimiento or 'Sin registro')|tojson }},
+                tutoriasCount: {{ a.lista_tutorias|length if a.lista_tutorias else 0 }},
+                realizadasCount: {{ a.lista_tutorias|selectattr('estado', 'equalto', 'Realizada')|list|length if a.lista_tutorias else 0 }}
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+        {% endif %}
     ];
 
     // Detectar Tutor
-    const nombreTutorActual = "{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else '' }}".toLowerCase();
+    const nombreTutorActual = {{ (tutor.usuario.nombre_completo if tutor and tutor.usuario else '')|tojson }}.toLowerCase();
     let esSilvia = nombreTutorActual.includes('silvia');
     let gruposTutor = esSilvia ? ['81', '82'] : ['83', '84'];
     let nombreTutorFormatted = esSilvia ? 'Dra. Silvia Sofia Castrejon' : 'Prof. Juan Manuel Tovar';
 
-    // Organizar los alumnos en sus respectivos grupos (divididos de forma uniforme si no tienen la etiqueta explícita)
+    // Organizar los alumnos en sus respectivos grupos
     const baseAlumnosGrupos = {};
     const mitad = Math.ceil(alumnosReales.length / 2);
     
