@@ -7,8 +7,9 @@ from functools import wraps
 import jwt, shutil, os, threading, time
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'clave_segura_sistema_tutorias_2026_utn'
-CARPETA_BASE = os.path.dirname(__file__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'clave_segura_sistema_tutorias_2026_utn')
+
+CARPETA_BASE = os.path.abspath(os.path.dirname(__file__))
 RUTA_DB = os.path.join(CARPETA_BASE, "sistema_tutorias.db")
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{RUTA_DB}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -171,43 +172,60 @@ ALUMNOS_INICIALES = [
     ("TIC-310178", "Wu Barocio Alfonso Alejandro"),
 ]
 
-with app.app_context():
-    db.create_all()
-    if not ConfiguracionRespaldos.query.first(): 
-        db.session.add(ConfiguracionRespaldos())
-        
-    if not Usuario.query.filter_by(credencial="coordinador").first():
-        admin = Usuario(tipo="coordinador", credencial="coordinador", nombre_completo="Coordinador General", contrasena=generate_password_hash("clave_coordinador"))
-        db.session.add(admin)
-        db.session.flush()
-        
-    # Inicialización de los 2 tutores específicos
-    for cred, nombre in TUTORES_INICIALES:
-        if not Usuario.query.filter_by(credencial=cred).first():
-            usr = Usuario(
-                tipo="tutor", 
-                credencial=cred, 
-                nombre_completo=nombre, 
-                contrasena=generate_password_hash(cred)
-            )
-            db.session.add(usr)
-            db.session.flush()
-            db.session.add(Tutor(usuario_id=usr.id))
+def inicializar_base_datos():
+    with app.app_context():
+        db.create_all()
+        if not ConfiguracionRespaldos.query.first(): 
+            db.session.add(ConfiguracionRespaldos())
             
-    # Inicialización de alumnos
-    for cred, nombre in ALUMNOS_INICIALES:
-        if not Usuario.query.filter_by(credencial=cred).first():
-            usr = Usuario(
-                tipo="alumno", 
-                credencial=cred, 
-                nombre_completo=nombre, 
-                contrasena=generate_password_hash(cred)
-            )
-            db.session.add(usr)
-            db.session.flush()
-            db.session.add(Alumno(usuario_id=usr.id, id_tutor=None, rendimiento="Sin registro"))
-            
-    db.session.commit()
+        # Coordinador
+        usr_coord = Usuario.query.filter_by(credencial="coordinador").first()
+        if not usr_coord:
+            admin = Usuario(tipo="coordinador", credencial="coordinador", nombre_completo="Coordinador General", contrasena=generate_password_hash("clave_coordinador"))
+            db.session.add(admin)
+        else:
+            usr_coord.contrasena = generate_password_hash("clave_coordinador")
+            usr_coord.bloqueado = False
+
+        # Tutores (Crea o Sincroniza contraseña)
+        for cred, nombre in TUTORES_INICIALES:
+            usr = Usuario.query.filter_by(credencial=cred).first()
+            if not usr:
+                usr = Usuario(
+                    tipo="tutor", 
+                    credencial=cred, 
+                    nombre_completo=nombre, 
+                    contrasena=generate_password_hash(cred)
+                )
+                db.session.add(usr)
+                db.session.flush()
+                db.session.add(Tutor(usuario_id=usr.id))
+            else:
+                usr.contrasena = generate_password_hash(cred)
+                usr.bloqueado = False
+                usr.intentos_fallidos = 0
+                
+        # Alumnos (Crea o Sincroniza contraseña)
+        for cred, nombre in ALUMNOS_INICIALES:
+            usr = Usuario.query.filter_by(credencial=cred).first()
+            if not usr:
+                usr = Usuario(
+                    tipo="alumno", 
+                    credencial=cred, 
+                    nombre_completo=nombre, 
+                    contrasena=generate_password_hash(cred)
+                )
+                db.session.add(usr)
+                db.session.flush()
+                db.session.add(Alumno(usuario_id=usr.id, id_tutor=None, rendimiento="Sin registro"))
+            else:
+                usr.contrasena = generate_password_hash(cred)
+                usr.bloqueado = False
+                usr.intentos_fallidos = 0
+                
+        db.session.commit()
+
+inicializar_base_datos()
 
 # ===================== RESPALDOS =====================
 CARPETA_RESPALDOS = os.path.join(CARPETA_BASE, "respaldos")
@@ -624,4 +642,5 @@ def reporte_general_pdf():
     return send_file(ruta, as_attachment=True, download_name="reporte_general.pdf")
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port, debug=False)
