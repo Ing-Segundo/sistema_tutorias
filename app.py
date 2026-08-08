@@ -77,99 +77,102 @@ TUTORES_INICIALES = [
 ]
 
 ALUMNOS_INICIALES = [
-    # GRUPO 81
-    ("TIC-310113", "Andrade Carlos Ricardo"),
-    ("TIC-310095", "Beltrán Peña Samantha Milliani"),
-    ("TIC-310099", "Fernández López Angela Ailin"),
-    ("TIC-310134", "López Cabrera Luis Daniel"),
-    ("TIC-310010", "Regino Ines Alan Andrés"),
-    ("TIC-310060", "Ávalos Zendejas José Ramón"),
-    ("TIC-310147", "Covarrubias García Dayron Antonio"),
-    ("TIC-300012", "González Ruelas Fernanda"),
-    ("TIC-310184", "Mora Yañez Jonathan Alexis"),
-    ("TIC-310086", "Sánchez González Karen Alexa"),
-    ("TIC-310009", "Zamora Partida Enrique Gael"),
-    ("TIC-310159", "Cano Amparo Paul Mauricio"),
-    ("TIC-310155", "García Medina Edwin Julian"),
-    ("TIC-310185", "Martínez Elías Kevin Arturo"),
-    ("TIC-310123", "Pérez Arias Adrián de Jesús"),
-    ("TIC-310071", "Sandoval Guardado Miguel Ángel"),
-    ("TIC-310046", "Segura Hernández Edgar Gabriel"),
-    ("TIC-310042", "Ramírez Serna Gabriel Alejandro"),
-    ("TIC-310150", "Robles Ramírez Jorge Alexander"),
-    ("TIC-310001", "Rubio Romero Katherine Jais"),
-    ("TI-310142", "Vázquez Cortez Jorge Alejandro"),
-    # GRUPO 82
-    ("TIC-310173", "Aguilar Núñez José Manuel"),
-    ("TIC-310012", "Aranda Martínez Eimy Eileen"),
-    ("TIC-310049", "Esparza Burgara Jesús Gabriel"),
-    ("TIC-310089", "Gasga García Joana Michelle"),
-    ("TIC-310148", "López Castillo Carlos Eduardo"),
-    ("TIC-310029", "De la Paz Venegas Brandon Josué"),
-    ("TIC-310035", "Aguilar Osuna Xandier Daniel"),
-    ("TIC-310054", "Cañedo Segura Nephtis Adonahi"),
-    ("TIC-310131", "Flores Luna Diego Sebastián"),
-    ("TIC-310091", "González Torres Karol Emmanuel"),
-    ("TIC-300099", "Ozuna Aguilar Karla Yadira"),
-    ("TIC-310068", "Pérez Ruiz Julio Javier"),
-    ("TIC-310153", "Ávila Ríos Rafael Humberto"),
-    ("TIC-310182", "Reyna Villanueva David Arturo"),
-    ("TIC-310040", "Gómez Nava Luis Ricardo"),
-    ("TIC-310088", "Zepeda Aguilar Jazmín Lizeth"),
-    ("TIC-310167", "Ornelas González Jesús Antonio"),
-    ("TIC-310192", "Rodríguez de la Cruz Jesús Emmanuel"),
-    ("TIC-310195", "Morales Bañuelos Alex Gilberto"),
-    ("TIC-310059", "Ramos Díaz Aldair Alejandro"),
-    ("TIC-310196", "Ruíz Encarnación Maximiliano"),
-    ("TIC-310137", "Topete Fregoso José Armando"),
-    ("TIC-310156", "Velasco Sánchez Raúl Mauricio"),
-    ("TIC-310011", "Medina Delgado Alan Emir"),
-    # GRUPO 83
-    ("TIC-310072", "Araujo Robledo Alain Javier"),
-    ("TIC-310048", "Cisneros Macías Alondra Guadalupe"),
-    ("TIC-310143", "Flores Ochoa Kervin Geovanni"),
-    ("TIC-310104", "Mendoza Salas Gilberto Alonso"),
-    ("TIC-310116", "Ramos Rivera Yoel Guadalupe"),
-    ("TIC-310166", "Bañuelos Vizcarra Román Alexis"),
-    ("TIC-310097", "Estrada Parra Emiliano"),
-    ("TIC-310190", "Montes Montes Pedro Vladimir"),
-    ("TIC-310160", "Palomar Macías Kevin Abraham"),
-    ("TIC-310037", "Velázquez Meza Axel"),
-    ("TIC-300002", "Bernal Arias Diana Laura"),
-    ("TIC-310085", "Díaz Hernández Cesar Andrés"),
-    ("TIC-310025", "Moreno Avalos Anel Elizabeth"),
-    ("TIC-310067", "Rivas Sierra José Manuel"),
-    ("TIC-310047", "López Raygoza Christopher Wilfrido"),
-    ("TIC-310114", "Plascencia Domínguez Christopher Martin"),
-    ("TIC-260053", "Rodríguez Millán Gerardo Alberto"),
-    ("TIC-310168", "Rosales García Sherlyn Vanessa"),
-    ("TIC-310094", "Ruiz Mendoza Gilberto"),
-    ("TIC-310102", "Topete Sánchez José Carlos"),
-    # GRUPO 84
-    ("TIC-310120", "Alvarado Rodríguez Alexis Ariel"),
-    ("TIC-310020", "Barajas Rosales Erick Geovanny"),
-    ("TIC-310128", "García Correa Bertha Odalys"),
-    ("TIC-310163", "Guerrero Ponce Roque Joseph"),
-    ("TIC-310016", "Raygosa Curiel Julissa Anahy"),
-    ("TIC-310187", "Torres Rodríguez Emmanuel"),
-    ("TIC-310103", "Arce Rosales Fernanda Dalet"),
-    ("TIC-300089", "Cocco Malagón Christpher"),
-    ("TIC-312001", "García Macías Jahir"),
-    ("TIC-310151", "Gutiérrez Ruelas Nelly Jarei"),
-    ("TIC-310055", "Ramírez Abrego Danna Giselle"),
-    ("TIC-310087", "Segundo Lara Jeshua Miguel"),
-    ("TIC-310188", "Bernal Hernández Brandon Eduardo"),
-    ("TIC-310022", "Corona Pérez Alain Antonio"),
-    ("TIC-310003", "Gonzalez Lares Alexandra Rubí"),
-    ("TIC-310036", "Gutiérrez Zepeda Yorel Isaí"),
-    ("TIC-310073", "Rivera Orozco Vanessa de Jesús"),
-    ("TIC-310007", "Samaniego de León Andy Alexander"),
-    ("TIC-310027", "Díaz Herrera Víctor Manuel"),
-    ("TIC-310019", "Larios García Cristopher"),
-    ("TIC-300133", "Marrujo Arellano Crystopher"),
-    ("TIC-300170", "Navarro López Antonio Damián"),
-    ("TIC-310121", "Peña Arvizu Jorge Gabriel"),
-    ("TIC-310178", "Wu Barocio Alfonso Alejandro"),
+    # GRUPO 81 -> Tutor: silvia.castrejon
+    ("TIC-310113", "Andrade Carlos Ricardo", "silvia.castrejon"),
+    ("TIC-310095", "Beltrán Peña Samantha Milliani", "silvia.castrejon"),
+    ("TIC-310099", "Fernández López Angela Ailin", "silvia.castrejon"),
+    ("TIC-310134", "López Cabrera Luis Daniel", "silvia.castrejon"),
+    ("TIC-310010", "Regino Ines Alan Andrés", "silvia.castrejon"),
+    ("TIC-310060", "Ávalos Zendejas José Ramón", "silvia.castrejon"),
+    ("TIC-310147", "Covarrubias García Dayron Antonio", "silvia.castrejon"),
+    ("TIC-300012", "González Ruelas Fernanda", "silvia.castrejon"),
+    ("TIC-310184", "Mora Yañez Jonathan Alexis", "silvia.castrejon"),
+    ("TIC-310086", "Sánchez González Karen Alexa", "silvia.castrejon"),
+    ("TIC-310009", "Zamora Partida Enrique Gael", "silvia.castrejon"),
+    ("TIC-310159", "Cano Amparo Paul Mauricio", "silvia.castrejon"),
+    ("TIC-310155", "García Medina Edwin Julian", "silvia.castrejon"),
+    ("TIC-310185", "Martínez Elías Kevin Arturo", "silvia.castrejon"),
+    ("TIC-310123", "Pérez Arias Adrián de Jesús", "silvia.castrejon"),
+    ("TIC-310071", "Sandoval Guardado Miguel Ángel", "silvia.castrejon"),
+    ("TIC-310046", "Segura Hernández Edgar Gabriel", "silvia.castrejon"),
+    ("TIC-310042", "Ramírez Serna Gabriel Alejandro", "silvia.castrejon"),
+    ("TIC-310150", "Robles Ramírez Jorge Alexander", "silvia.castrejon"),
+    ("TIC-310001", "Rubio Romero Katherine Jais", "silvia.castrejon"),
+    ("TI-310142", "Vázquez Cortez Jorge Alejandro", "silvia.castrejon"),
+    
+    # GRUPO 82 -> Tutor: silvia.castrejon
+    ("TIC-310173", "Aguilar Núñez José Manuel", "silvia.castrejon"),
+    ("TIC-310012", "Aranda Martínez Eimy Eileen", "silvia.castrejon"),
+    ("TIC-310049", "Esparza Burgara Jesús Gabriel", "silvia.castrejon"),
+    ("TIC-310089", "Gasga García Joana Michelle", "silvia.castrejon"),
+    ("TIC-310148", "López Castillo Carlos Eduardo", "silvia.castrejon"),
+    ("TIC-310029", "De la Paz Venegas Brandon Josué", "silvia.castrejon"),
+    ("TIC-310035", "Aguilar Osuna Xandier Daniel", "silvia.castrejon"),
+    ("TIC-310054", "Cañedo Segura Nephtis Adonahi", "silvia.castrejon"),
+    ("TIC-310131", "Flores Luna Diego Sebastián", "silvia.castrejon"),
+    ("TIC-310091", "González Torres Karol Emmanuel", "silvia.castrejon"),
+    ("TIC-300099", "Ozuna Aguilar Karla Yadira", "silvia.castrejon"),
+    ("TIC-310068", "Pérez Ruiz Julio Javier", "silvia.castrejon"),
+    ("TIC-310153", "Ávila Ríos Rafael Humberto", "silvia.castrejon"),
+    ("TIC-310182", "Reyna Villanueva David Arturo", "silvia.castrejon"),
+    ("TIC-310040", "Gómez Nava Luis Ricardo", "silvia.castrejon"),
+    ("TIC-310088", "Zepeda Aguilar Jazmín Lizeth", "silvia.castrejon"),
+    ("TIC-310167", "Ornelas González Jesús Antonio", "silvia.castrejon"),
+    ("TIC-310192", "Rodríguez de la Cruz Jesús Emmanuel", "silvia.castrejon"),
+    ("TIC-310195", "Morales Bañuelos Alex Gilberto", "silvia.castrejon"),
+    ("TIC-310059", "Ramos Díaz Aldair Alejandro", "silvia.castrejon"),
+    ("TIC-310196", "Ruíz Encarnación Maximiliano", "silvia.castrejon"),
+    ("TIC-310137", "Topete Fregoso José Armando", "silvia.castrejon"),
+    ("TIC-310156", "Velasco Sánchez Raúl Mauricio", "silvia.castrejon"),
+    ("TIC-310011", "Medina Delgado Alan Emir", "silvia.castrejon"),
+    
+    # GRUPO 83 -> Tutor: juan.tovar
+    ("TIC-310072", "Araujo Robledo Alain Javier", "juan.tovar"),
+    ("TIC-310048", "Cisneros Macías Alondra Guadalupe", "juan.tovar"),
+    ("TIC-310143", "Flores Ochoa Kervin Geovanni", "juan.tovar"),
+    ("TIC-310104", "Mendoza Salas Gilberto Alonso", "juan.tovar"),
+    ("TIC-310116", "Ramos Rivera Yoel Guadalupe", "juan.tovar"),
+    ("TIC-310166", "Bañuelos Vizcarra Román Alexis", "juan.tovar"),
+    ("TIC-310097", "Estrada Parra Emiliano", "juan.tovar"),
+    ("TIC-310190", "Montes Montes Pedro Vladimir", "juan.tovar"),
+    ("TIC-310160", "Palomar Macías Kevin Abraham", "juan.tovar"),
+    ("TIC-310037", "Velázquez Meza Axel", "juan.tovar"),
+    ("TIC-300002", "Bernal Arias Diana Laura", "juan.tovar"),
+    ("TIC-310085", "Díaz Hernández Cesar Andrés", "juan.tovar"),
+    ("TIC-310025", "Moreno Avalos Anel Elizabeth", "juan.tovar"),
+    ("TIC-310067", "Rivas Sierra José Manuel", "juan.tovar"),
+    ("TIC-310047", "López Raygoza Christopher Wilfrido", "juan.tovar"),
+    ("TIC-310114", "Plascencia Domínguez Christopher Martin", "juan.tovar"),
+    ("TIC-260053", "Rodríguez Millán Gerardo Alberto", "juan.tovar"),
+    ("TIC-310168", "Rosales García Sherlyn Vanessa", "juan.tovar"),
+    ("TIC-310094", "Ruiz Mendoza Gilberto", "juan.tovar"),
+    ("TIC-310102", "Topete Sánchez José Carlos", "juan.tovar"),
+    
+    # GRUPO 84 -> Tutor: juan.tovar
+    ("TIC-310120", "Alvarado Rodríguez Alexis Ariel", "juan.tovar"),
+    ("TIC-310020", "Barajas Rosales Erick Geovanny", "juan.tovar"),
+    ("TIC-310128", "García Correa Bertha Odalys", "juan.tovar"),
+    ("TIC-310163", "Guerrero Ponce Roque Joseph", "juan.tovar"),
+    ("TIC-310016", "Raygosa Curiel Julissa Anahy", "juan.tovar"),
+    ("TIC-310187", "Torres Rodríguez Emmanuel", "juan.tovar"),
+    ("TIC-310103", "Arce Rosales Fernanda Dalet", "juan.tovar"),
+    ("TIC-300089", "Cocco Malagón Christpher", "juan.tovar"),
+    ("TIC-312001", "García Macías Jahir", "juan.tovar"),
+    ("TIC-310151", "Gutiérrez Ruelas Nelly Jarei", "juan.tovar"),
+    ("TIC-310055", "Ramírez Abrego Danna Giselle", "juan.tovar"),
+    ("TIC-310087", "Segundo Lara Jeshua Miguel", "juan.tovar"),
+    ("TIC-310188", "Bernal Hernández Brandon Eduardo", "juan.tovar"),
+    ("TIC-310022", "Corona Pérez Alain Antonio", "juan.tovar"),
+    ("TIC-310003", "Gonzalez Lares Alexandra Rubí", "juan.tovar"),
+    ("TIC-310036", "Gutiérrez Zepeda Yorel Isaí", "juan.tovar"),
+    ("TIC-310073", "Rivera Orozco Vanessa de Jesús", "juan.tovar"),
+    ("TIC-310007", "Samaniego de León Andy Alexander", "juan.tovar"),
+    ("TIC-310027", "Díaz Herrera Víctor Manuel", "juan.tovar"),
+    ("TIC-310019", "Larios García Cristopher", "juan.tovar"),
+    ("TIC-300133", "Marrujo Arellano Crystopher", "juan.tovar"),
+    ("TIC-300170", "Navarro López Antonio Damián", "juan.tovar"),
+    ("TIC-310121", "Peña Arvizu Jorge Gabriel", "juan.tovar"),
+    ("TIC-310178", "Wu Barocio Alfonso Alejandro", "juan.tovar"),
 ]
 
 def inicializar_base_datos():
@@ -186,6 +189,9 @@ def inicializar_base_datos():
         else:
             usr_coord.contrasena = generate_password_hash("clave_coordinador")
             usr_coord.bloqueado = False
+
+        # Mapa para asociar credencial del tutor a su id_usuario de la BD
+        mapa_tutores = {}
 
         # Tutores (Crea o Sincroniza contraseña)
         for cred, nombre in TUTORES_INICIALES:
@@ -204,10 +210,13 @@ def inicializar_base_datos():
                 usr.contrasena = generate_password_hash(cred)
                 usr.bloqueado = False
                 usr.intentos_fallidos = 0
+            mapa_tutores[cred] = usr.id
                 
-        # Alumnos (Crea o Sincroniza contraseña)
-        for cred, nombre in ALUMNOS_INICIALES:
+        # Alumnos (Crea o Sincroniza contraseña y asigna Tutor)
+        for cred, nombre, cred_tutor in ALUMNOS_INICIALES:
             usr = Usuario.query.filter_by(credencial=cred).first()
+            id_tutor_asignado = mapa_tutores.get(cred_tutor)
+
             if not usr:
                 usr = Usuario(
                     tipo="alumno", 
@@ -217,12 +226,14 @@ def inicializar_base_datos():
                 )
                 db.session.add(usr)
                 db.session.flush()
-                db.session.add(Alumno(usuario_id=usr.id, id_tutor=None, rendimiento="Sin registro"))
+                db.session.add(Alumno(usuario_id=usr.id, id_tutor=id_tutor_asignado, rendimiento="Sin registro"))
             else:
                 usr.contrasena = generate_password_hash(cred)
                 usr.bloqueado = False
                 usr.intentos_fallidos = 0
-                
+                if usr.perfil_alumno:
+                    usr.perfil_alumno.id_tutor = id_tutor_asignado
+
         db.session.commit()
 
 inicializar_base_datos()
