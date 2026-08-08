@@ -70,24 +70,127 @@ class Auditoria(db.Model):
     usuario = db.Column(db.String(100))
 
 # ===================== DATOS INICIALES =====================
+ALUMNOS_INICIALES = [
+    # GRUPO 81
+    ("TIC-310113", "Andrade Carlos Ricardo"),
+    ("TIC-310095", "Beltrán Peña Samantha Milliani"),
+    ("TIC-310099", "Fernández López Angela Ailin"),
+    ("TIC-310134", "López Cabrera Luis Daniel"),
+    ("TIC-310010", "Regino Ines Alan Andrés"),
+    ("TIC-310060", "Ávalos Zendejas José Ramón"),
+    ("TIC-310147", "Covarrubias García Dayron Antonio"),
+    ("TIC-300012", "González Ruelas Fernanda"),
+    ("TIC-310184", "Mora Yañez Jonathan Alexis"),
+    ("TIC-310086", "Sánchez González Karen Alexa"),
+    ("TIC-310009", "Zamora Partida Enrique Gael"),
+    ("TIC-310159", "Cano Amparo Paul Mauricio"),
+    ("TIC-310155", "García Medina Edwin Julian"),
+    ("TIC-310185", "Martínez Elías Kevin Arturo"),
+    ("TIC-310123", "Pérez Arias Adrián de Jesús"),
+    ("TIC-310071", "Sandoval Guardado Miguel Ángel"),
+    ("TIC-310046", "Segura Hernández Edgar Gabriel"),
+    ("TIC-310042", "Ramírez Serna Gabriel Alejandro"),
+    ("TIC-310150", "Robles Ramírez Jorge Alexander"),
+    ("TIC-310001", "Rubio Romero Katherine Jais"),
+    ("TI-310142", "Vázquez Cortez Jorge Alejandro"),
+    # GRUPO 82
+    ("TIC-310173", "Aguilar Núñez José Manuel"),
+    ("TIC-310012", "Aranda Martínez Eimy Eileen"),
+    ("TIC-310049", "Esparza Burgara Jesús Gabriel"),
+    ("TIC-310089", "Gasga García Joana Michelle"),
+    ("TIC-310148", "López Castillo Carlos Eduardo"),
+    ("TIC-310029", "De la Paz Venegas Brandon Josué"),
+    ("TIC-310035", "Aguilar Osuna Xandier Daniel"),
+    ("TIC-310054", "Cañedo Segura Nephtis Adonahi"),
+    ("TIC-310131", "Flores Luna Diego Sebastián"),
+    ("TIC-310091", "González Torres Karol Emmanuel"),
+    ("TIC-300099", "Ozuna Aguilar Karla Yadira"),
+    ("TIC-310068", "Pérez Ruiz Julio Javier"),
+    ("TIC-310153", "Ávila Ríos Rafael Humberto"),
+    ("TIC-310182", "Reyna Villanueva David Arturo"),
+    ("TIC-310040", "Gómez Nava Luis Ricardo"),
+    ("TIC-310088", "Zepeda Aguilar Jazmín Lizeth"),
+    ("TIC-310167", "Ornelas González Jesús Antonio"),
+    ("TIC-310192", "Rodríguez de la Cruz Jesús Emmanuel"),
+    ("TIC-310195", "Morales Bañuelos Alex Gilberto"),
+    ("TIC-310059", "Ramos Díaz Aldair Alejandro"),
+    ("TIC-310196", "Ruíz Encarnación Maximiliano"),
+    ("TIC-310137", "Topete Fregoso José Armando"),
+    ("TIC-310156", "Velasco Sánchez Raúl Mauricio"),
+    ("TIC-310011", "Medina Delgado Alan Emir"),
+    # GRUPO 83
+    ("TIC-310072", "Araujo Robledo Alain Javier"),
+    ("TIC-310048", "Cisneros Macías Alondra Guadalupe"),
+    ("TIC-310143", "Flores Ochoa Kervin Geovanni"),
+    ("TIC-310104", "Mendoza Salas Gilberto Alonso"),
+    ("TIC-310116", "Ramos Rivera Yoel Guadalupe"),
+    ("TIC-310166", "Bañuelos Vizcarra Román Alexis"),
+    ("TIC-310097", "Estrada Parra Emiliano"),
+    ("TIC-310190", "Montes Montes Pedro Vladimir"),
+    ("TIC-310160", "Palomar Macías Kevin Abraham"),
+    ("TIC-310037", "Velázquez Meza Axel"),
+    ("TIC-300002", "Bernal Arias Diana Laura"),
+    ("TIC-310085", "Díaz Hernández Cesar Andrés"),
+    ("TIC-310025", "Moreno Avalos Anel Elizabeth"),
+    ("TIC-310067", "Rivas Sierra José Manuel"),
+    ("TIC-310047", "López Raygoza Christopher Wilfrido"),
+    ("TIC-310114", "Plascencia Domínguez Christopher Martin"),
+    ("TIC-260053", "Rodríguez Millán Gerardo Alberto"),
+    ("TIC-310168", "Rosales García Sherlyn Vanessa"),
+    ("TIC-310094", "Ruiz Mendoza Gilberto"),
+    ("TIC-310102", "Topete Sánchez José Carlos"),
+    # GRUPO 84
+    ("TIC-310120", "Alvarado Rodríguez Alexis Ariel"),
+    ("TIC-310020", "Barajas Rosales Erick Geovanny"),
+    ("TIC-310128", "García Correa Bertha Odalys"),
+    ("TIC-310163", "Guerrero Ponce Roque Joseph"),
+    ("TIC-310016", "Raygosa Curiel Julissa Anahy"),
+    ("TIC-310187", "Torres Rodríguez Emmanuel"),
+    ("TIC-310103", "Arce Rosales Fernanda Dalet"),
+    ("TIC-300089", "Cocco Malagón Christpher"),
+    ("TIC-312001", "García Macías Jahir"),
+    ("TIC-310151", "Gutiérrez Ruelas Nelly Jarei"),
+    ("TIC-310055", "Ramírez Abrego Danna Giselle"),
+    ("TIC-310087", "Segundo Lara Jeshua Miguel"),
+    ("TIC-310188", "Bernal Hernández Brandon Eduardo"),
+    ("TIC-310022", "Corona Pérez Alain Antonio"),
+    ("TIC-310003", "Gonzalez Lares Alexandra Rubí"),
+    ("TIC-310036", "Gutiérrez Zepeda Yorel Isaí"),
+    ("TIC-310073", "Rivera Orozco Vanessa de Jesús"),
+    ("TIC-310007", "Samaniego de León Andy Alexander"),
+    ("TIC-310027", "Díaz Herrera Víctor Manuel"),
+    ("TIC-310019", "Larios García Cristopher"),
+    ("TIC-300133", "Marrujo Arellano Crystopher"),
+    ("TIC-300170", "Navarro López Antonio Damián"),
+    ("TIC-310121", "Peña Arvizu Jorge Gabriel"),
+    ("TIC-310178", "Wu Barocio Alfonso Alejandro"),
+]
+
 with app.app_context():
     db.create_all()
     if not ConfiguracionRespaldos.query.first(): 
         db.session.add(ConfiguracionRespaldos())
+        
     if not Usuario.query.filter_by(credencial="coordinador").first():
         admin = Usuario(tipo="coordinador", credencial="coordinador", nombre_completo="Coordinador General", contrasena=generate_password_hash("clave_coordinador"))
-        db.session.add(admin); db.session.flush()
+        db.session.add(admin)
+        db.session.flush()
+        
     for n in range(1, 4):
         cred = f"TUT-{n:06d}"
         if not Usuario.query.filter_by(credencial=cred).first():
             usr = Usuario(tipo="tutor", credencial=cred, nombre_completo=f"Tutor {n}", contrasena=generate_password_hash(cred))
-            db.session.add(usr); db.session.flush(); db.session.add(Tutor(usuario_id=usr.id))
-    for n in range(1, 11):
-        cred = f"TIC-{n:06d}"
+            db.session.add(usr)
+            db.session.flush()
+            db.session.add(Tutor(usuario_id=usr.id))
+            
+    for cred, nombre in ALUMNOS_INICIALES:
         if not Usuario.query.filter_by(credencial=cred).first():
-            usr = Usuario(tipo="alumno", credencial=cred, nombre_completo=f"Alumno {n}", contrasena=generate_password_hash(cred))
-            db.session.add(usr); db.session.flush()
-            db.session.add(Alumno(usuario_id=usr.id, id_tutor=2, rendimiento="Promedio: 8.5"))
+            usr = Usuario(tipo="alumno", credencial=cred, nombre_completo=nombre, contrasena=generate_password_hash(cred))
+            db.session.add(usr)
+            db.session.flush()
+            db.session.add(Alumno(usuario_id=usr.id, id_tutor=None, rendimiento="Sin registro"))
+            
     db.session.commit()
 
 # ===================== RESPALDOS =====================
