@@ -70,6 +70,11 @@ class Auditoria(db.Model):
     usuario = db.Column(db.String(100))
 
 # ===================== DATOS INICIALES =====================
+TUTORES_INICIALES = [
+    ("juan.tovar", "Juan Manuel Tovar Sánchez"),
+    ("silvia.castrejon", "Silvia Sofia Castrejon Zarate")
+]
+
 ALUMNOS_INICIALES = [
     # GRUPO 81
     ("TIC-310113", "Andrade Carlos Ricardo"),
@@ -176,17 +181,28 @@ with app.app_context():
         db.session.add(admin)
         db.session.flush()
         
-    for n in range(1, 4):
-        cred = f"TUT-{n:06d}"
+    # Inicialización de los 2 tutores específicos
+    for cred, nombre in TUTORES_INICIALES:
         if not Usuario.query.filter_by(credencial=cred).first():
-            usr = Usuario(tipo="tutor", credencial=cred, nombre_completo=f"Tutor {n}", contrasena=generate_password_hash(cred))
+            usr = Usuario(
+                tipo="tutor", 
+                credencial=cred, 
+                nombre_completo=nombre, 
+                contrasena=generate_password_hash(cred)
+            )
             db.session.add(usr)
             db.session.flush()
             db.session.add(Tutor(usuario_id=usr.id))
             
+    # Inicialización de alumnos
     for cred, nombre in ALUMNOS_INICIALES:
         if not Usuario.query.filter_by(credencial=cred).first():
-            usr = Usuario(tipo="alumno", credencial=cred, nombre_completo=nombre, contrasena=generate_password_hash(cred))
+            usr = Usuario(
+                tipo="alumno", 
+                credencial=cred, 
+                nombre_completo=nombre, 
+                contrasena=generate_password_hash(cred)
+            )
             db.session.add(usr)
             db.session.flush()
             db.session.add(Alumno(usuario_id=usr.id, id_tutor=None, rendimiento="Sin registro"))
