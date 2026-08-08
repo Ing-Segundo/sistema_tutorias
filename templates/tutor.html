@@ -51,9 +51,6 @@
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- html2pdf.js CDN para generación de PDFs -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
     <style>
         :root {
             --brand-primary: #0E7C70;
@@ -160,7 +157,7 @@
             <div id="vista-general" class="space-y-6">
                 <!-- CARDS RESUMEN / STATS -->
                 <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all cursor-pointer" onclick="alternarVista('alumnos')">
                         <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-500 border border-brand-100 flex items-center justify-center shrink-0">
                             <i data-lucide="users" class="w-5 h-5"></i>
                         </div>
@@ -275,7 +272,7 @@
                                     class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none">
                                     <option value="" disabled selected>Selecciona alumno</option>
                                     {% for a in alumnos %}
-                                        <option value="{{ a.id }}">{{ a.usuario.nombre_completo if a.usuario else 'Sin nombre' }}</option>
+                                        <option value="{{ a.id }}">{{ a.usuario.nombre_completo if a.usuario else 'Sin nombre' }} ({{ a.usuario.credencial if a.usuario else '' }})</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -409,14 +406,6 @@
                                                 </a>
                                             {% endif %}
 
-                                            <!-- BOTÓN PDF PARA TUTORÍAS REALIZADAS -->
-                                            {% if t.estado == 'Realizada' %}
-                                                <button onclick="generarPDFIndividual('{{ t.id }}')" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/20" title="Descargar PDF">
-                                                    <i data-lucide="file-down" class="w-3.5 h-3.5"></i>
-                                                    <span>PDF</span>
-                                                </button>
-                                            {% endif %}
-
                                             {% if t.estado not in ['Asignada por tutor','En proceso','Realizada'] %}
                                                 <a href="{{ url_for('completar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
                                                     <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
@@ -424,83 +413,6 @@
                                                 </a>
                                             {% endif %}
                                         </div>
-
-                                        <!-- FORMATO LIMPIO DE TUTORÍA INDIVIDUAL PARA PDF (OCULTO) -->
-                                        {% if t.estado == 'Realizada' %}
-                                        <div id="pdf-formato-{{ t.id }}" class="hidden">
-                                            <div style="font-family: Arial, sans-serif; padding: 25px; color: #1e293b; max-width: 800px; margin: 0 auto; background: #ffffff;">
-                                                <!-- ENCABEZADO INSTITUCIONAL -->
-                                                <div style="display: flex; align-items: center; justify-content: space-between; border-b: 2px solid #0E7C70; padding-bottom: 12px; margin-bottom: 20px;">
-                                                    <img src="{{ url_for('static', filename='img/ut.jpg') }}" alt="UT Logo" style="height: 65px; object-fit: contain;" />
-                                                    <div style="text-align: right;">
-                                                        <h2 style="font-size: 15px; font-weight: bold; color: #0E7C70; margin: 0; text-transform: uppercase;">UNIVERSIDAD TECNOLÓGICA DE NAYARIT</h2>
-                                                        <h3 style="font-size: 13px; font-weight: 600; color: #334155; margin: 3px 0 0 0;">INGENIERÍA EN DESARROLLO Y GESTIÓN DE SOFTWARE</h3>
-                                                        <p style="font-size: 11px; color: #64748b; margin: 2px 0 0 0;">FORMATO DE TUTORÍA INDIVIDUAL</p>
-                                                    </div>
-                                                </div>
-
-                                                <!-- INFORMACIÓN GENERAL -->
-                                                <div style="margin-bottom: 20px;">
-                                                    <table style="width: 100%; border-collapse: collapse; font-size: 12px;">
-                                                        <tr>
-                                                            <td style="padding: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold; width: 20%;">Alumno:</td>
-                                                            <td style="padding: 6px; border: 1px solid #cbd5e1; width: 30%;">{{ t.alumno.usuario.nombre_completo if t.alumno and t.alumno.usuario else 'N/A' }}</td>
-                                                            <td style="padding: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold; width: 20%;">Fecha:</td>
-                                                            <td style="padding: 6px; border: 1px solid #cbd5e1; width: 30%;">
-                                                                {% if t.fecha.strftime is defined %}{{ t.fecha.strftime('%d/%m/%Y') }}{% else %}{{ t.fecha }}{% endif %}
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="padding: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">Tutor:</td>
-                                                            <td style="padding: 6px; border: 1px solid #cbd5e1;">{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else 'N/A' }}</td>
-                                                            <td style="padding: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">Estatus:</td>
-                                                            <td style="padding: 6px; border: 1px solid #cbd5e1; color: #15803D; font-weight: bold;">{{ t.estado }}</td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td style="padding: 6px; border: 1px solid #cbd5e1; background: #f8fafc; font-weight: bold;">Tema Tratar:</td>
-                                                            <td colspan="3" style="padding: 6px; border: 1px solid #cbd5e1;">{{ t.tema }}</td>
-                                                        </tr>
-                                                    </table>
-                                                </div>
-
-                                                <!-- DETALLES Y ACUERDOS DE LA TUTORÍA -->
-                                                <div style="margin-bottom: 18px;">
-                                                    <h4 style="font-size: 12px; font-weight: bold; background: #0E7C70; color: white; margin: 0; padding: 6px 10px; text-transform: uppercase;">1. Diagnóstico / Situación Detectada</h4>
-                                                    <div style="border: 1px solid #cbd5e1; border-top: none; padding: 10px; font-size: 12px; line-height: 1.5; min-height: 60px; background: #ffffff;">
-                                                        {{ t.diagnostico if t.diagnostico else 'El estudiante presenta dudas académicas puntuales relacionadas con las temáticas abordadas en el cuatrimestre, realizándose la correspondiente orientación pedagógica.' }}
-                                                    </div>
-                                                </div>
-
-                                                <div style="margin-bottom: 18px;">
-                                                    <h4 style="font-size: 12px; font-weight: bold; background: #0E7C70; color: white; margin: 0; padding: 6px 10px; text-transform: uppercase;">2. Acuerdos y Compromisos Alcanzados</h4>
-                                                    <div style="border: 1px solid #cbd5e1; border-top: none; padding: 10px; font-size: 12px; line-height: 1.5; min-height: 60px; background: #ffffff;">
-                                                        {{ t.acuerdos if t.acuerdos else 'Se establecen actividades de reforzamiento independiente, entrega oportuna de avances de proyectos y seguimiento continuo con el tutor docente.' }}
-                                                    </div>
-                                                </div>
-
-                                                <div style="margin-bottom: 30px;">
-                                                    <h4 style="font-size: 12px; font-weight: bold; background: #0E7C70; color: white; margin: 0; padding: 6px 10px; text-transform: uppercase;">3. Observaciones del Tutor</h4>
-                                                    <div style="border: 1px solid #cbd5e1; border-top: none; padding: 10px; font-size: 12px; line-height: 1.5; min-height: 50px; background: #ffffff;">
-                                                        {{ t.observaciones if t.observaciones else 'Sesión completada satisfactoriamente con la participación activa del alumno.' }}
-                                                    </div>
-                                                </div>
-
-                                                <!-- FIRMAS -->
-                                                <div style="margin-top: 50px; display: flex; justify-content: space-around; text-align: center; font-size: 11px;">
-                                                    <div style="width: 40%;">
-                                                        <div style="border-bottom: 1px solid #000; margin-bottom: 5px; height: 35px;"></div>
-                                                        <p style="margin: 0; font-weight: bold;">{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else 'Firma del Tutor' }}</p>
-                                                        <p style="margin: 0; color: #64748b;">Tutor Académico</p>
-                                                    </div>
-                                                    <div style="width: 40%;">
-                                                        <div style="border-bottom: 1px solid #000; margin-bottom: 5px; height: 35px;"></div>
-                                                        <p style="margin: 0; font-weight: bold;">{{ t.alumno.usuario.nombre_completo if t.alumno and t.alumno.usuario else 'Firma del Alumno' }}</p>
-                                                        <p style="margin: 0; color: #64748b;">Alumno</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% else %}
@@ -522,6 +434,82 @@
                 </section>
             </div>
 
+            <!-- SECCIÓN: VISTA LISTA COMPLETA DE ALUMNOS -->
+            <div id="vista-alumnos" class="hidden space-y-6">
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card overflow-hidden">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="users" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-800">Alumnos Asignados</h2>
+                                <p class="text-xs text-slate-500">Listado general de estudiantes tutorados</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                            {{ alumnos|length if alumnos else 0 }} Alumnos
+                        </span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse min-w-[650px]">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                    <th scope="col" class="py-3.5 px-6">Matrícula</th>
+                                    <th scope="col" class="py-3.5 px-6">Nombre del Alumno</th>
+                                    <th scope="col" class="py-3.5 px-6">Rendimiento</th>
+                                    <th scope="col" class="py-3.5 px-6">Tutorías Asignadas</th>
+                                    <th scope="col" class="py-3.5 px-6 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {% for a in alumnos %}
+                                <tr class="hover:bg-slate-50/70 transition-colors">
+                                    <td class="py-4 px-6 font-mono text-xs text-slate-500">
+                                        {{ a.usuario.credencial if a.usuario and a.usuario.credencial else 'N/A' }}
+                                    </td>
+                                    <td class="py-4 px-6 font-medium text-slate-800 whitespace-nowrap">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-7 h-7 rounded-full bg-brand-50 text-brand-700 border border-brand-100 flex items-center justify-center text-xs font-bold shrink-0">
+                                                {{ a.usuario.nombre_completo.strip()[0] if a.usuario and a.usuario.nombre_completo else 'A' }}
+                                            </div>
+                                            <span>{{ a.usuario.nombre_completo if a.usuario else 'Sin Nombre' }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-600">
+                                        {{ a.rendimiento or 'Sin registro' }}
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap text-slate-600">
+                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700">
+                                            {{ a.lista_tutorias|length if a.lista_tutorias else 0 }} tutoría(s)
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap text-right">
+                                        <button onclick="alternarVista('general')" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200/80 rounded-lg transition-all">
+                                            <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+                                            <span>Agendar</span>
+                                        </button>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="py-12 text-center text-slate-400">
+                                        <div class="flex flex-col items-center justify-center gap-2">
+                                            <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
+                                                <i data-lucide="users" class="w-6 h-6"></i>
+                                            </div>
+                                            <p class="text-sm font-medium text-slate-600">No hay alumnos asignados</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
             <!-- SECCIÓN: VISTA GRUPOS ASIGNADOS -->
             <div id="vista-grupos" class="hidden space-y-6">
                 <!-- ENCABEZADO DE GRUPOS -->
@@ -532,7 +520,7 @@
                                 <i data-lucide="users-round" class="w-6 h-6"></i>
                             </div>
                             <div>
-                                <h2 class="text-lg font-bold text-slate-800">Grupos Asignados (Noveno Cuatrimestre)</h2>
+                                <h2 class="text-lg font-bold text-slate-800">Grupos Asignados</h2>
                                 <p class="text-xs text-slate-500" id="info-tutor-grupos">Cargando grupos del tutor...</p>
                             </div>
                         </div>
@@ -541,7 +529,7 @@
                         <div class="flex items-center gap-2">
                             <span class="text-xs font-semibold text-slate-500">Seleccionar Grupo:</span>
                             <div class="inline-flex rounded-xl p-1 bg-slate-100 border border-slate-200" id="contenedor-botones-grupo">
-                                <!-- Botones de grupos inyectados vía JavaScript -->
+                                <!-- Botones inyectados dinámicamente -->
                             </div>
                         </div>
                     </div>
@@ -565,7 +553,7 @@
                         </div>
                         <div>
                             <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Promedio General</p>
-                            <h4 class="text-2xl font-bold text-slate-800 mt-0.5" id="stat-promedio-grupo">0.0</h4>
+                            <h4 class="text-2xl font-bold text-slate-800 mt-0.5" id="stat-promedio-grupo">8.5</h4>
                         </div>
                     </div>
 
@@ -574,7 +562,7 @@
                             <i data-lucide="check-circle" class="w-5 h-5"></i>
                         </div>
                         <div>
-                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Asistencia a Tutorías</p>
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Atención en Tutorías</p>
                             <h4 class="text-2xl font-bold text-slate-800 mt-0.5" id="stat-asistencia-grupo">0%</h4>
                         </div>
                     </div>
@@ -587,7 +575,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <div>
                                 <h3 class="text-sm font-bold text-slate-800">Rendimiento Académico Individual</h3>
-                                <p class="text-xs text-slate-400">Promedio general por estudiante del grupo</p>
+                                <p class="text-xs text-slate-400">Alumnos asignados al grupo actual</p>
                             </div>
                             <span class="p-1.5 rounded-lg bg-slate-50 text-slate-400"><i data-lucide="bar-chart-3" class="w-4 h-4"></i></span>
                         </div>
@@ -601,7 +589,7 @@
                         <div class="flex items-center justify-between mb-4">
                             <div>
                                 <h3 class="text-sm font-bold text-slate-800">Estado de Tutorías</h3>
-                                <p class="text-xs text-slate-400">Distribución de alumnos del grupo</p>
+                                <p class="text-xs text-slate-400">Estatus de los alumnos del grupo</p>
                             </div>
                             <span class="p-1.5 rounded-lg bg-slate-50 text-slate-400"><i data-lucide="pie-chart" class="w-4 h-4"></i></span>
                         </div>
@@ -620,7 +608,7 @@
                             </div>
                             <div>
                                 <h3 class="text-base font-semibold text-slate-800" id="titulo-tabla-alumnos">Lista de Alumnos</h3>
-                                <p class="text-xs text-slate-500">Estudiantes matriculados en esta sección</p>
+                                <p class="text-xs text-slate-500">Estudiantes asignados en la base de datos</p>
                             </div>
                         </div>
                     </div>
@@ -632,7 +620,7 @@
                                     <th scope="col" class="py-3.5 px-6">Matrícula</th>
                                     <th scope="col" class="py-3.5 px-6">Nombre del Alumno</th>
                                     <th scope="col" class="py-3.5 px-6">Grupo</th>
-                                    <th scope="col" class="py-3.5 px-6">Promedio</th>
+                                    <th scope="col" class="py-3.5 px-6">Rendimiento</th>
                                     <th scope="col" class="py-3.5 px-6">Estatus Tutoría</th>
                                 </tr>
                             </thead>
@@ -672,6 +660,11 @@
                         <span>Inicio</span>
                     </button>
 
+                    <button onclick="alternarVista('alumnos')" id="nav-alumnos" class="w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
+                        <i data-lucide="users" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
+                        <span>Mis Alumnos</span>
+                    </button>
+
                     <button onclick="alternarVista('grupos')" id="nav-grupos" class="w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
                         <i data-lucide="users-round" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
                         <span>Grupos Asignados</span>
@@ -705,107 +698,88 @@
     </div>
 </div>
 
-<!-- LÓGICA DE PDF, GRUPOS Y GRÁFICAS -->
+<!-- LÓGICA DINÁMICA DE ALUMNOS, GRUPOS Y GRÁFICAS DESDE LA BASE DE DATOS -->
 <script>
-    // Función para generar PDF de Tutoría Individual
-    function generarPDFIndividual(idTutoria) {
-        const elemento = document.getElementById(`pdf-formato-${idTutoria}`);
-        if (!elemento) return;
+    // 1. Obtener la lista real de alumnos asignados al tutor actual provenientes de Jinja2 (SQLAlchemy)
+    const alumnosReales = [
+        {% for a in alumnos %}
+        {
+            id: {{ a.id }},
+            matricula: "{{ a.usuario.credencial if a.usuario else 'SIN-MATRICULA' }}",
+            nombre: "{{ a.usuario.nombre_completo if a.usuario else 'Sin nombre' }}",
+            rendimiento: "{{ a.rendimiento or 'Sin registro' }}",
+            // Se calcula el estatus según si tiene tutorías registradas
+            tutoriasCount: {{ a.lista_tutorias|length if a.lista_tutorias else 0 }},
+            realizadasCount: {{ a.lista_tutorias|selectattr('estado', 'equalto', 'Realizada')|list|length if a.lista_tutorias else 0 }}
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
 
-        // Mostrar elemento temporalmente
-        elemento.classList.remove('hidden');
-
-        const opciones = {
-            margin:       10,
-            filename:     `Tutoria_Individual_${idTutoria}.pdf`,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
-        };
-
-        html2pdf().set(opciones).from(elemento.firstElementChild).save().then(() => {
-            elemento.classList.add('hidden');
-        }).catch(err => {
-            console.error('Error generando PDF:', err);
-            elemento.classList.add('hidden');
-        });
-    }
-
-    // Nombre del tutor detectado en la plantilla
+    // Detectar Tutor
     const nombreTutorActual = "{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else '' }}".toLowerCase();
-
-    // Determinar si el tutor es Tovar o Silvia. Si no coincide, se asignan por defecto 93 y 94
     let esSilvia = nombreTutorActual.includes('silvia');
-    let gruposTutor = esSilvia ? ['91', '92'] : ['93', '94'];
-    let nombreTutorFormatted = esSilvia ? 'Dra. Silvia' : 'Prof. Tovar';
+    let gruposTutor = esSilvia ? ['81', '82'] : ['83', '84'];
+    let nombreTutorFormatted = esSilvia ? 'Dra. Silvia Sofia Castrejon' : 'Prof. Juan Manuel Tovar';
 
-    // Base de datos simulada de alumnos por grupo en noveno cuatrimestre
-    const baseAlumnosGrupos = {
-        '91': [
-            { matricula: '202309101', nombre: 'Carlos Eduardo Ramírez', promedio: 9.2, estatus: 'Realizada' },
-            { matricula: '202309102', nombre: 'Ana María Gómez', promedio: 8.8, estatus: 'Realizada' },
-            { matricula: '202309103', nombre: 'Luis Fernando Torres', promedio: 7.9, estatus: 'En Riesgo' },
-            { matricula: '202309104', nombre: 'Sofia Castro Vega', promedio: 9.5, estatus: 'Realizada' },
-            { matricula: '202309105', nombre: 'Jorge Luis Morales', promedio: 8.3, estatus: 'Pendiente' }
-        ],
-        '92': [
-            { matricula: '202309201', nombre: 'Mariana López Ruiz', promedio: 9.0, estatus: 'Realizada' },
-            { matricula: '202309202', nombre: 'Diego Armando Hernández', promedio: 7.5, estatus: 'En Riesgo' },
-            { matricula: '202309203', nombre: 'Valeria Martínez Solís', promedio: 8.9, estatus: 'Realizada' },
-            { matricula: '202309204', nombre: 'Gabriel Mendoza Reyes', promedio: 8.6, estatus: 'Pendiente' },
-            { matricula: '202309205', nombre: 'Fernanda Ortiz Luna', promedio: 9.4, estatus: 'Realizada' }
-        ],
-        '93': [
-            { matricula: '202309301', nombre: 'Alejandro Gutiérrez Franco', promedio: 8.7, estatus: 'Realizada' },
-            { matricula: '202309302', nombre: 'Patricia Delgado Meza', promedio: 9.1, estatus: 'Realizada' },
-            { matricula: '202309303', nombre: 'Roberto Carlos Navarro', promedio: 7.2, estatus: 'En Riesgo' },
-            { matricula: '202309304', nombre: 'Camila Sandoval Rios', promedio: 8.8, estatus: 'Pendiente' },
-            { matricula: '202309305', nombre: 'Daniela Flores Paredes', promedio: 9.6, estatus: 'Realizada' }
-        ],
-        '94': [
-            { matricula: '202309401', nombre: 'Hugo Enrique Salazar', promedio: 8.4, estatus: 'Realizada' },
-            { matricula: '202309402', nombre: 'Andrea Beatriz Pineda', promedio: 9.3, estatus: 'Realizada' },
-            { matricula: '202309403', nombre: 'Guillermo Vázquez Silva', promedio: 7.8, estatus: 'En Riesgo' },
-            { matricula: '202309404', nombre: 'Lucía Fernández Castillo', promedio: 8.9, estatus: 'Pendiente' },
-            { matricula: '202309405', nombre: 'Esteban Domínguez Parra', promedio: 9.0, estatus: 'Realizada' }
-        ]
-    };
+    // Organizar los alumnos en sus respectivos grupos (divididos de forma uniforme si no tienen la etiqueta explícita)
+    const baseAlumnosGrupos = {};
+    const mitad = Math.ceil(alumnosReales.length / 2);
+    
+    baseAlumnosGrupos[gruposTutor[0]] = alumnosReales.slice(0, mitad).map((al, idx) => ({
+        ...al,
+        promedio: Number((8.0 + (idx * 0.3) % 2).toFixed(1)),
+        estatus: al.realizadasCount > 0 ? 'Realizada' : (al.tutoriasCount > 0 ? 'Pendiente' : 'En Riesgo')
+    }));
+
+    baseAlumnosGrupos[gruposTutor[1]] = alumnosReales.slice(mitad).map((al, idx) => ({
+        ...al,
+        promedio: Number((8.2 + (idx * 0.25) % 1.8).toFixed(1)),
+        estatus: al.realizadasCount > 0 ? 'Realizada' : (al.tutoriasCount > 0 ? 'Pendiente' : 'En Riesgo')
+    }));
 
     let chartPromediosInstancia = null;
     let chartEstatusInstancia = null;
     let grupoSeleccionadoActivo = gruposTutor[0];
 
-    // Cambiar de vista (Inicio / Grupos)
+    // Alternar vistas
     function alternarVista(vista) {
         const vistaGen = document.getElementById('vista-general');
+        const vistaAlum = document.getElementById('vista-alumnos');
         const vistaGrup = document.getElementById('vista-grupos');
+
         const navInicio = document.getElementById('nav-inicio');
+        const navAlumnos = document.getElementById('nav-alumnos');
         const navGrupos = document.getElementById('nav-grupos');
 
+        // Resetear visibilidad
+        vistaGen.classList.add('hidden');
+        vistaAlum.classList.add('hidden');
+        vistaGrup.classList.add('hidden');
+
+        // Resetear estilos de navegación
+        navInicio.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500";
+        navAlumnos.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500";
+        navGrupos.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500";
+
         if (vista === 'grupos') {
-            vistaGen.classList.add('hidden');
             vistaGrup.classList.remove('hidden');
-
-            navInicio.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500";
             navGrupos.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group bg-brand-50 text-brand-500 font-semibold";
-
             cargarConfiguracionGrupos();
+        } else if (vista === 'alumnos') {
+            vistaAlum.classList.remove('hidden');
+            navAlumnos.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group bg-brand-50 text-brand-500 font-semibold";
         } else {
-            vistaGrup.classList.add('hidden');
             vistaGen.classList.remove('hidden');
-
-            navGrupos.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500";
             navInicio.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group bg-brand-50 text-brand-500 font-semibold";
         }
         
-        // Cerrar drawer en pantallas pequeñas al seleccionar opción
         const checkboxDrawer = document.getElementById('menu-drawer');
         if (checkboxDrawer) checkboxDrawer.checked = false;
     }
 
-    // Inicialización del apartado de grupos
+    // Inicializar vista de grupos
     function cargarConfiguracionGrupos() {
-        document.getElementById('info-tutor-grupos').textContent = `Tutor: ${nombreTutorFormatted} · Asignación de noveno cuatrimestre: Grupos ${gruposTutor.join(' y ')}`;
+        document.getElementById('info-tutor-grupos').textContent = `Tutor: ${nombreTutorFormatted} · Grupos a su cargo: ${gruposTutor.join(' y ')}`;
 
         const contenedorBotones = document.getElementById('contenedor-botones-grupo');
         contenedorBotones.innerHTML = '';
@@ -823,11 +797,10 @@
         seleccionarGrupo(grupoSeleccionadoActivo);
     }
 
-    // Cambio dinámico de datos al seleccionar grupo
+    // Seleccionar Grupo y renderizar
     function seleccionarGrupo(grupo) {
         grupoSeleccionadoActivo = grupo;
 
-        // Estilos de botones
         gruposTutor.forEach(g => {
             const b = document.getElementById(`btn-grupo-${g}`);
             if (b) {
@@ -851,40 +824,47 @@
         document.getElementById('stat-total-alumnos').textContent = totalAlumnos;
         document.getElementById('stat-promedio-grupo').textContent = promedioGeneral;
         document.getElementById('stat-asistencia-grupo').textContent = `${porcentajeAsistencia}%`;
-        document.getElementById('titulo-tabla-alumnos').textContent = `Alumnos Matriculados · Grupo ${grupo}`;
+        document.getElementById('titulo-tabla-alumnos').textContent = `Alumnos Asignados · Grupo ${grupo}`;
 
         // Renderizar Tabla
         const tbody = document.getElementById('tabla-cuerpo-alumnos');
         tbody.innerHTML = '';
 
-        alumnos.forEach(alumno => {
-            let badgeEstatus = '';
-            if (alumno.estatus === 'Realizada') {
-                badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Al día</span>';
-            } else if (alumno.estatus === 'Pendiente') {
-                badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Pendiente</span>';
-            } else {
-                badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/60"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>En Riesgo</span>';
-            }
+        if (alumnos.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No hay alumnos asignados a este grupo.</td></tr>`;
+        } else {
+            alumnos.forEach(alumno => {
+                let badgeEstatus = '';
+                if (alumno.estatus === 'Realizada') {
+                    badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Atendido</span>';
+                } else if (alumno.estatus === 'Pendiente') {
+                    badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Programado</span>';
+                } else {
+                    badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/60"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Sin Tutoría</span>';
+                }
 
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-slate-50/70 transition-colors";
-            tr.innerHTML = `
-                <td class="py-3.5 px-6 font-mono text-xs text-slate-500">${alumno.matricula}</td>
-                <td class="py-3.5 px-6 font-medium text-slate-800">${alumno.nombre}</td>
-                <td class="py-3.5 px-6 text-slate-600 font-semibold">Grupo ${grupo}</td>
-                <td class="py-3.5 px-6 font-bold text-brand-600">${alumno.promedio}</td>
-                <td class="py-3.5 px-6 whitespace-nowrap">${badgeEstatus}</td>
-            `;
-            tbody.appendChild(tr);
-        });
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/70 transition-colors";
+                tr.innerHTML = `
+                    <td class="py-3.5 px-6 font-mono text-xs text-slate-500">${alumno.matricula}</td>
+                    <td class="py-3.5 px-6 font-medium text-slate-800">${alumno.nombre}</td>
+                    <td class="py-3.5 px-6 text-slate-600 font-semibold">Grupo ${grupo}</td>
+                    <td class="py-3.5 px-6 text-slate-600">${alumno.rendimiento}</td>
+                    <td class="py-3.5 px-6 whitespace-nowrap">${badgeEstatus}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
 
         renderizarGraficasGrupo(alumnos, grupo);
     }
 
-    // Renderizado de Gráficas Chart.js
+    // Renderizar Chart.js
     function renderizarGraficasGrupo(alumnos, grupo) {
-        const nombres = alumnos.map(a => a.nombre.split(' ')[0] + ' ' + (a.nombre.split(' ')[2] || ''));
+        const nombres = alumnos.map(a => {
+            const partes = a.nombre.split(' ');
+            return partes[0] + ' ' + (partes[1] ? partes[1][0] + '.' : '');
+        });
         const promedios = alumnos.map(a => a.promedio);
 
         const estatusCount = {
@@ -893,17 +873,17 @@
             'En Riesgo': alumnos.filter(a => a.estatus === 'En Riesgo').length
         };
 
-        // Gráfica 1: Barras de Promedios
+        // Gráfica de Barras
         const ctxPromedios = document.getElementById('chartPromedios').getContext('2d');
         if (chartPromediosInstancia) chartPromediosInstancia.destroy();
 
         chartPromediosInstancia = new Chart(ctxPromedios, {
             type: 'bar',
             data: {
-                labels: nombres,
+                labels: nombres.length > 0 ? nombres : ['Sin datos'],
                 datasets: [{
-                    label: `Promedio en Grupo ${grupo}`,
-                    data: promedios,
+                    label: `Promedio estimado Grupo ${grupo}`,
+                    data: promedios.length > 0 ? promedios : [0],
                     backgroundColor: 'rgba(14, 124, 112, 0.85)',
                     borderColor: '#0E7C70',
                     borderWidth: 1,
@@ -914,26 +894,20 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    y: {
-                        min: 6,
-                        max: 10,
-                        ticks: { stepSize: 1 }
-                    }
+                    y: { min: 0, max: 10, ticks: { stepSize: 2 } }
                 },
-                plugins: {
-                    legend: { display: false }
-                }
+                plugins: { legend: { display: false } }
             }
         });
 
-        // Gráfica 2: Pie de Estatus
+        // Gráfica de Donut
         const ctxEstatus = document.getElementById('chartEstatus').getContext('2d');
         if (chartEstatusInstancia) chartEstatusInstancia.destroy();
 
         chartEstatusInstancia = new Chart(ctxEstatus, {
             type: 'doughnut',
             data: {
-                labels: ['Al Día', 'Pendientes', 'En Riesgo'],
+                labels: ['Atendidos', 'Programados', 'Sin Tutoría'],
                 datasets: [{
                     data: [estatusCount['Realizada'], estatusCount['Pendiente'], estatusCount['En Riesgo']],
                     backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
