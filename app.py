@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, g
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from fpdf import FPDF
 from functools import wraps
 import jwt, shutil, os, threading, time
@@ -65,14 +65,15 @@ class ConfiguracionRespaldos(db.Model):
 class Auditoria(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     accion = db.Column(db.String(100), nullable=False)
-    fecha = db.Column(db.DateTime, default=datetime.utcnow)
+    fecha = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     ip = db.Column(db.String(50), nullable=False)
     usuario = db.Column(db.String(100))
 
 # ===================== DATOS INICIALES =====================
 with app.app_context():
     db.create_all()
-    if not ConfiguracionRespaldos.query.first(): db.session.add(ConfiguracionRespaldos())
+    if not ConfiguracionRespaldos.query.first(): 
+        db.session.add(ConfiguracionRespaldos())
     if not Usuario.query.filter_by(credencial="coordinador").first():
         admin = Usuario(tipo="coordinador", credencial="coordinador", nombre_completo="Coordinador General", contrasena=generate_password_hash("clave_coordinador"))
         db.session.add(admin); db.session.flush()
@@ -92,45 +93,71 @@ with app.app_context():
 # ===================== RESPALDOS =====================
 CARPETA_RESPALDOS = os.path.join(CARPETA_BASE, "respaldos")
 os.makedirs(CARPETA_RESPALDOS, exist_ok=True)
+
 def tarea_respaldo_automatico():
     while True:
         with app.app_context():
-            cfg = ConfiguracionRespaldos.query.first()
-            if cfg and cfg.activo:
-                ahora = datetime.utcnow()
-                if not cfg.ultima_ejecucion or (ahora - cfg.ultima_ejecucion).total_seconds() >= cfg.intervalo_horas * 3600:
-                    nombre = f"respaldo_{ahora.strftime('%Y%m%d_%H%M%S')}.db"
-                    destino = os.path.join(CARPETA_RESPALDOS, nombre)
-                    if os.path.exists(RUTA_DB):
-                        shutil.copy2(RUTA_DB, destino)
-                        cfg.ultima_ejecucion = ahora; db.session.commit()
+            try:
+                cfg = ConfiguracionRespaldos.query.first()
+                if cfg and cfg.activo:
+                    ahora = datetime.now(timezone.utc)
+                    if not cfg.ultima_ejecucion or (ahora - cfg.ultima_ejecucion.replace(tzinfo=timezone.utc)).total_seconds() >= cfg.intervalo_horas * 3600:
+                        nombre = f"respaldo_{ahora.strftime('%Y%m%d_%H%M%S')}.db"
+                        destino = os.path.join(CARPETA_RESPALDOS, nombre)
+                        if os.path.exists(RUTA_DB):
+                            shutil.copy2(RUTA_DB, destino)
+                            cfg.ultima_ejecucion = ahora
+                            db.session.commit()
+            except Exception as e:
+                print(f"Error en tarea de respaldo: {e}")
         time.sleep(3600)
+
 threading.Thread(target=tarea_respaldo_automatico, daemon=True).start()
 
 # ===================== FUNCIONES AUXILIARES =====================
 def generar_pdf(datos, titulo, columnas):
-    pdf = FPDF(); pdf.add_page()
-    pdf.set_font("Arial", "B", 16); pdf.cell(0, 10, titulo, ln=True, align="C"); pdf.ln(5)
-    pdf.set_font("Arial", "B", 10); anchos = [40, 50, 40, 50]
-    for i, col in enumerate(columnas): pdf.cell(anchos[i], 8, col, border=1, align="C")
-    pdf.ln(); pdf.set_font("Arial", "", 9)
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", "B", 16)
+    pdf.cell(0, 10, titulo.encode('latin-1', 'replace').decode('latin-1'), ln=True, align="C")
+    pdf.ln(5)
+    pdf.set_font("Arial", "B", 10)
+    anchos = [40, 50, 40, 50]
+    for i, col in enumerate(columnas):
+        pdf.cell(anchos[i], 8, col.encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
+    pdf.ln()
+    pdf.set_font("Arial", "", 9)
     for fila in datos:
-        for i, celda in enumerate(fila): pdf.cell(anchos[i], 8, str(celda), border=1, align="C")
+        for i, celda in enumerate(fila):
+            texto = str(celda).encode('latin-1', 'replace').decode('latin-1')
+            pdf.cell(anchos[i], 8, texto, border=1, align="C")
         pdf.ln()
     ruta = os.path.join(CARPETA_BASE, f"reporte_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf")
-    pdf.output(ruta); return ruta
+    pdf.output(ruta)
+    return ruta
 
 # ===================== JWT COMPLEMENTARIO =====================
-JWT_ALGORITMO = "HS256"; JWT_MINUTOS_EXPIRACION = 30
+JWT_ALGORITMO = "HS256"
+JWT_MINUTOS_EXPIRACION = 30
+
 def generar_token(usuario):
-    payload = {"uid": usuario.id, "rol": usuario.tipo, "nombre": usuario.nombre_completo, "exp": datetime.utcnow() + timedelta(minutes=JWT_MINUTOS_EXPIRACION)}
+    payload = {
+        "uid": usuario.id,
+        "rol": usuario.tipo,
+        "nombre": usuario.nombre_completo,
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=JWT_MINUTOS_EXPIRACION)
+    }
     return jwt.encode(payload, app.config["SECRET_KEY"], algorithm=JWT_ALGORITMO)
+
 def obtener_token_peticion():
     token = request.cookies.get("token")
-    if token: return token
+    if token: 
+        return token
     encabezado = request.headers.get("Authorization", "")
-    if encabezado.startswith("Bearer "): return encabezado.split(" ", 1)[1]
+    if encabezado.startswith("Bearer "): 
+        return encabezado.split(" ", 1)[1]
     return None
+
 def requiere_rol(*roles_permitidos):
     def decorador(vista):
         @wraps(vista)
@@ -139,11 +166,18 @@ def requiere_rol(*roles_permitidos):
                 g.uid, g.rol, g.nombre = session["uid"], session["rol"], session.get("nombre")
                 return vista(*args, **kwargs)
             token = obtener_token_peticion()
-            if not token: return redirect(url_for("login"))
-            try: payload = jwt.decode(token, app.config["SECRET_KEY"], algorithms=[JWT_ALGORITMO])
-            except jwt.ExpiredSignatureError: flash("Tu sesión ha expirado", "error"); return redirect(url_for("login"))
-            except jwt.InvalidTokenError: flash("Sesión inválida", "error"); return redirect(url_for("login"))
-            if roles_permitidos and payload["rol"] not in roles_permitidos: return redirect(url_for("login"))
+            if not token: 
+                return redirect(url_for("login"))
+            try:
+                payload = jwt.decode(token, app.config["SECRET_KEY"], algorithms=[JWT_ALGORITMO])
+            except jwt.ExpiredSignatureError:
+                flash("Tu sesión ha expirado", "error")
+                return redirect(url_for("login"))
+            except jwt.InvalidTokenError:
+                flash("Sesión inválida", "error")
+                return redirect(url_for("login"))
+            if roles_permitidos and payload["rol"] not in roles_permitidos:
+                return redirect(url_for("login"))
             g.uid, g.rol, g.nombre = payload["uid"], payload["rol"], payload["nombre"]
             return vista(*args, **kwargs)
         return envoltura
@@ -155,11 +189,15 @@ def requiere_rol(*roles_permitidos):
 def login():
     ip = request.remote_addr
     if request.method == "POST":
-        cred = request.form["credencial"].strip(); passw = request.form["contrasena"].strip()
+        cred = request.form["credencial"].strip()
+        passw = request.form["contrasena"].strip()
         usuario = Usuario.query.filter_by(credencial=cred).first()
         if not usuario or not check_password_hash(usuario.contrasena, passw):
-            flash("Credenciales incorrectas", "error"); return redirect(url_for("login"))
-        if usuario.bloqueado: flash("Usuario bloqueado", "error"); return redirect(url_for("login"))
+            flash("Credenciales incorrectas", "error")
+            return redirect(url_for("login"))
+        if usuario.bloqueado:
+            flash("Usuario bloqueado", "error")
+            return redirect(url_for("login"))
         usuario.intentos_fallidos = 0
         db.session.add(Auditoria(accion=f"INGRESO: {usuario.tipo}", ip=ip, usuario=usuario.nombre_completo))
         db.session.commit()
@@ -167,7 +205,8 @@ def login():
         token = generar_token(usuario)
         respuesta = redirect(url_for(f"panel_{usuario.tipo}"))
         respuesta.set_cookie("token", token, httponly=True, samesite="Lax", secure=request.is_secure, max_age=JWT_MINUTOS_EXPIRACION * 60)
-        flash(f"Bienvenido {usuario.nombre_completo}", "success"); return respuesta
+        flash(f"Bienvenido {usuario.nombre_completo}", "success")
+        return respuesta
     return render_template("login.html")
 
 @app.route("/salir")
@@ -189,11 +228,16 @@ def panel_alumno():
 @requiere_rol("alumno")
 def solicitar_tutoria():
     alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
-    fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d"); tema = request.form["tema"].strip()
-    if not tema: flash("El tema no puede estar vacío", "error"); return redirect(url_for("panel_alumno"))
+    fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
+    tema = request.form["tema"].strip()
+    if not tema:
+        flash("El tema no puede estar vacío", "error")
+        return redirect(url_for("panel_alumno"))
     nueva = Tutoria(id_alumno=alumno.id, id_tutor=alumno.id_tutor, fecha=fecha, tema=tema, estado="Solicitada")
-    db.session.add(nueva); db.session.commit()
-    flash("Solicitud enviada al tutor correctamente", "success"); return redirect(url_for("panel_alumno"))
+    db.session.add(nueva)
+    db.session.commit()
+    flash("Solicitud enviada al tutor correctamente", "success")
+    return redirect(url_for("panel_alumno"))
 
 @app.route("/reporte-alumno-pdf")
 @requiere_rol("alumno")
@@ -209,7 +253,8 @@ def reporte_alumno_pdf():
 def reportes_alumno():
     alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
     mis_tutorias = Tutoria.query.filter_by(id_alumno=alumno.id).all()
-    total = len(mis_tutorias); realizadas = sum(1 for t in mis_tutorias if t.estado == "Realizada")
+    total = len(mis_tutorias)
+    realizadas = sum(1 for t in mis_tutorias if t.estado == "Realizada")
     pendientes = sum(1 for t in mis_tutorias if t.estado in ["Solicitada", "Confirmada", "Asignada por tutor"])
     return render_template("reportes_alumno.html", total=total, realizadas=realizadas, pendientes=pendientes, tutorias=mis_tutorias)
 
@@ -225,28 +270,38 @@ def panel_tutor():
 @app.route("/tutor/aceptar/<int:id>")
 @requiere_rol("tutor")
 def aceptar_tutoria(id):
-    tut = Tutoria.query.get_or_404(id); tut.estado = "Asignada por tutor"; db.session.commit()
-    flash("Tutoría aceptada y lista para iniciar", "success"); return redirect(url_for("panel_tutor"))
+    tut = Tutoria.query.get_or_404(id)
+    tut.estado = "Asignada por tutor"
+    db.session.commit()
+    flash("Tutoría aceptada y lista para iniciar", "success")
+    return redirect(url_for("panel_tutor"))
 
 @app.route("/tutor/editar-tutoria/<int:id>", methods=["GET"])
 @requiere_rol("tutor")
 def form_editar_tutoria(id):
-    tut = Tutoria.query.get_or_404(id); return render_template("editar_tutoria.html", tutoria=tut)
+    tut = Tutoria.query.get_or_404(id)
+    return render_template("editar_tutoria.html", tutoria=tut)
 
 @app.route("/tutor/editar-tutoria/<int:id>", methods=["POST"])
 @requiere_rol("tutor")
 def editar_tutoria(id):
     tut = Tutoria.query.get_or_404(id)
-    tut.fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d"); tut.tema = request.form["tema"]
-    tut.estado = request.form["estado"]; tut.observaciones = request.form["observaciones"]
-    db.session.commit(); flash("Tutoría actualizada", "success"); return redirect(url_for("panel_tutor"))
+    tut.fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
+    tut.tema = request.form["tema"]
+    tut.estado = request.form["estado"]
+    tut.observaciones = request.form["observaciones"]
+    db.session.commit()
+    flash("Tutoría actualizada", "success")
+    return redirect(url_for("panel_tutor"))
 
 @app.route("/tutor/actualizar-horario", methods=["POST"])
 @requiere_rol("tutor")
 def actualizar_horario():
     tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
-    tutor.horario = request.form["horario"]; db.session.commit()
-    flash("Horario actualizado", "success"); return redirect(url_for("panel_tutor"))
+    tutor.horario = request.form["horario"]
+    db.session.commit()
+    flash("Horario actualizado", "success")
+    return redirect(url_for("panel_tutor"))
 
 @app.route("/tutor/crear-tutoria", methods=["POST"])
 @requiere_rol("tutor")
@@ -254,14 +309,19 @@ def crear_tutoria():
     tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
     fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
     nueva = Tutoria(id_alumno=request.form["id_alumno"], id_tutor=tutor.usuario_id, fecha=fecha, tema=request.form["tema"], estado="Asignada por tutor")
-    db.session.add(nueva); db.session.commit()
-    flash("Tutoría creada", "success"); return redirect(url_for("panel_tutor"))
+    db.session.add(nueva)
+    db.session.commit()
+    flash("Tutoría creada", "success")
+    return redirect(url_for("panel_tutor"))
 
 @app.route("/tutor/completar/<int:id>")
 @requiere_rol("tutor")
 def completar_tutoria(id):
-    tut = Tutoria.query.get_or_404(id); tut.estado = "Realizada"; db.session.commit()
-    flash("Tutoría marcada como realizada", "success"); return redirect(url_for("panel_tutor"))
+    tut = Tutoria.query.get_or_404(id)
+    tut.estado = "Realizada"
+    db.session.commit()
+    flash("Tutoría marcada como realizada", "success")
+    return redirect(url_for("panel_tutor"))
 
 @app.route("/reporte-tutor-pdf")
 @requiere_rol("tutor")
@@ -278,7 +338,8 @@ def reportes_tutor():
     tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
     mis_tutorias = Tutoria.query.filter_by(id_tutor=tutor.usuario_id).all()
     mis_alumnos = Alumno.query.filter_by(id_tutor=tutor.usuario_id).count()
-    total = len(mis_tutorias); realizadas = sum(1 for t in mis_tutorias if t.estado == "Realizada")
+    total = len(mis_tutorias)
+    realizadas = sum(1 for t in mis_tutorias if t.estado == "Realizada")
     pendientes = sum(1 for t in mis_tutorias if t.estado in ["Solicitada", "Confirmada", "Asignada por tutor"])
     return render_template("reportes_tutor.html", total=total, realizadas=realizadas, pendientes=pendientes, alumnos=mis_alumnos, tutorias=mis_tutorias)
 
@@ -287,18 +348,26 @@ def reportes_tutor():
 @requiere_rol("tutor")
 def iniciar_tutoria(id):
     tutoria = Tutoria.query.get_or_404(id)
-    if tutoria.id_tutor != g.uid: flash("No tienes permiso para esta tutoría", "error"); return redirect(url_for("panel_tutor"))
-    tutoria.estado = "En proceso"; db.session.commit()
-    flash("Tutoría iniciada correctamente", "success"); return redirect(url_for("ver_tutoria_individual", id=id))
+    if tutoria.id_tutor != g.uid:
+        flash("No tienes permiso para esta tutoría", "error")
+        return redirect(url_for("panel_tutor"))
+    tutoria.estado = "En proceso"
+    db.session.commit()
+    flash("Tutoría iniciada correctamente", "success")
+    return redirect(url_for("ver_tutoria_individual", id=id))
 
 @app.route("/tutoria-individual/<int:id>", methods=["GET", "POST"])
 @requiere_rol("tutor", "alumno")
 def ver_tutoria_individual(id):
     tutoria = Tutoria.query.get_or_404(id)
-    if g.rol == "tutor" and tutoria.id_tutor != g.uid: flash("No tienes acceso", "error"); return redirect(url_for("panel_tutor"))
+    if g.rol == "tutor" and tutoria.id_tutor != g.uid:
+        flash("No tienes acceso", "error")
+        return redirect(url_for("panel_tutor"))
     if g.rol == "alumno":
         alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
-        if tutoria.id_alumno != alumno.id: flash("No tienes acceso", "error"); return redirect(url_for("panel_alumno"))
+        if tutoria.id_alumno != alumno.id:
+            flash("No tienes acceso", "error")
+            return redirect(url_for("panel_alumno"))
     if request.method == "POST":
         tutoria.carrera = request.form.get("carrera", tutoria.carrera)
         tutoria.grupo = request.form.get("grupo", tutoria.grupo)
@@ -308,80 +377,131 @@ def ver_tutoria_individual(id):
         tutoria.puntos_relevantes = request.form.get("puntos_relevantes", tutoria.puntos_relevantes)
         tutoria.compromisos = request.form.get("compromisos", tutoria.compromisos)
         tutoria.observaciones = request.form.get("observaciones", tutoria.observaciones)
-        if g.rol == "tutor": tutoria.estado = "Realizada"
-        db.session.commit(); flash("Cambios guardados correctamente", "success"); return redirect(url_for("ver_tutoria_individual", id=id))
+        if g.rol == "tutor":
+            tutoria.estado = "Realizada"
+        db.session.commit()
+        flash("Cambios guardados correctamente", "success")
+        return redirect(url_for("ver_tutoria_individual", id=id))
     return render_template("tutoria_individual.html", tutoria=tutoria)
 
 # ===================== COORDINADOR =====================
 @app.route("/panel-coordinador")
 @requiere_rol("coordinador")
 def panel_coordinador():
-    return render_template("coordinador.html", usuarios=Usuario.query.all(), tutorias=Tutoria.query.all(),
-        auditoria=Auditoria.query.order_by(Auditoria.fecha.desc()).limit(30).all(),
-        respaldos=os.listdir(CARPETA_RESPALDOS), cfg=ConfiguracionRespaldos.query.first())
+    return render_template("coordinador.html", 
+                           usuarios=Usuario.query.all(), 
+                           tutorias=Tutoria.query.all(),
+                           auditoria=Auditoria.query.order_by(Auditoria.fecha.desc()).limit(30).all(),
+                           respaldos=os.listdir(CARPETA_RESPALDOS), 
+                           cfg=ConfiguracionRespaldos.query.first())
 
 @app.route("/reportes")
 @requiere_rol("coordinador")
 def reportes():
     return render_template("reportes.html",
-        total_tutorias=Tutoria.query.count(), solicitadas=Tutoria.query.filter_by(estado="Solicitada").count(),
-        confirmadas=Tutoria.query.filter_by(estado="Confirmada").count(), realizadas=Tutoria.query.filter_by(estado="Realizada").count(),
-        asignadas=Tutoria.query.filter_by(estado="Asignada por tutor").count(), total_alumnos=Usuario.query.filter_by(tipo="alumno").count(),
-        total_tutores=Usuario.query.filter_by(tipo="tutor").count(), total_coordinadores=Usuario.query.filter_by(tipo="coordinador").count(),
-        activos=Usuario.query.filter_by(bloqueado=False).count(), bloqueados=Usuario.query.filter_by(bloqueado=True).count())
+                           total_tutorias=Tutoria.query.count(), 
+                           solicitadas=Tutoria.query.filter_by(estado="Solicitada").count(),
+                           confirmadas=Tutoria.query.filter_by(estado="Confirmada").count(), 
+                           realizadas=Tutoria.query.filter_by(estado="Realizada").count(),
+                           asignadas=Tutoria.query.filter_by(estado="Asignada por tutor").count(), 
+                           total_alumnos=Usuario.query.filter_by(tipo="alumno").count(),
+                           total_tutores=Usuario.query.filter_by(tipo="tutor").count(), 
+                           total_coordinadores=Usuario.query.filter_by(tipo="coordinador").count(),
+                           activos=Usuario.query.filter_by(bloqueado=False).count(), 
+                           bloqueados=Usuario.query.filter_by(bloqueado=True).count())
 
 @app.route("/coordinador/crear-usuario", methods=["POST"])
 @requiere_rol("coordinador")
 def crear_usuario():
-    tipo = request.form["tipo"]; cred = request.form["credencial"]; nombre = request.form["nombre"]; clave = request.form["contrasena"]
-    if Usuario.query.filter_by(credencial=cred).first(): flash("Credencial ya existe", "error"); return redirect(url_for("panel_coordinador"))
+    tipo = request.form["tipo"]
+    cred = request.form["credencial"]
+    nombre = request.form["nombre"]
+    clave = request.form["contrasena"]
+    if Usuario.query.filter_by(credencial=cred).first():
+        flash("Credencial ya existe", "error")
+        return redirect(url_for("panel_coordinador"))
     nuevo = Usuario(tipo=tipo, credencial=cred, nombre_completo=nombre, contrasena=generate_password_hash(clave))
-    db.session.add(nuevo); db.session.flush()
-    if tipo == "alumno": db.session.add(Alumno(usuario_id=nuevo.id, id_tutor=None))
-    if tipo == "tutor": db.session.add(Tutor(usuario_id=nuevo.id))
+    db.session.add(nuevo)
+    db.session.flush()
+    if tipo == "alumno": 
+        db.session.add(Alumno(usuario_id=nuevo.id, id_tutor=None))
+    if tipo == "tutor": 
+        db.session.add(Tutor(usuario_id=nuevo.id))
     db.session.add(Auditoria(accion=f"CREÓ USUARIO: {cred}", ip=request.remote_addr, usuario=g.nombre))
-    db.session.commit(); flash("Usuario creado correctamente", "success"); return redirect(url_for("panel_coordinador"))
+    db.session.commit()
+    flash("Usuario creado correctamente", "success")
+    return redirect(url_for("panel_coordinador"))
 
 @app.route("/coordinador/asignar-tutor/<int:id_alumno>", methods=["POST"])
 @requiere_rol("coordinador")
 def asignar_tutor(id_alumno):
-    alumno = Alumno.query.get_or_404(id_alumno); alumno.id_tutor = request.form["id_tutor"]
-    db.session.commit(); flash("Tutor asignado correctamente", "success"); return redirect(url_for("panel_coordinador"))
+    alumno = Alumno.query.get_or_404(id_alumno)
+    id_tutor = request.form.get("id_tutor")
+    alumno.id_tutor = int(id_tutor) if id_tutor else None
+    db.session.commit()
+    flash("Tutor asignado correctamente", "success")
+    return redirect(url_for("panel_coordinador"))
 
 @app.route("/coordinador/cambiar-estado/<int:id>")
 @requiere_rol("coordinador")
 def cambiar_estado(id):
-    usuario = Usuario.query.get_or_404(id); usuario.bloqueado = not usuario.bloqueado; usuario.intentos_fallidos = 0
-    db.session.commit(); flash("Estado actualizado", "success"); return redirect(url_for("panel_coordinador"))
+    usuario = Usuario.query.get_or_404(id)
+    usuario.bloqueado = not usuario.bloqueado
+    usuario.intentos_fallidos = 0
+    db.session.commit()
+    flash("Estado actualizado", "success")
+    return redirect(url_for("panel_coordinador"))
 
 @app.route("/coordinador/respaldo-manual")
 @requiere_rol("coordinador")
 def respaldo_manual():
     nombre = f"respaldo_manual_{datetime.now().strftime('%Y%m%d_%H%M%S')}.db"
-    destino = os.path.join(CARPETA_RESPALDOS, nombre); shutil.copy2(RUTA_DB, destino)
+    destino = os.path.join(CARPETA_RESPALDOS, nombre)
+    shutil.copy2(RUTA_DB, destino)
     db.session.add(Auditoria(accion="RESPALDO MANUAL", ip=request.remote_addr, usuario=g.nombre))
-    db.session.commit(); flash("Respaldo creado correctamente", "success"); return redirect(url_for("panel_coordinador"))
+    db.session.commit()
+    flash("Respaldo creado correctamente", "success")
+    return redirect(url_for("panel_coordinador"))
 
 @app.route("/coordinador/restaurar/<nombre>")
 @requiere_rol("coordinador")
 def restaurar(nombre):
     origen = os.path.join(CARPETA_RESPALDOS, nombre)
-    if os.path.exists(origen): shutil.copy2(origen, RUTA_DB); flash("Base restaurada correctamente", "success")
-    else: flash("Archivo no encontrado", "error")
+    if os.path.exists(origen):
+        shutil.copy2(origen, RUTA_DB)
+        flash("Base restaurada correctamente", "success")
+    else:
+        flash("Archivo no encontrado", "error")
+    return redirect(url_for("panel_coordinador"))
+
+@app.route("/coordinador/eliminar-respaldo/<nombre>")
+@requiere_rol("coordinador")
+def eliminar_respaldo(nombre):
+    ruta = os.path.join(CARPETA_RESPALDOS, nombre)
+    if os.path.exists(ruta):
+        os.remove(ruta)
+        db.session.add(Auditoria(accion=f"ELIMINÓ RESPALDO: {nombre}", ip=request.remote_addr, usuario=g.nombre))
+        db.session.commit()
+        flash("Archivo de respaldo eliminado", "success")
+    else:
+        flash("El archivo no existe", "error")
     return redirect(url_for("panel_coordinador"))
 
 @app.route("/coordinador/config-respaldos", methods=["POST"])
 @requiere_rol("coordinador")
 def config_respaldos():
     cfg = ConfiguracionRespaldos.query.first()
-    cfg.activo = "activo" in request.form; cfg.intervalo_horas = int(request.form["intervalo"])
-    db.session.commit(); flash("Configuración guardada", "success"); return redirect(url_for("panel_coordinador"))
+    cfg.activo = "activo" in request.form
+    cfg.intervalo_horas = int(request.form["intervalo"])
+    db.session.commit()
+    flash("Configuración guardada", "success")
+    return redirect(url_for("panel_coordinador"))
 
 @app.route("/reporte-general-pdf")
 @requiere_rol("coordinador")
 def reporte_general_pdf():
     datos = [(u.tipo.upper(), u.credencial, u.nombre_completo, "Bloqueado" if u.bloqueado else "Activo") for u in Usuario.query.all()]
-    ruta = generar_pdf(datos, "Reporte General", ["Rol", "Credencial", "Nombre", "Estado"])
+    ruta = generar_pdf(datos, "Reporte General de Usuarios", ["Rol", "Credencial", "Nombre", "Estado"])
     return send_file(ruta, as_attachment=True, download_name="reporte_general.pdf")
 
 if __name__ == "__main__":
