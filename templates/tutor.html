@@ -59,12 +59,25 @@
             background-image: 
                 radial-gradient(circle at 100% 0%, rgba(14, 124, 112, 0.03) 0%, transparent 40%),
                 radial-gradient(circle at 0% 100%, rgba(134, 217, 119, 0.04) 0%, transparent 40%);
-            background-attachment: fixed;
+            background-attachment: scroll; /* Se cambia a scroll para prevenir problemas de renderizado en móviles */
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
+
         .glass-panel {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        /* Aplica el efecto de desenfoque e imagen fija unicamente en computadoras/pantallas grandes */
+        @media (min-width: 1024px) {
+            body {
+                background-attachment: fixed;
+            }
+            .glass-panel {
+                background: rgba(255, 255, 255, 0.85);
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+            }
         }
     </style>
 </head>
