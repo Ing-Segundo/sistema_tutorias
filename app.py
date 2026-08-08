@@ -411,14 +411,17 @@ def reportes_alumno():
 @requiere_rol("tutor")
 def panel_tutor():
     tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
-    tutorias = Tutoria.query.filter_by(id_tutor=tutor.usuario_id).order_by(Tutoria.fecha.desc()).all()
-    alumnos = Alumno.query.filter_by(id_tutor=tutor.usuario_id).all()
+    tutorias = Tutoria.query.filter_by(id_tutor=g.uid).order_by(Tutoria.fecha.desc()).all()
+    alumnos = Alumno.query.filter_by(id_tutor=g.uid).all()
     return render_template("tutor.html", tutor=tutor, alumnos=alumnos, tutorias=tutorias)
 
 @app.route("/tutor/aceptar/<int:id>")
 @requiere_rol("tutor")
 def aceptar_tutoria(id):
     tut = Tutoria.query.get_or_404(id)
+    if tut.id_tutor != g.uid:
+        flash("No tienes permiso para esta tutoría", "error")
+        return redirect(url_for("panel_tutor"))
     tut.estado = "Asignada por tutor"
     db.session.commit()
     flash("Tutoría aceptada y lista para iniciar", "success")
@@ -428,12 +431,18 @@ def aceptar_tutoria(id):
 @requiere_rol("tutor")
 def form_editar_tutoria(id):
     tut = Tutoria.query.get_or_404(id)
+    if tut.id_tutor != g.uid:
+        flash("No tienes permiso para editar esta tutoría", "error")
+        return redirect(url_for("panel_tutor"))
     return render_template("editar_tutoria.html", tutoria=tut)
 
 @app.route("/tutor/editar-tutoria/<int:id>", methods=["POST"])
 @requiere_rol("tutor")
 def editar_tutoria(id):
     tut = Tutoria.query.get_or_404(id)
+    if tut.id_tutor != g.uid:
+        flash("No tienes permiso para modificar esta tutoría", "error")
+        return redirect(url_for("panel_tutor"))
     tut.fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
     tut.tema = request.form["tema"]
     tut.estado = request.form["estado"]
@@ -454,9 +463,15 @@ def actualizar_horario():
 @app.route("/tutor/crear-tutoria", methods=["POST"])
 @requiere_rol("tutor")
 def crear_tutoria():
-    tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
     fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
-    nueva = Tutoria(id_alumno=request.form["id_alumno"], id_tutor=tutor.usuario_id, fecha=fecha, tema=request.form["tema"], estado="Asignada por tutor")
+    id_alumno = request.form["id_alumno"]
+    nueva = Tutoria(
+        id_alumno=id_alumno, 
+        id_tutor=g.uid, 
+        fecha=fecha, 
+        tema=request.form["tema"], 
+        estado="Asignada por tutor"
+    )
     db.session.add(nueva)
     db.session.commit()
     flash("Tutoría creada", "success")
@@ -466,6 +481,9 @@ def crear_tutoria():
 @requiere_rol("tutor")
 def completar_tutoria(id):
     tut = Tutoria.query.get_or_404(id)
+    if tut.id_tutor != g.uid:
+        flash("No tienes permiso para modificar esta tutoría", "error")
+        return redirect(url_for("panel_tutor"))
     tut.estado = "Realizada"
     db.session.commit()
     flash("Tutoría marcada como realizada", "success")
@@ -475,7 +493,7 @@ def completar_tutoria(id):
 @requiere_rol("tutor")
 def reporte_tutor_pdf():
     tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
-    tutorias = Tutoria.query.filter_by(id_tutor=tutor.usuario_id).all()
+    tutorias = Tutoria.query.filter_by(id_tutor=g.uid).all()
     datos = [(t.alumno.usuario.nombre_completo, t.fecha.strftime("%d/%m/%Y"), t.tema, t.estado) for t in tutorias]
     ruta = generar_pdf(datos, f"Tutorías a mi cargo - {tutor.usuario.nombre_completo}", ["Alumno", "Fecha", "Tema", "Estado"])
     return send_file(ruta, as_attachment=True, download_name="tutorias_tutor.pdf")
@@ -484,8 +502,8 @@ def reporte_tutor_pdf():
 @requiere_rol("tutor")
 def reportes_tutor():
     tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
-    mis_tutorias = Tutoria.query.filter_by(id_tutor=tutor.usuario_id).all()
-    mis_alumnos = Alumno.query.filter_by(id_tutor=tutor.usuario_id).count()
+    mis_tutorias = Tutoria.query.filter_by(id_tutor=g.uid).all()
+    mis_alumnos = Alumno.query.filter_by(id_tutor=g.uid).count()
     total = len(mis_tutorias)
     realizadas = sum(1 for t in mis_tutorias if t.estado == "Realizada")
     pendientes = sum(1 for t in mis_tutorias if t.estado in ["Solicitada", "Confirmada", "Asignada por tutor"])
