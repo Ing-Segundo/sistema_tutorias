@@ -45,6 +45,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 
+    <!-- Chart.js para gráficas por grupo -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <!-- Lucide Icons CDN -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -59,7 +62,7 @@
             background-image: 
                 radial-gradient(circle at 100% 0%, rgba(14, 124, 112, 0.03) 0%, transparent 40%),
                 radial-gradient(circle at 0% 100%, rgba(134, 217, 119, 0.04) 0%, transparent 40%);
-            background-attachment: scroll; /* Se cambia a scroll para prevenir problemas de renderizado en móviles */
+            background-attachment: scroll;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
         }
@@ -68,7 +71,6 @@
             background: rgba(255, 255, 255, 0.95);
         }
 
-        /* Aplica el efecto de desenfoque e imagen fija unicamente en computadoras/pantallas grandes */
         @media (min-width: 1024px) {
             body {
                 background-attachment: fixed;
@@ -151,283 +153,408 @@
                 {% endif %}
             {% endwith %}
 
-            <!-- CARDS RESUMEN / STATS -->
-            <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
-                    <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-500 border border-brand-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="users" class="w-5 h-5"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total Alumnos</p>
-                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">{{ alumnos|length if alumnos else 0 }}</h4>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
-                    <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="calendar" class="w-5 h-5"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Tutorías Asignadas</p>
-                        <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">{{ tutorias|length if tutorias else 0 }}</h4>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
-                    <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
-                        <i data-lucide="activity" class="w-5 h-5"></i>
-                    </div>
-                    <div class="min-w-0">
-                        <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Estado Panel</p>
-                        <div class="flex items-center gap-2 mt-1">
-                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                            <span class="text-sm font-semibold text-emerald-700">Activo</span>
+            <!-- SECCIÓN: VISTA PANEL GENERAL -->
+            <div id="vista-general" class="space-y-6">
+                <!-- CARDS RESUMEN / STATS -->
+                <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
+                        <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-500 border border-brand-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Total Alumnos</p>
+                            <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">{{ alumnos|length if alumnos else 0 }}</h4>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <!-- PERFIL TUTOR Y HORARIO -->
-            <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
-                            <i data-lucide="id-card" class="w-5 h-5"></i>
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
+                        <div class="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
                         </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-slate-800">Mis Datos</h2>
-                            <p class="text-xs text-slate-500">Información del tutor y configuración de horarios</p>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Tutorías Asignadas</p>
+                            <h4 class="text-2xl font-bold text-slate-800 leading-tight mt-0.5">{{ tutorias|length if tutorias else 0 }}</h4>
                         </div>
                     </div>
-                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-100">
-                        <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
-                        <span>Tutor Académico</span>
-                    </span>
-                </div>
 
-                <div class="p-5 sm:p-6">
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-end">
-                        <!-- Nombre -->
-                        <div class="lg:col-span-3">
-                            <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1.5">Nombre Completo</span>
-                            <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-200/60">
-                                <p class="text-sm font-semibold text-slate-800 truncate">{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else 'No asignado' }}</p>
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4 hover:shadow-saas-hover transition-all">
+                        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="activity" class="w-5 h-5"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Estado Panel</p>
+                            <div class="flex items-center gap-2 mt-1">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span class="text-sm font-semibold text-emerald-700">Activo</span>
                             </div>
                         </div>
+                    </div>
+                </section>
 
-                        <!-- Formulario de Horario -->
-                        <form method="POST" action="{{ url_for('actualizar_horario') }}" class="lg:col-span-6 flex flex-col sm:flex-row items-end gap-3">
-                            <div class="w-full space-y-1.5">
-                                <label for="horario" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400">
-                                    Horario de atención
-                                </label>
-                                <div class="relative">
-                                    <i data-lucide="clock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
-                                    <input type="text" name="horario" id="horario" value="{{ tutor.horario if tutor and tutor.horario else '' }}" placeholder="Ej. Lunes a Viernes 08:00-16:00" required 
-                                        class="w-full h-10 pl-10 pr-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                <!-- PERFIL TUTOR Y HORARIO -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="id-card" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-800">Mis Datos</h2>
+                                <p class="text-xs text-slate-500">Información del tutor y configuración de horarios</p>
+                            </div>
+                        </div>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-brand-50 text-brand-700 border border-brand-100">
+                            <i data-lucide="shield-check" class="w-3.5 h-3.5"></i>
+                            <span>Tutor Académico</span>
+                        </span>
+                    </div>
+
+                    <div class="p-5 sm:p-6">
+                        <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-end">
+                            <!-- Nombre -->
+                            <div class="lg:col-span-3">
+                                <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1.5">Nombre Completo</span>
+                                <div class="bg-slate-50/70 p-3 rounded-xl border border-slate-200/60">
+                                    <p class="text-sm font-semibold text-slate-800 truncate">{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else 'No asignado' }}</p>
                                 </div>
                             </div>
-                            <button type="submit" class="w-full sm:w-auto h-10 px-4 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-medium text-xs rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 shrink-0 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
-                                <i data-lucide="save" class="w-4 h-4"></i>
-                                <span>Actualizar</span>
-                            </button>
+
+                            <!-- Formulario de Horario -->
+                            <form method="POST" action="{{ url_for('actualizar_horario') }}" class="lg:col-span-6 flex flex-col sm:flex-row items-end gap-3">
+                                <div class="w-full space-y-1.5">
+                                    <label for="horario" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                                        Horario de atención
+                                    </label>
+                                    <div class="relative">
+                                        <i data-lucide="clock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+                                        <input type="text" name="horario" id="horario" value="{{ tutor.horario if tutor and tutor.horario else '' }}" placeholder="Ej. Lunes a Viernes 08:00-16:00" required 
+                                            class="w-full h-10 pl-10 pr-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                                    </div>
+                                </div>
+                                <button type="submit" class="w-full sm:w-auto h-10 px-4 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-medium text-xs rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 shrink-0 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                                    <i data-lucide="save" class="w-4 h-4"></i>
+                                    <span>Actualizar</span>
+                                </button>
+                            </form>
+
+                            <!-- Descargar Reporte PDF -->
+                            <div class="lg:col-span-3">
+                                <a href="{{ url_for('reporte_tutor_pdf') }}" class="w-full h-10 px-4 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg transition-all shadow-sm hover:border-slate-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500/20">
+                                    <i data-lucide="file-text" class="w-4 h-4 text-rose-600"></i>
+                                    <span>Descargar Reporte PDF</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- FORMULARIO: ASIGNAR NUEVA TUTORÍA -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="calendar-plus" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-800">Asignar Nueva Tutoría</h2>
+                                <p class="text-xs text-slate-500">Agenda una sesión académica con un alumno asignado</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-5 sm:p-6">
+                        <form method="POST" action="{{ url_for('crear_tutoria') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                            <div class="space-y-1.5">
+                                <label for="id_alumno" class="block text-xs font-semibold text-slate-700">
+                                    Alumno <span class="text-rose-500">*</span>
+                                </label>
+                                <select id="id_alumno" name="id_alumno" required 
+                                    class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none">
+                                    <option value="" disabled selected>Selecciona alumno</option>
+                                    {% for a in alumnos %}
+                                        <option value="{{ a.id }}">{{ a.usuario.nombre_completo if a.usuario else 'Sin nombre' }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label for="fecha" class="block text-xs font-semibold text-slate-700">
+                                    Fecha <span class="text-rose-500">*</span>
+                                </label>
+                                <input type="date" id="fecha" name="fecha" required 
+                                    class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label for="tema" class="block text-xs font-semibold text-slate-700">
+                                    Tema <span class="text-rose-500">*</span>
+                                </label>
+                                <input type="text" id="tema" name="tema" placeholder="Ej. Repaso de Examen" required 
+                                    class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                            </div>
+
+                            <div>
+                                <button type="submit" class="w-full h-10 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-medium text-sm rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                                    <i data-lucide="plus" class="w-4 h-4"></i>
+                                    <span>Crear Tutoría</span>
+                                </button>
+                            </div>
                         </form>
-
-                        <!-- Descargar Reporte PDF -->
-                        <div class="lg:col-span-3">
-                            <a href="{{ url_for('reporte_tutor_pdf') }}" class="w-full h-10 px-4 text-xs font-medium text-slate-700 bg-white hover:bg-slate-50 border border-slate-200 rounded-lg transition-all shadow-sm hover:border-slate-300 flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500/20">
-                                <i data-lucide="file-text" class="w-4 h-4 text-rose-600"></i>
-                                <span>Descargar Reporte PDF</span>
-                            </a>
-                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
 
-            <!-- FORMULARIO: ASIGNAR NUEVA TUTORÍA -->
-            <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
-                            <i data-lucide="calendar-plus" class="w-5 h-5"></i>
+                <!-- TABLA DE TUTORÍAS -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="list-checks" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-800">Tutorías a mi Cargo</h2>
+                                <p class="text-xs text-slate-500">Listado y gestión de sesiones programadas</p>
+                            </div>
                         </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-slate-800">Asignar Nueva Tutoría</h2>
-                            <p class="text-xs text-slate-500">Agenda una sesión académica con un alumno asignado</p>
-                        </div>
+                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                            {{ tutorias|length if tutorias else 0 }} Registros
+                        </span>
                     </div>
-                </div>
 
-                <div class="p-5 sm:p-6">
-                    <form method="POST" action="{{ url_for('crear_tutoria') }}" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
-                        <div class="space-y-1.5">
-                            <label for="id_alumno" class="block text-xs font-semibold text-slate-700">
-                                Alumno <span class="text-rose-500">*</span>
-                            </label>
-                            <select id="id_alumno" name="id_alumno" required 
-                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none">
-                                <option value="" disabled selected>Selecciona alumno</option>
-                                {% for a in alumnos %}
-                                    <option value="{{ a.id }}">{{ a.usuario.nombre_completo if a.usuario else 'Sin nombre' }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <label for="fecha" class="block text-xs font-semibold text-slate-700">
-                                Fecha <span class="text-rose-500">*</span>
-                            </label>
-                            <input type="date" id="fecha" name="fecha" required 
-                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
-                        </div>
-
-                        <div class="space-y-1.5">
-                            <label for="tema" class="block text-xs font-semibold text-slate-700">
-                                Tema <span class="text-rose-500">*</span>
-                            </label>
-                            <input type="text" id="tema" name="tema" placeholder="Ej. Repaso de Examen" required 
-                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
-                        </div>
-
-                        <div>
-                            <button type="submit" class="w-full h-10 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-medium text-sm rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
-                                <i data-lucide="plus" class="w-4 h-4"></i>
-                                <span>Crear Tutoría</span>
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            </section>
-
-            <!-- TABLA DE TUTORÍAS -->
-            <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                    <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
-                            <i data-lucide="list-checks" class="w-5 h-5"></i>
-                        </div>
-                        <div>
-                            <h2 class="text-base font-semibold text-slate-800">Tutorías a mi Cargo</h2>
-                            <p class="text-xs text-slate-500">Listado y gestión de sesiones programadas</p>
-                        </div>
-                    </div>
-                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                        {{ tutorias|length if tutorias else 0 }} Registros
-                    </span>
-                </div>
-
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-sm border-collapse min-w-[700px]">
-                        <thead>
-                            <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
-                                <th scope="col" class="py-3.5 px-6">Alumno</th>
-                                <th scope="col" class="py-3.5 px-6">Fecha</th>
-                                <th scope="col" class="py-3.5 px-6">Tema</th>
-                                <th scope="col" class="py-3.5 px-6">Estado</th>
-                                <th scope="col" class="py-3.5 px-6 text-right">Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-slate-100">
-                            {% for t in tutorias %}
-                            <tr class="hover:bg-slate-50/70 transition-colors group">
-                                <td class="py-4 px-6 font-medium text-slate-800 whitespace-nowrap">
-                                    <div class="flex items-center gap-2.5">
-                                        <div class="w-7 h-7 rounded-full bg-brand-50 text-brand-700 border border-brand-100 flex items-center justify-center text-xs font-bold shrink-0">
-                                            {{ t.alumno.usuario.nombre_completo.strip()[0] if t.alumno and t.alumno.usuario and t.alumno.usuario.nombre_completo else 'A' }}
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse min-w-[700px]">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                    <th scope="col" class="py-3.5 px-6">Alumno</th>
+                                    <th scope="col" class="py-3.5 px-6">Fecha</th>
+                                    <th scope="col" class="py-3.5 px-6">Tema</th>
+                                    <th scope="col" class="py-3.5 px-6">Estado</th>
+                                    <th scope="col" class="py-3.5 px-6 text-right">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100">
+                                {% for t in tutorias %}
+                                <tr class="hover:bg-slate-50/70 transition-colors group">
+                                    <td class="py-4 px-6 font-medium text-slate-800 whitespace-nowrap">
+                                        <div class="flex items-center gap-2.5">
+                                            <div class="w-7 h-7 rounded-full bg-brand-50 text-brand-700 border border-brand-100 flex items-center justify-center text-xs font-bold shrink-0">
+                                                {{ t.alumno.usuario.nombre_completo.strip()[0] if t.alumno and t.alumno.usuario and t.alumno.usuario.nombre_completo else 'A' }}
+                                            </div>
+                                            <span>{{ t.alumno.usuario.nombre_completo if t.alumno and t.alumno.usuario else 'Sin Alumno' }}</span>
                                         </div>
-                                        <span>{{ t.alumno.usuario.nombre_completo if t.alumno and t.alumno.usuario else 'Sin Alumno' }}</span>
-                                    </div>
-                                </td>
-                                <td class="py-4 px-6 whitespace-nowrap text-slate-600">
-                                    <div class="flex items-center gap-2">
-                                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
-                                        <span>
-                                            {% if t.fecha.strftime is defined %}
-                                                {{ t.fecha.strftime('%d/%m/%Y') }}
-                                            {% else %}
-                                                {{ t.fecha }}
-                                            {% endif %}
-                                        </span>
-                                    </div>
-                                </td>
-                                <td class="py-4 px-6 text-slate-700 max-w-xs truncate font-normal">
-                                    {{ t.tema }}
-                                </td>
-                                <td class="py-4 px-6 whitespace-nowrap">
-                                    {% if t.estado == 'Solicitada' %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                            Solicitada
-                                        </span>
-                                    {% elif t.estado == 'Realizada' %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                            Realizada
-                                        </span>
-                                    {% elif t.estado == 'En proceso' %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200/60">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
-                                            En proceso
-                                        </span>
-                                    {% else %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                            {{ t.estado }}
-                                        </span>
-                                    {% endif %}
-                                </td>
-                                <td class="py-4 px-6 whitespace-nowrap text-right">
-                                    <div class="flex items-center justify-end gap-1.5">
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap text-slate-600">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
+                                            <span>
+                                                {% if t.fecha.strftime is defined %}
+                                                    {{ t.fecha.strftime('%d/%m/%Y') }}
+                                                {% else %}
+                                                    {{ t.fecha }}
+                                                {% endif %}
+                                            </span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-700 max-w-xs truncate font-normal">
+                                        {{ t.tema }}
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap">
                                         {% if t.estado == 'Solicitada' %}
-                                            <a href="{{ url_for('aceptar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
-                                                <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                                                <span>Aceptar</span>
-                                            </a>
-                                            <a href="{{ url_for('form_editar_tutoria', id=t.id) }}" class="inline-flex items-center p-1 text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-500/20" title="Editar">
-                                                <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-                                            </a>
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                Solicitada
+                                            </span>
+                                        {% elif t.estado == 'Realizada' %}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                Realizada
+                                            </span>
+                                        {% elif t.estado == 'En proceso' %}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200/60">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
+                                                En proceso
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                {{ t.estado }}
+                                            </span>
                                         {% endif %}
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap text-right">
+                                        <div class="flex items-center justify-end gap-1.5">
+                                            {% if t.estado == 'Solicitada' %}
+                                                <a href="{{ url_for('aceptar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                                                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                                    <span>Aceptar</span>
+                                                </a>
+                                                <a href="{{ url_for('form_editar_tutoria', id=t.id) }}" class="inline-flex items-center p-1 text-brand-700 bg-brand-50 hover:bg-brand-100 border border-brand-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-500/20" title="Editar">
+                                                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                                </a>
+                                            {% endif %}
 
-                                        {% if t.estado in ['Asignada por tutor', 'Confirmada'] %}
-                                            <a href="{{ url_for('iniciar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-brand-500 hover:bg-brand-600 border border-transparent rounded-lg transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20">
-                                                <i data-lucide="play" class="w-3.5 h-3.5"></i>
-                                                <span>Iniciar</span>
-                                            </a>
-                                        {% endif %}
+                                            {% if t.estado in ['Asignada por tutor', 'Confirmada'] %}
+                                                <a href="{{ url_for('iniciar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-brand-500 hover:bg-brand-600 border border-transparent rounded-lg transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-brand-500/20">
+                                                    <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                                                    <span>Iniciar</span>
+                                                </a>
+                                            {% endif %}
 
-                                        {% if t.estado in ['Asignada por tutor', 'En proceso', 'Realizada'] %}
-                                            <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-sky-500/20">
-                                                <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                                <span>Ficha</span>
-                                            </a>
-                                        {% endif %}
+                                            {% if t.estado in ['Asignada por tutor', 'En proceso', 'Realizada'] %}
+                                                <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-sky-700 bg-sky-50 hover:bg-sky-100 border border-sky-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-sky-500/20">
+                                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                                    <span>Ficha</span>
+                                                </a>
+                                            {% endif %}
 
-                                        {% if t.estado not in ['Asignada por tutor','En proceso','Realizada'] %}
-                                            <a href="{{ url_for('completar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-                                                <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
-                                                <span>Completar</span>
-                                            </a>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td colspan="5" class="py-12 text-center text-slate-400">
-                                    <div class="flex flex-col items-center justify-center gap-2">
-                                        <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
-                                            <i data-lucide="inbox" class="w-6 h-6"></i>
+                                            {% if t.estado not in ['Asignada por tutor','En proceso','Realizada'] %}
+                                                <a href="{{ url_for('completar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                                                    <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+                                                    <span>Completar</span>
+                                                </a>
+                                            {% endif %}
                                         </div>
-                                        <p class="text-sm font-medium text-slate-600">Sin tutorías pendientes</p>
-                                        <p class="text-xs text-slate-400">Las tutorías programadas aparecerán reflejadas en esta sección.</p>
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
-                </div>
-            </section>
+                                    </td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="5" class="py-12 text-center text-slate-400">
+                                        <div class="flex flex-col items-center justify-center gap-2">
+                                            <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
+                                                <i data-lucide="inbox" class="w-6 h-6"></i>
+                                            </div>
+                                            <p class="text-sm font-medium text-slate-600">Sin tutorías pendientes</p>
+                                            <p class="text-xs text-slate-400">Las tutorías programadas aparecerán reflejadas en esta sección.</p>
+                                        </div>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <!-- SECCIÓN: VISTA GRUPOS ASIGNADOS -->
+            <div id="vista-grupos" class="hidden space-y-6">
+                <!-- ENCABEZADO DE GRUPOS -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-6">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2.5 rounded-xl bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="users-round" class="w-6 h-6"></i>
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-bold text-slate-800">Grupos Asignados (Noveno Cuatrimestre)</h2>
+                                <p class="text-xs text-slate-500" id="info-tutor-grupos">Cargando grupos del tutor...</p>
+                            </div>
+                        </div>
+
+                        <!-- Selector de Grupos -->
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs font-semibold text-slate-500">Seleccionar Grupo:</span>
+                            <div class="inline-flex rounded-xl p-1 bg-slate-100 border border-slate-200" id="contenedor-botones-grupo">
+                                <!-- Botones de grupos inyectados vía JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- STATS DEL GRUPO SELECCIONADO -->
+                <section class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-xl bg-sky-50 text-sky-600 border border-sky-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="user-check" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Alumnos en el Grupo</p>
+                            <h4 class="text-2xl font-bold text-slate-800 mt-0.5" id="stat-total-alumnos">0</h4>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="award" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Promedio General</p>
+                            <h4 class="text-2xl font-bold text-slate-800 mt-0.5" id="stat-promedio-grupo">0.0</h4>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex items-center gap-4">
+                        <div class="w-11 h-11 rounded-xl bg-brand-50 text-brand-500 border border-brand-100 flex items-center justify-center shrink-0">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Asistencia a Tutorías</p>
+                            <h4 class="text-2xl font-bold text-slate-800 mt-0.5" id="stat-asistencia-grupo">0%</h4>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- GRÁFICAS DEL GRUPO -->
+                <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    <!-- Gráfica 1: Calificaciones de Alumnos -->
+                    <div class="lg:col-span-8 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/80 shadow-saas-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">Rendimiento Académico Individual</h3>
+                                <p class="text-xs text-slate-400">Promedio general por estudiante del grupo</p>
+                            </div>
+                            <span class="p-1.5 rounded-lg bg-slate-50 text-slate-400"><i data-lucide="bar-chart-3" class="w-4 h-4"></i></span>
+                        </div>
+                        <div class="relative h-64">
+                            <canvas id="chartPromedios"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Gráfica 2: Estatus de Tutorías del Grupo -->
+                    <div class="lg:col-span-4 bg-white p-5 sm:p-6 rounded-2xl border border-slate-200/80 shadow-saas-card">
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="text-sm font-bold text-slate-800">Estado de Tutorías</h3>
+                                <p class="text-xs text-slate-400">Distribución de alumnos del grupo</p>
+                            </div>
+                            <span class="p-1.5 rounded-lg bg-slate-50 text-slate-400"><i data-lucide="pie-chart" class="w-4 h-4"></i></span>
+                        </div>
+                        <div class="relative h-64 flex items-center justify-center">
+                            <canvas id="chartEstatus"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- TABLA DE ALUMNOS DEL GRUPO -->
+                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card overflow-hidden">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                                <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-800" id="titulo-tabla-alumnos">Lista de Alumnos</h3>
+                                <p class="text-xs text-slate-500">Estudiantes matriculados en esta sección</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm border-collapse min-w-[600px]">
+                            <thead>
+                                <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                                    <th scope="col" class="py-3.5 px-6">Matrícula</th>
+                                    <th scope="col" class="py-3.5 px-6">Nombre del Alumno</th>
+                                    <th scope="col" class="py-3.5 px-6">Grupo</th>
+                                    <th scope="col" class="py-3.5 px-6">Promedio</th>
+                                    <th scope="col" class="py-3.5 px-6">Estatus Tutoría</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabla-cuerpo-alumnos" class="divide-y divide-slate-100">
+                                <!-- Filas inyectadas dinámicamente mediante JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
 
         </main>
     </div>
@@ -452,18 +579,23 @@
                 <nav class="space-y-1">
                     <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Navegación</span>
                     
-                    <a href="{{ url_for('panel_tutor') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'panel_tutor' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="home" class="w-4 h-4 {% if request.endpoint != 'panel_tutor' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
+                    <button onclick="alternarVista('general')" id="nav-inicio" class="w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group bg-brand-50 text-brand-500 font-semibold">
+                        <i data-lucide="home" class="w-4 h-4 transition-colors"></i>
                         <span>Inicio</span>
-                    </a>
+                    </button>
 
-                    <a href="{{ url_for('reporte_tutor_pdf') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'reporte_tutor_pdf' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="file-text" class="w-4 h-4 {% if request.endpoint != 'reporte_tutor_pdf' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
+                    <button onclick="alternarVista('grupos')" id="nav-grupos" class="w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
+                        <i data-lucide="users-round" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
+                        <span>Grupos Asignados</span>
+                    </button>
+
+                    <a href="{{ url_for('reporte_tutor_pdf') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
+                        <i data-lucide="file-text" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
                         <span>Reporte PDF</span>
                     </a>
 
-                    <a href="{{ url_for('reportes_tutor') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'reportes_tutor' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="pie-chart" class="w-4 h-4 {% if request.endpoint != 'reportes_tutor' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
+                    <a href="{{ url_for('reportes_tutor') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
                         <span>Mis Reportes</span>
                     </a>
                 </nav>
@@ -476,7 +608,7 @@
                         {{ tutor.usuario.nombre_completo[0] if tutor and tutor.usuario and tutor.usuario.nombre_completo else 'T' }}
                     </div>
                     <div class="min-w-0 flex-1">
-                        <p class="text-xs font-semibold text-slate-800 truncate">{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else 'Tutor' }}</p>
+                        <p class="text-xs font-semibold text-slate-800 truncate" id="nombre-tutor-sidebar">{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else 'Tutor' }}</p>
                         <p class="text-[10px] text-slate-400 truncate">Docente / Tutor</p>
                     </div>
                 </div>
@@ -485,8 +617,232 @@
     </div>
 </div>
 
-<!-- Scripts de Lucide Icons -->
+<!-- LÓGICA DE GRUPOS Y GRÁFICAS -->
 <script>
+    // Nombre del tutor detectado en la plantilla
+    const nombreTutorActual = "{{ tutor.usuario.nombre_completo if tutor and tutor.usuario else '' }}".toLowerCase();
+
+    // Determinar si el tutor es Tovar o Silvia. Si no coincide, se asignan por defecto 93 y 94
+    let esSilvia = nombreTutorActual.includes('silvia');
+    let gruposTutor = esSilvia ? ['91', '92'] : ['93', '94'];
+    let nombreTutorFormatted = esSilvia ? 'Dra. Silvia' : 'Prof. Tovar';
+
+    // Base de datos simulada de alumnos por grupo en noveno cuatrimestre
+    const baseAlumnosGrupos = {
+        '91': [
+            { matricula: '202309101', nombre: 'Carlos Eduardo Ramírez', promedio: 9.2, estatus: 'Realizada' },
+            { matricula: '202309102', nombre: 'Ana María Gómez', promedio: 8.8, estatus: 'Realizada' },
+            { matricula: '202309103', nombre: 'Luis Fernando Torres', promedio: 7.9, estatus: 'En Riesgo' },
+            { matricula: '202309104', nombre: 'Sofia Castro Vega', promedio: 9.5, estatus: 'Realizada' },
+            { matricula: '202309105', nombre: 'Jorge Luis Morales', promedio: 8.3, estatus: 'Pendiente' }
+        ],
+        '92': [
+            { matricula: '202309201', nombre: 'Mariana López Ruiz', promedio: 9.0, estatus: 'Realizada' },
+            { matricula: '202309202', nombre: 'Diego Armando Hernández', promedio: 7.5, estatus: 'En Riesgo' },
+            { matricula: '202309203', nombre: 'Valeria Martínez Solís', promedio: 8.9, estatus: 'Realizada' },
+            { matricula: '202309204', nombre: 'Gabriel Mendoza Reyes', promedio: 8.6, estatus: 'Pendiente' },
+            { matricula: '202309205', nombre: 'Fernanda Ortiz Luna', promedio: 9.4, estatus: 'Realizada' }
+        ],
+        '93': [
+            { matricula: '202309301', nombre: 'Alejandro Gutiérrez Franco', promedio: 8.7, estatus: 'Realizada' },
+            { matricula: '202309302', nombre: 'Patricia Delgado Meza', promedio: 9.1, estatus: 'Realizada' },
+            { matricula: '202309303', nombre: 'Roberto Carlos Navarro', promedio: 7.2, estatus: 'En Riesgo' },
+            { matricula: '202309304', nombre: 'Camila Sandoval Rios', promedio: 8.8, estatus: 'Pendiente' },
+            { matricula: '202309305', nombre: 'Daniela Flores Paredes', promedio: 9.6, estatus: 'Realizada' }
+        ],
+        '94': [
+            { matricula: '202309401', nombre: 'Hugo Enrique Salazar', promedio: 8.4, estatus: 'Realizada' },
+            { matricula: '202309402', nombre: 'Andrea Beatriz Pineda', promedio: 9.3, estatus: 'Realizada' },
+            { matricula: '202309403', nombre: 'Guillermo Vázquez Silva', promedio: 7.8, estatus: 'En Riesgo' },
+            { matricula: '202309404', nombre: 'Lucía Fernández Castillo', promedio: 8.9, estatus: 'Pendiente' },
+            { matricula: '202309405', nombre: 'Esteban Domínguez Parra', promedio: 9.0, estatus: 'Realizada' }
+        ]
+    };
+
+    let chartPromediosInstancia = null;
+    let chartEstatusInstancia = null;
+    let grupoSeleccionadoActivo = gruposTutor[0];
+
+    // Cambiar de vista (Inicio / Grupos)
+    function alternarVista(vista) {
+        const vistaGen = document.getElementById('vista-general');
+        const vistaGrup = document.getElementById('vista-grupos');
+        const navInicio = document.getElementById('nav-inicio');
+        const navGrupos = document.getElementById('nav-grupos');
+
+        if (vista === 'grupos') {
+            vistaGen.classList.add('hidden');
+            vistaGrup.classList.remove('hidden');
+
+            navInicio.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500";
+            navGrupos.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group bg-brand-50 text-brand-500 font-semibold";
+
+            cargarConfiguracionGrupos();
+        } else {
+            vistaGrup.classList.add('hidden');
+            vistaGen.classList.remove('hidden');
+
+            navGrupos.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group text-slate-600 hover:bg-slate-50 hover:text-brand-500";
+            navInicio.className = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group bg-brand-50 text-brand-500 font-semibold";
+        }
+        
+        // Cerrar drawer en pantallas pequeñas al seleccionar opción
+        const checkboxDrawer = document.getElementById('menu-drawer');
+        if (checkboxDrawer) checkboxDrawer.checked = false;
+    }
+
+    // Inicialización del apartado de grupos
+    function cargarConfiguracionGrupos() {
+        document.getElementById('info-tutor-grupos').textContent = `Tutor: ${nombreTutorFormatted} · Asignación de noveno cuatrimestre: Grupos ${gruposTutor.join(' y ')}`;
+
+        const contenedorBotones = document.getElementById('contenedor-botones-grupo');
+        contenedorBotones.innerHTML = '';
+
+        gruposTutor.forEach(grupo => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.onclick = () => seleccionarGrupo(grupo);
+            btn.id = `btn-grupo-${grupo}`;
+            btn.className = `px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${grupo === grupoSeleccionadoActivo ? 'bg-white text-brand-600 shadow-sm' : 'text-slate-500 hover:text-slate-800'}`;
+            btn.textContent = `Grupo ${grupo}`;
+            contenedorBotones.appendChild(btn);
+        });
+
+        seleccionarGrupo(grupoSeleccionadoActivo);
+    }
+
+    // Cambio dinámico de datos al seleccionar grupo
+    function seleccionarGrupo(grupo) {
+        grupoSeleccionadoActivo = grupo;
+
+        // Estilos de botones
+        gruposTutor.forEach(g => {
+            const b = document.getElementById(`btn-grupo-${g}`);
+            if (b) {
+                if (g === grupo) {
+                    b.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all bg-white text-brand-600 shadow-sm";
+                } else {
+                    b.className = "px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all text-slate-500 hover:text-slate-800";
+                }
+            }
+        });
+
+        const alumnos = baseAlumnosGrupos[grupo] || [];
+
+        // Calcular Estadísticas
+        const totalAlumnos = alumnos.length;
+        const promedioSuma = alumnos.reduce((acc, curr) => acc + curr.promedio, 0);
+        const promedioGeneral = totalAlumnos > 0 ? (promedioSuma / totalAlumnos).toFixed(1) : '0.0';
+        const realizadas = alumnos.filter(a => a.estatus === 'Realizada').length;
+        const porcentajeAsistencia = totalAlumnos > 0 ? Math.round((realizadas / totalAlumnos) * 100) : 0;
+
+        document.getElementById('stat-total-alumnos').textContent = totalAlumnos;
+        document.getElementById('stat-promedio-grupo').textContent = promedioGeneral;
+        document.getElementById('stat-asistencia-grupo').textContent = `${porcentajeAsistencia}%`;
+        document.getElementById('titulo-tabla-alumnos').textContent = `Alumnos Matriculados · Grupo ${grupo}`;
+
+        // Renderizar Tabla
+        const tbody = document.getElementById('tabla-cuerpo-alumnos');
+        tbody.innerHTML = '';
+
+        alumnos.forEach(alumno => {
+            let badgeEstatus = '';
+            if (alumno.estatus === 'Realizada') {
+                badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Al día</span>';
+            } else if (alumno.estatus === 'Pendiente') {
+                badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Pendiente</span>';
+            } else {
+                badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/60"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>En Riesgo</span>';
+            }
+
+            const tr = document.createElement('tr');
+            tr.className = "hover:bg-slate-50/70 transition-colors";
+            tr.innerHTML = `
+                <td class="py-3.5 px-6 font-mono text-xs text-slate-500">${alumno.matricula}</td>
+                <td class="py-3.5 px-6 font-medium text-slate-800">${alumno.nombre}</td>
+                <td class="py-3.5 px-6 text-slate-600 font-semibold">Grupo ${grupo}</td>
+                <td class="py-3.5 px-6 font-bold text-brand-600">${alumno.promedio}</td>
+                <td class="py-3.5 px-6 whitespace-nowrap">${badgeEstatus}</td>
+            `;
+            tbody.appendChild(tr);
+        });
+
+        renderizarGraficasGrupo(alumnos, grupo);
+    }
+
+    // Renderizado de Gráficas Chart.js
+    function renderizarGraficasGrupo(alumnos, grupo) {
+        const nombres = alumnos.map(a => a.nombre.split(' ')[0] + ' ' + (a.nombre.split(' ')[2] || ''));
+        const promedios = alumnos.map(a => a.promedio);
+
+        const estatusCount = {
+            'Realizada': alumnos.filter(a => a.estatus === 'Realizada').length,
+            'Pendiente': alumnos.filter(a => a.estatus === 'Pendiente').length,
+            'En Riesgo': alumnos.filter(a => a.estatus === 'En Riesgo').length
+        };
+
+        // Gráfica 1: Barras de Promedios
+        const ctxPromedios = document.getElementById('chartPromedios').getContext('2d');
+        if (chartPromediosInstancia) chartPromediosInstancia.destroy();
+
+        chartPromediosInstancia = new Chart(ctxPromedios, {
+            type: 'bar',
+            data: {
+                labels: nombres,
+                datasets: [{
+                    label: `Promedio en Grupo ${grupo}`,
+                    data: promedios,
+                    backgroundColor: 'rgba(14, 124, 112, 0.85)',
+                    borderColor: '#0E7C70',
+                    borderWidth: 1,
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        min: 6,
+                        max: 10,
+                        ticks: { stepSize: 1 }
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Gráfica 2: Pie de Estatus
+        const ctxEstatus = document.getElementById('chartEstatus').getContext('2d');
+        if (chartEstatusInstancia) chartEstatusInstancia.destroy();
+
+        chartEstatusInstancia = new Chart(ctxEstatus, {
+            type: 'doughnut',
+            data: {
+                labels: ['Al Día', 'Pendientes', 'En Riesgo'],
+                datasets: [{
+                    data: [estatusCount['Realizada'], estatusCount['Pendiente'], estatusCount['En Riesgo']],
+                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 12, font: { size: 11 } }
+                    }
+                }
+            }
+        });
+    }
+
+    // Inicializar Iconos Lucide
     lucide.createIcons();
 </script>
 </body>
