@@ -1,470 +1,441 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light">
+<html lang="es" class="h-full bg-[#EAF2ED]">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Reportes de Tutor · Sistema de Tutorías</title>
-    
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#F0FFF0',
+                            100: '#E1EFE6',
+                            200: '#C2DFCD',
+                            300: '#94C7A7',
+                            400: '#228B22',
+                            500: '#1A5333',   /* Verde sólido principal */
+                            600: '#144228',   /* Verde oscuro sidebar */
+                            700: '#0F331F',
+                            bg: '#FAF0E6',    /* Tono crema/piel jaguar */
+                        },
+                        accent: '#228B22',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'saas-card': '0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.03)',
+                        'saas-hover': '0 8px 16px -4px rgba(26, 83, 51, 0.08), 0 4px 6px -2px rgba(0,0,0,0.02)',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- DaisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
+
     <!-- Google Fonts: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
-    
-    <!-- Tailwind CSS + DaisyUI -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.10/dist/full.min.css" rel="stylesheet" />
-    
-    <!-- Font Awesome 6 Pro/Free -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
-    
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
     <!-- Chart.js Engine -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
     <style>
         :root {
-            --verde-ut: #0E7C70;
-            --verde-ut-hover: #0B6359;
-            --verde-sec: #15803D;
-            --verde-suave: #E6F7F5;
-            --verde-claro: #F0FDF4;
-            --texto-principal: #0F172A;
-            --texto-sec: #475569;
-            --borde-suave: #E2E8F0;
-            --sombra-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --sombra-card: 0 4px 20px -2px rgba(14, 124, 112, 0.06), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
-            --sombra-hover: 0 12px 28px -4px rgba(14, 124, 112, 0.12), 0 4px 12px -2px rgba(0, 0, 0, 0.04);
-            --radius-card: 1rem;
+            --brand-primary: #1A5333;
+            --brand-hover: #144228;
         }
 
+        /* Capa con textura de manchas sobre fondo crema/verde suave */
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            background-color: #F8FAFC;
-            color: var(--texto-principal);
-            -webkit-font-smoothing: antialiased;
-        }
-
-        /* Navbar Layout */
-        .navbar-custom {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid var(--borde-suave);
-        }
-
-        /* Card System UI */
-        .card-modern {
-            background: #FFFFFF;
-            border-radius: var(--radius-card);
-            border: 1px solid var(--borde-suave);
-            box-shadow: var(--sombra-card);
-            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        
-        .card-modern:hover {
-            box-shadow: var(--sombra-hover);
-            transform: translateY(-2px);
-        }
-
-        /* KPI Metric Cards */
-        .stat-card {
-            background: #FFFFFF;
-            border-radius: var(--radius-card);
-            padding: 1.25rem 1.5rem;
-            border: 1px solid var(--borde-suave);
-            box-shadow: var(--sombra-card);
-            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+            font-family: 'Inter', sans-serif;
+            background-color: #EAF2ED;
             position: relative;
-            overflow: hidden;
+            min-height: 100vh;
         }
 
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--sombra-hover);
-        }
-
-        .stat-icon-wrapper {
-            width: 2.75rem;
-            height: 2.75rem;
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 800;
-            letter-spacing: -0.03em;
-            line-height: 1;
-            color: var(--texto-principal);
-        }
-
-        .stat-label {
-            font-size: 0.8125rem;
-            color: var(--texto-sec);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: 0.5rem;
-        }
-
-        /* Headings & Section UI */
-        .section-title {
-            font-weight: 700;
-            font-size: 1.05rem;
-            color: var(--texto-principal);
-            display: flex;
-            align-items: center;
-            gap: 0.625rem;
-            letter-spacing: -0.01em;
-        }
-
-        .section-title i {
-            color: var(--verde-ut);
-        }
-
-        /* Badge Enterprise Tokens */
-        .badge-base {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.375rem;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            line-height: 1;
-        }
-
-        .badge-success-light { background: #DCFCE7; color: #15803D; border: 1px solid #BBF7D0; }
-        .badge-warning-light { background: #FEF3C7; color: #B45309; border: 1px solid #FDE68A; }
-        .badge-info-light { background: #E0F2FE; color: #0369A1; border: 1px solid #BAE6FD; }
-        .badge-secondary-light { background: #F1F5F9; color: #475569; border: 1px solid #E2E8F0; }
-
-        /* Data Tables Modernization */
-        .table-modern {
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            border-collapse: separate;
-            border-spacing: 0;
+            height: 100%;
+            background-image: url("{% if url_for is defined %}{{ url_for('static', filename='img/manchas.jpeg') }}{% else %}/assets/img/manchas.jpeg{% endif %}");
+            background-repeat: repeat;
+            background-size: 380px auto;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        .table-modern thead th {
-            background: #F8FAFC;
-            font-weight: 600;
-            color: var(--texto-sec);
-            padding: 0.875rem 1.25rem;
-            border-bottom: 1px solid var(--borde-suave);
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
         }
 
-        .table-modern tbody td {
-            padding: 1rem 1.25rem;
-            border-bottom: 1px solid #F1F5F9;
-            vertical-align: middle;
-            color: var(--texto-principal);
-            font-size: 0.875rem;
+        /* Animaciones para las tarjetas y gráficas */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .table-modern tbody tr:last-child td {
-            border-bottom: none;
+        .animate-fade-in-up {
+            animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
-        .table-modern tbody tr {
-            transition: background-color 0.15s ease;
+        /* Efectos interactivos */
+        .card-hover-effect {
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        .table-modern tbody tr:hover {
-            background-color: #F8FAFC;
+        .card-hover-effect:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(26, 83, 51, 0.1), 0 4px 6px -2px rgba(0,0,0,0.03);
         }
-
-        /* Sidebar Navigation UI */
-        .sidebar-menu a {
-            border-radius: 0.625rem;
-            padding: 0.625rem 0.875rem;
-            margin: 0.125rem 0;
-            font-weight: 500;
-            font-size: 0.875rem;
-            transition: all 0.15s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: #475569;
-        }
-
-        .sidebar-menu a i {
-            width: 1.25rem;
-            text-align: center;
-            font-size: 0.95rem;
-            color: #64748B;
-            transition: color 0.15s ease;
-        }
-
-        .sidebar-menu a:hover {
-            background: var(--verde-suave);
-            color: var(--verde-ut);
-        }
-
-        .sidebar-menu a:hover i {
-            color: var(--verde-ut);
-        }
-
-        .sidebar-menu a.active {
-            background: var(--verde-suave);
-            color: var(--verde-ut);
-            font-weight: 600;
-        }
-
-        .sidebar-menu a.active i {
-            color: var(--verde-ut);
-        }
-
-        .drawer-toggle-label {
-            cursor: pointer;
-            font-size: 1.125rem;
-            padding: 0.5rem;
-            border-radius: 0.5rem;
-            transition: background 0.2s;
-            color: var(--texto-sec);
-        }
-
-        .drawer-toggle-label:hover {
-            background: #F1F5F9;
-            color: var(--texto-principal);
-        }
-
-        html { scroll-behavior: smooth; }
     </style>
 </head>
-<body class="antialiased">
+<body class="h-full antialiased text-slate-800 relative">
 
-<div class="drawer lg:drawer-open">
+<div class="drawer lg:drawer-open min-h-screen relative z-10">
     <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
 
     <!-- CONTENIDO PRINCIPAL -->
-    <div class="drawer-content flex flex-col min-h-screen">
+    <div class="drawer-content flex flex-col min-w-0 bg-transparent">
 
-        <!-- BARRA SUPERIOR -->
-        <header class="navbar-custom sticky top-0 z-30 flex items-center justify-between px-4 lg:px-8 py-3">
+        <!-- BARRA SUPERIOR (NAVBAR) -->
+        <header class="sticky top-0 z-30 h-16 glass-panel border-b border-slate-200/60 px-4 lg:px-8 flex items-center justify-between shadow-sm">
             <div class="flex items-center gap-3">
-                <label for="menu-drawer" class="drawer-toggle-label lg:hidden" aria-label="Abrir menú">
-                    <i class="fas fa-bars"></i>
+                <label for="menu-drawer" aria-label="Abrir menú de navegación" class="lg:hidden cursor-pointer p-2 rounded-lg text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors">
+                    <i data-lucide="menu" class="w-5 h-5"></i>
                 </label>
-                <div class="flex items-center gap-2.5">
-                    <div class="w-8 h-8 rounded-lg bg-[#0E7C70]/10 flex items-center justify-center">
-                        <i class="fas fa-chart-pie text-[#0E7C70] text-sm"></i>
-                    </div>
-                    <span class="text-lg font-bold text-slate-800 tracking-tight">
-                        Mis Reportes
-                    </span>
+                
+                <div class="flex items-center gap-2">
+                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 hidden sm:inline-block">Plataforma</span>
+                    <span class="text-slate-300 hidden sm:inline-block">/</span>
+                    <h1 class="text-sm md:text-base font-semibold text-slate-800 flex items-center gap-2">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-[#1A5333]"></i>
+                        Reportes de Tutor
+                    </h1>
                 </div>
             </div>
-            
-            <div class="flex items-center gap-4">
-                <span class="text-xs font-medium text-slate-500 hidden sm:inline-block bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
-                    <i class="fas fa-circle text-emerald-500 text-[8px] mr-1.5"></i>Sesión Activa
-                </span>
-                <a href="{{ url_for('salir') }}" class="btn btn-sm bg-red-50 hover:bg-red-100 text-red-600 border-red-200/60 rounded-xl transition-all duration-200 gap-2 font-medium normal-case">
-                    <i class="fas fa-sign-out-alt text-xs"></i>
-                    <span>Cerrar Sesión</span>
+
+            <div class="flex items-center gap-3">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200/80 text-xs font-semibold text-emerald-800">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span>Sesión Activa</span>
+                </div>
+
+                <a href="{% if url_for is defined %}{{ url_for('salir') }}{% else %}#{% endif %}" aria-label="Cerrar Sesión" class="inline-flex items-center gap-2 px-3.5 py-1.5 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/20">
+                    <i data-lucide="log-out" class="w-3.5 h-3.5"></i>
+                    <span class="hidden sm:inline">Cerrar Sesión</span>
                 </a>
             </div>
         </header>
 
-        <!-- CUERPO DE PÁGINA -->
-        <main class="flex-1 p-4 md:p-6 lg:p-8 max-w-7xl mx-auto w-full space-y-6">
+        <!-- CUERPO PRINCIPAL CON TODAS LAS SECCIONES -->
+        <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
 
-            <!-- METRICAS Y KPIS -->
+            <!-- BANNER INFORMATIVO PARA EVALUACIÓN DOCENTE / DIRECTIVA -->
+            <section class="bg-white/90 backdrop-blur-md rounded-2xl border border-emerald-200/80 p-5 shadow-saas-card flex flex-col md:flex-row items-start md:items-center justify-between gap-4 animate-fade-in-up">
+                <div class="flex items-start gap-3.5">
+                    <div class="p-2.5 rounded-xl bg-emerald-100/70 text-[#1A5333] border border-emerald-200 shrink-0">
+                        <i data-lucide="file-bar-chart-2" class="w-6 h-6"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-base font-bold text-slate-800">Informe de Seguimiento y Eficiencia Tutorada</h2>
+                        <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">
+                            Métricas ejecutivas diseñadas para evaluar el impacto del programa de tutorías, dar cumplimiento a los indicadores institucionales y respaldar el avance académico del alumnado a cargo.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 w-full md:w-auto shrink-0">
+                    <a href="{% if url_for is defined %}{{ url_for('reporte_tutor_pdf') }}{% else %}#{% endif %}" class="w-full md:w-auto inline-flex items-center justify-center gap-2 px-4 py-2 text-xs font-semibold text-white bg-[#1A5333] hover:bg-[#144228] border border-emerald-700 rounded-xl transition-all shadow-sm focus:outline-none">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Exportar Informe PDF</span>
+                    </a>
+                </div>
+            </section>
+
+            <!-- SECCIÓN: RESUMEN KPI (INDICADORES DE DESEMPEÑO) -->
             <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 
-                <!-- Card 1 -->
-                <div class="stat-card">
+                <!-- KPI 1 -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-saas-card card-hover-effect flex flex-col justify-between animate-fade-in-up" style="animation-delay: 0.05s;">
                     <div class="flex items-center justify-between">
-                        <span class="stat-label">Alumnos Asignados</span>
-                        <div class="stat-icon-wrapper bg-teal-50 text-[#0E7C70]">
-                            <i class="fas fa-user-graduate"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Alumnos Asignados</span>
+                        <div class="p-2 rounded-xl bg-emerald-50 text-[#1A5333] border border-emerald-100">
+                            <i data-lucide="users" class="w-5 h-5"></i>
                         </div>
                     </div>
-                    <div class="stat-number">{{ alumnos }}</div>
-                    <p class="text-xs text-slate-400 mt-2 font-medium">Estudiantes bajo tutoría</p>
+                    <div class="mt-3">
+                        <span class="text-3xl font-extrabold text-slate-800">{{ alumnos if alumnos is defined else '0' }}</span>
+                        <p class="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1">
+                            <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-emerald-600"></i>
+                            Población bajo seguimiento
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Card 2 -->
-                <div class="stat-card">
+                <!-- KPI 2 -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-saas-card card-hover-effect flex flex-col justify-between animate-fade-in-up" style="animation-delay: 0.1s;">
                     <div class="flex items-center justify-between">
-                        <span class="stat-label">Total Tutorías</span>
-                        <div class="stat-icon-wrapper bg-blue-50 text-blue-600">
-                            <i class="fas fa-calendar-alt"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Total Tutorías</span>
+                        <div class="p-2 rounded-xl bg-sky-50 text-sky-700 border border-sky-100">
+                            <i data-lucide="calendar" class="w-5 h-5"></i>
                         </div>
                     </div>
-                    <div class="stat-number">{{ total }}</div>
-                    <p class="text-xs text-slate-400 mt-2 font-medium">Histórico acumulado</p>
+                    <div class="mt-3">
+                        <span class="text-3xl font-extrabold text-slate-800">{{ total if total is defined else '0' }}</span>
+                        <p class="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1">
+                            <i data-lucide="layers" class="w-3.5 h-3.5 text-sky-600"></i>
+                            Solicitudes solicitadas
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Card 3 -->
-                <div class="stat-card">
+                <!-- KPI 3 -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-saas-card card-hover-effect flex flex-col justify-between animate-fade-in-up" style="animation-delay: 0.15s;">
                     <div class="flex items-center justify-between">
-                        <span class="stat-label">Realizadas</span>
-                        <div class="stat-icon-wrapper bg-emerald-50 text-emerald-600">
-                            <i class="fas fa-check-circle"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Completadas</span>
+                        <div class="p-2 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-100">
+                            <i data-lucide="check-circle" class="w-5 h-5"></i>
                         </div>
                     </div>
-                    <div class="stat-number text-emerald-600">{{ realizadas }}</div>
-                    <p class="text-xs text-slate-400 mt-2 font-medium">Concluidas con éxito</p>
+                    <div class="mt-3">
+                        <span class="text-3xl font-extrabold text-emerald-800">{{ realizadas if realizadas is defined else '0' }}</span>
+                        <p class="text-xs text-emerald-700 font-medium mt-1 flex items-center gap-1">
+                            <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
+                            Sesiones concluidas
+                        </p>
+                    </div>
                 </div>
 
-                <!-- Card 4 -->
-                <div class="stat-card">
+                <!-- KPI 4 -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 p-5 shadow-saas-card card-hover-effect flex flex-col justify-between animate-fade-in-up" style="animation-delay: 0.2s;">
                     <div class="flex items-center justify-between">
-                        <span class="stat-label">Pendientes</span>
-                        <div class="stat-icon-wrapper bg-amber-50 text-amber-600">
-                            <i class="fas fa-clock"></i>
+                        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Pendientes</span>
+                        <div class="p-2 rounded-xl bg-amber-50 text-amber-700 border border-amber-100">
+                            <i data-lucide="clock" class="w-5 h-5"></i>
                         </div>
                     </div>
-                    <div class="stat-number text-amber-600">{{ pendientes }}</div>
-                    <p class="text-xs text-slate-400 mt-2 font-medium">Requieren atención</p>
+                    <div class="mt-3">
+                        <span class="text-3xl font-extrabold text-amber-700">{{ pendientes if pendientes is defined else '0' }}</span>
+                        <p class="text-xs text-amber-700 font-medium mt-1 flex items-center gap-1">
+                            <i data-lucide="alert-circle" class="w-3.5 h-3.5"></i>
+                            Por atender / Programadas
+                        </p>
+                    </div>
                 </div>
 
             </section>
 
-            <!-- ANALÍTICA VISUAL Y GRÁFICAS -->
+            <!-- SECCIÓN: GRÁFICAS Y ANALÍTICA AVANZADA -->
             <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 
-                <!-- Gráfica Principal -->
-                <div class="card-modern p-5 md:p-6 lg:col-span-2 flex flex-col justify-between">
-                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                        <h3 class="section-title">
-                            <i class="fas fa-chart-bar"></i> Distribución de Tutorías
-                        </h3>
-                        <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Métricas de Rendimiento</span>
+                <!-- Gráfica Principal de Barras -->
+                <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all p-5 sm:p-6 flex flex-col justify-between animate-fade-in-up" style="animation-delay: 0.25s;">
+                    <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                        <div class="flex items-center gap-2.5">
+                            <div class="p-2 rounded-lg bg-emerald-50 text-[#1A5333] border border-emerald-100">
+                                <i data-lucide="bar-chart-3" class="w-5 h-5"></i>
+                            </div>
+                            <div>
+                                <h3 class="text-base font-semibold text-slate-800">Distribución de Tutorías</h3>
+                                <p class="text-xs text-slate-500">Comparativa cuantitativa entre tutorías realizadas y pendientes</p>
+                            </div>
+                        </div>
+                        <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider hidden sm:inline-block">Métrica Global</span>
                     </div>
-                    <div class="relative w-full h-[280px] sm:h-[320px] flex items-center justify-center">
+
+                    <div class="relative w-full h-[280px] sm:h-[320px] pt-4">
                         <canvas id="graficaTutor"></canvas>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <span class="flex items-center gap-1.5">
+                            <i data-lucide="info" class="w-3.5 h-3.5 text-[#1A5333]"></i>
+                            Permite corroborar la tasa de cumplimiento del tutor docente.
+                        </span>
+                        <span class="font-medium text-emerald-800 hidden sm:inline">Actualizado</span>
                     </div>
                 </div>
 
-                <!-- Resumen de Proporción -->
-                <div class="card-modern p-5 md:p-6 flex flex-col justify-between">
+                <!-- Gráfica de Anillo y Proporción Porcentual -->
+                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all p-5 sm:p-6 flex flex-col justify-between animate-fade-in-up" style="animation-delay: 0.3s;">
                     <div>
-                        <div class="flex items-center justify-between mb-4 pb-3 border-b border-slate-100">
-                            <h3 class="section-title">
-                                <i class="fas fa-pie-chart"></i> Proporción
-                            </h3>
-                            <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Estatus</span>
+                        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+                            <div class="flex items-center gap-2.5">
+                                <div class="p-2 rounded-lg bg-emerald-50 text-[#1A5333] border border-emerald-100">
+                                    <i data-lucide="pie-chart" class="w-5 h-5"></i>
+                                </div>
+                                <div>
+                                    <h3 class="text-base font-semibold text-slate-800">Eficiencia Atencional</h3>
+                                    <p class="text-xs text-slate-500">Porcentaje de avance</p>
+                                </div>
+                            </div>
                         </div>
-                        <p class="text-xs text-slate-500 mb-6 leading-relaxed">
-                            Resumen porcentual de las tutorías completadas frente a los compromisos pendientes programados.
+
+                        <!-- Gráfica tipo Dona -->
+                        <div class="relative w-full h-[180px] my-4 flex items-center justify-center">
+                            <canvas id="graficaDona"></canvas>
+                        </div>
+
+                        <p class="text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100 text-center">
+                            Muestra el alcance efectivo de las tutorías sobre las solicitudes recibidas en el periodo activo.
                         </p>
                     </div>
 
-                    <div class="space-y-4">
+                    <div class="space-y-3 mt-4 pt-4 border-t border-slate-100">
                         <div>
-                            <div class="flex justify-between text-xs font-semibold mb-1.5">
-                                <span class="text-slate-600">Completadas</span>
-                                <span class="text-[#0E7C70]">
-                                    {% if total > 0 %}
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-600 flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-[#1A5333]"></span>
+                                    Completadas
+                                </span>
+                                <span class="text-[#1A5333]">
+                                    {% if total is defined and total > 0 %}
                                         {{ ((realizadas / total) * 100)|round(1) }}%
                                     {% else %}
                                         0%
                                     {% endif %}
                                 </span>
                             </div>
-                            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-[#0E7C70] h-full rounded-full transition-all duration-500" 
-                                     style="width: {% if total > 0 %}{{ ((realizadas / total) * 100)|round(1) }}{% else %}0{% endif %}%"></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-[#1A5333] h-full rounded-full transition-all duration-700" 
+                                     style="width: {% if total is defined and total > 0 %}{{ ((realizadas / total) * 100)|round(1) }}{% else %}0{% endif %}%"></div>
                             </div>
                         </div>
 
                         <div>
-                            <div class="flex justify-between text-xs font-semibold mb-1.5">
-                                <span class="text-slate-600">Pendientes</span>
-                                <span class="text-amber-500">
-                                    {% if total > 0 %}
+                            <div class="flex justify-between text-xs font-semibold mb-1">
+                                <span class="text-slate-600 flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                                    Pendientes
+                                </span>
+                                <span class="text-amber-600">
+                                    {% if total is defined and total > 0 %}
                                         {{ ((pendientes / total) * 100)|round(1) }}%
                                     {% else %}
                                         0%
                                     {% endif %}
                                 </span>
                             </div>
-                            <div class="w-full bg-slate-100 h-2.5 rounded-full overflow-hidden">
-                                <div class="bg-amber-400 h-full rounded-full transition-all duration-500" 
-                                     style="width: {% if total > 0 %}{{ ((pendientes / total) * 100)|round(1) }}{% else %}0{% endif %}%"></div>
+                            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-amber-400 h-full rounded-full transition-all duration-700" 
+                                     style="width: {% if total is defined and total > 0 %}{{ ((pendientes / total) * 100)|round(1) }}{% else %}0{% endif %}%"></div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="mt-6 pt-4 border-t border-slate-100 flex justify-between items-center text-xs text-slate-400">
-                        <span>Actualizado automáticamente</span>
-                        <i class="fas fa-sync-alt text-slate-300"></i>
                     </div>
                 </div>
 
             </section>
 
-            <!-- TABLA DE DETALLE -->
-            <section class="card-modern overflow-hidden">
-                <div class="p-5 md:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <h3 class="section-title">
-                        <i class="fas fa-list-ul"></i> Detalle de Tutorías a mi Cargo
-                    </h3>
-                    <span class="text-xs font-medium text-slate-500 bg-slate-50 px-2.5 py-1 rounded-md border border-slate-200/80 self-start sm:self-auto">
-                        Registros Totales: {{ tutorias|length }}
+            <!-- SECCIÓN: TABLA DE REGISTROS Y DETALLE -->
+            <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden animate-fade-in-up" style="animation-delay: 0.35s;">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-slate-50/50">
+                    <div class="flex items-center gap-2.5">
+                        <div class="p-2 rounded-lg bg-emerald-50 text-[#1A5333] border border-emerald-100">
+                            <i data-lucide="list-checks" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-base font-semibold text-slate-800">Detalle de Tutorías a mi Cargo</h2>
+                            <p class="text-xs text-slate-500">Listado detallado para auditoría docente e inspección académica</p>
+                        </div>
+                    </div>
+
+                    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100/70 text-emerald-900 border border-emerald-200 self-start sm:self-auto">
+                        <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                        Total Registros: {{ tutorias|length if tutorias is defined else '0' }}
                     </span>
                 </div>
-                
+
                 <div class="overflow-x-auto">
-                    <table class="table-modern">
+                    <table class="w-full text-left text-xs sm:text-sm border-collapse min-w-[700px]">
                         <thead>
-                            <tr>
-                                <th>Alumno</th>
-                                <th>Fecha</th>
-                                <th>Tema</th>
-                                <th>Estado</th>
+                            <tr class="bg-slate-50/80 border-b border-slate-200/80 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                                <th scope="col" class="py-3.5 px-6">Alumno Tutorado</th>
+                                <th scope="col" class="py-3.5 px-6">Fecha</th>
+                                <th scope="col" class="py-3.5 px-6">Tema / Asunto</th>
+                                <th scope="col" class="py-3.5 px-6">Estado</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {% for t in tutorias %}
-                            <tr>
-                                <td class="font-semibold text-slate-800">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-xs font-bold text-slate-600">
-                                            {{ t.alumno.usuario.nombre_completo[0] }}
+                        <tbody class="divide-y divide-slate-100 font-medium">
+                            {% if tutorias is defined and tutorias %}
+                                {% for t in tutorias %}
+                                <tr class="hover:bg-slate-50/70 transition-colors group">
+                                    <td class="py-4 px-6 font-semibold text-slate-800">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#1A5333] border border-emerald-200 flex items-center justify-center text-xs font-bold shrink-0">
+                                                {{ t.alumno.usuario.nombre_completo[0] if t.alumno and t.alumno.usuario else 'A' }}
+                                            </div>
+                                            <span>{{ t.alumno.usuario.nombre_completo if t.alumno and t.alumno.usuario else 'Estudiante' }}</span>
                                         </div>
-                                        <span>{{ t.alumno.usuario.nombre_completo }}</span>
-                                    </div>
-                                </td>
-                                <td class="whitespace-nowrap font-medium text-slate-500">
-                                    <i class="far fa-calendar text-slate-400 mr-1.5"></i>{{ t.fecha.strftime('%d/%m/%Y') }}
-                                </td>
-                                <td class="max-w-xs truncate text-slate-600">{{ t.tema }}</td>
-                                <td>
-                                    {% if t.estado == 'Solicitada' %}
-                                        <span class="badge-base badge-warning-light"><i class="fas fa-hourglass-half"></i>Solicitada</span>
-                                    {% elif t.estado == 'Realizada' %}
-                                        <span class="badge-base badge-success-light"><i class="fas fa-check-circle"></i>Realizada</span>
-                                    {% elif t.estado == 'En proceso' %}
-                                        <span class="badge-base badge-info-light"><i class="fas fa-spinner fa-spin"></i>En proceso</span>
-                                    {% elif t.estado == 'Asignada por tutor' %}
-                                        <span class="badge-base badge-secondary-light"><i class="fas fa-user-check"></i>Asignada</span>
-                                    {% else %}
-                                        <span class="badge-base badge-secondary-light"><i class="fas fa-tag"></i>{{ t.estado }}</span>
-                                    {% endif %}
-                                </td>
-                            </tr>
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap text-slate-600">
+                                        <div class="flex items-center gap-2">
+                                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A5333] transition-colors"></i>
+                                            <span>{{ t.fecha.strftime('%d/%m/%Y') if t.fecha.strftime is defined else t.fecha }}</span>
+                                        </div>
+                                    </td>
+                                    <td class="py-4 px-6 text-slate-700 max-w-xs truncate font-normal">
+                                        {{ t.tema }}
+                                    </td>
+                                    <td class="py-4 px-6 whitespace-nowrap">
+                                        {% if t.estado == 'Solicitada' %}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                Solicitada
+                                            </span>
+                                        {% elif t.estado == 'Realizada' %}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                Realizada
+                                            </span>
+                                        {% elif t.estado == 'En proceso' %}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200/60">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
+                                                En proceso
+                                            </span>
+                                        {% else %}
+                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                {{ t.estado }}
+                                            </span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
                             {% else %}
                             <tr>
-                                <td colspan="4" class="text-center py-12 text-slate-400">
-                                    <div class="max-w-xs mx-auto space-y-3">
-                                        <div class="w-12 h-12 rounded-full bg-slate-50 border border-slate-100 flex items-center justify-center mx-auto text-slate-300">
-                                            <i class="fas fa-inbox text-xl"></i>
+                                <td colspan="4" class="py-12 text-center text-slate-400">
+                                    <div class="flex flex-col items-center justify-center gap-2">
+                                        <div class="p-3 rounded-full bg-slate-50 border border-slate-100 text-slate-300">
+                                            <i data-lucide="inbox" class="w-6 h-6"></i>
                                         </div>
-                                        <p class="text-sm font-medium text-slate-500">No hay tutorías registradas</p>
-                                        <p class="text-xs text-slate-400">Las tutorías asignadas aparecerán listadas en esta sección.</p>
+                                        <p class="text-sm font-medium text-slate-600">No hay tutorías registradas</p>
+                                        <p class="text-xs text-slate-400">Las tutorías asignadas a tu perfil docente aparecerán listadas en esta sección.</p>
                                     </div>
                                 </td>
                             </tr>
-                            {% endfor %}
+                            {% endif %}
                         </tbody>
                     </table>
                 </div>
@@ -473,149 +444,193 @@
         </main>
     </div>
 
-    <!-- MENÚ LATERAL (SIDEBAR) -->
+    <!-- MENÚ LATERAL (SIDEBAR) VERDE (IGUAL A ALUMNO.HTML) -->
     <div class="drawer-side z-50">
-        <label for="menu-drawer" class="drawer-overlay" aria-label="Cerrar menú"></label>
-        <aside class="bg-white w-72 h-full p-5 border-r border-slate-200/80 flex flex-col justify-between">
-            <div>
-                <!-- Brand Header -->
-                <div class="flex items-center gap-3 px-2 mb-8">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0E7C70] to-[#15803D] flex items-center justify-center text-white shadow-md shadow-[#0E7C70]/20">
-                        <i class="fas fa-chalkboard-teacher text-lg"></i>
+        <label for="menu-drawer" aria-label="Cerrar menú de navegación" class="drawer-overlay bg-slate-900/30"></label>
+        <aside class="bg-[#1A5333] text-white w-72 h-full flex flex-col justify-between p-4 shadow-xl">
+            <div class="space-y-6">
+                <!-- BRANDING DE SIDEBAR -->
+                <div class="flex items-center gap-3 px-3 py-2 border-b border-emerald-700/50 pb-4">
+                    <div class="w-9 h-9 rounded-xl bg-emerald-600/50 border border-emerald-400/30 flex items-center justify-center text-white shrink-0">
+                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
                     </div>
-                    <div>
-                        <span class="text-base font-bold text-slate-800 tracking-tight block leading-none">Sistema Tutorías</span>
-                        <span class="text-[11px] font-medium text-slate-400">UT Nayarit</span>
+                    <div class="flex flex-col">
+                        <span class="text-base font-bold tracking-tight leading-none text-white">Tutorías UT</span>
+                        <span class="text-[10px] font-semibold text-emerald-200 tracking-wider uppercase mt-1">Portal del Tutor</span>
                     </div>
                 </div>
 
-                <!-- Navigation Links -->
-                <nav>
-                    <p class="px-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2">Navegación</p>
-                    <ul class="sidebar-menu space-y-1">
-                        <li>
-                            <a href="{{ url_for('panel_tutor') }}">
-                                <i class="fas fa-home"></i> 
-                                <span>Inicio</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url_for('reporte_tutor_pdf') }}">
-                                <i class="fas fa-file-pdf"></i> 
-                                <span>Reporte PDF</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ url_for('reportes_tutor') }}" class="active">
-                                <i class="fas fa-chart-pie"></i> 
-                                <span>Mis Reportes</span>
-                            </a>
-                        </li>
-                    </ul>
+                <!-- ELEMENTOS DE NAVEGACIÓN -->
+                <nav class="space-y-1">
+                    <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-emerald-200/60 block mb-2">Navegación</span>
+                    
+                    <a href="{% if url_for is defined %}{{ url_for('panel_tutor') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
+                        <i data-lucide="home" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
+                        <span>Inicio</span>
+                    </a>
+
+                    <a href="{% if url_for is defined %}{{ url_for('reporte_tutor_pdf') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
+                        <i data-lucide="file-text" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
+                        <span>Reporte PDF</span>
+                    </a>
+
+                    <a href="{% if url_for is defined %}{{ url_for('reportes_tutor') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all group bg-emerald-800/60 text-white border border-emerald-600/40">
+                        <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-300"></i>
+                        <span>Mis Reportes</span>
+                    </a>
                 </nav>
             </div>
 
-            <!-- Footer Sidebar Info -->
-            <div class="border-t border-slate-100 pt-4 text-xs text-slate-400 px-2 flex items-center gap-2">
-                <i class="fas fa-shield-alt text-slate-300"></i>
-                <span>Módulo de Tutor ver. 2.4</span>
+            <!-- FOOTER DEL SIDEBAR VERDE -->
+            <div class="pt-4 border-t border-emerald-700/50 space-y-3">
+                <div class="p-3 rounded-xl bg-emerald-800/40 border border-emerald-600/30 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#1A5333] flex items-center justify-center font-bold text-xs shrink-0">
+                        T
+                    </div>
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-xs font-semibold text-white truncate">
+                            Docente Tutor
+                        </span>
+                        <span class="text-[10px] text-emerald-200/80 truncate">Tutor Activo</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1.5 px-2 text-[11px] text-emerald-200/80">
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-300"></i>
+                    <span>Acceso Institucional Seguro</span>
+                </div>
             </div>
         </aside>
     </div>
+
 </div>
 
-<!-- SCRIPTS DE CHART.JS -->
+<!-- Initializer & Charts Script -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const canvas = document.getElementById('graficaTutor');
-        if (!canvas) return;
-        
-        const ctx = canvas.getContext('2d');
-        
-        // Dynamic Gradients
-        const gradientRealizadas = ctx.createLinearGradient(0, 0, 0, 300);
-        gradientRealizadas.addColorStop(0, '#0E7C70');
-        gradientRealizadas.addColorStop(1, '#15803D');
+    document.addEventListener("DOMContentLoaded", function () {
+        // Inicialización de Lucide Icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
 
-        const gradientPendientes = ctx.createLinearGradient(0, 0, 0, 300);
-        gradientPendientes.addColorStop(0, '#F59E0B');
-        gradientPendientes.addColorStop(1, '#D97706');
+        // Configuración de Gráfica de Barras
+        const canvasBar = document.getElementById('graficaTutor');
+        if (canvasBar) {
+            const ctx = canvasBar.getContext('2d');
+            
+            // Gradientes Verdes / Ámbar institucionales
+            const gradVerde = ctx.createLinearGradient(0, 0, 0, 300);
+            gradVerde.addColorStop(0, '#1A5333');
+            gradVerde.addColorStop(1, '#228B22');
 
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Realizadas', 'Pendientes'],
-                datasets: [{
-                    label: 'Cantidad',
-                    data: [{{ realizadas }}, {{ pendientes }}],
-                    backgroundColor: [gradientRealizadas, gradientPendientes],
-                    borderRadius: 10,
-                    borderSkipped: false,
-                    barThickness: 48,
-                    maxBarThickness: 56
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {
-                    duration: 1000,
-                    easing: 'easeOutQuart'
+            const gradAmbar = ctx.createLinearGradient(0, 0, 0, 300);
+            gradAmbar.addColorStop(0, '#F59E0B');
+            gradAmbar.addColorStop(1, '#D97706');
+
+            const valRealizadas = {{ realizadas if realizadas is defined else 0 }};
+            const valPendientes = {{ pendientes if pendientes is defined else 0 }};
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Completadas / Realizadas', 'Pendientes / En Curso'],
+                    datasets: [{
+                        label: 'Cantidad de Tutorías',
+                        data: [valRealizadas, valPendientes],
+                        backgroundColor: [gradVerde, gradAmbar],
+                        borderRadius: 8,
+                        borderSkipped: false,
+                        barThickness: 42,
+                        maxBarThickness: 50
+                    }]
                 },
-                plugins: {
-                    legend: {
-                        display: false
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    animation: {
+                        duration: 1200,
+                        easing: 'easeOutQuart'
                     },
-                    tooltip: {
-                        backgroundColor: '#0F172A',
-                        titleFont: { family: 'Inter', size: 13, weight: '600' },
-                        bodyFont: { family: 'Inter', size: 12 },
-                        padding: 12,
-                        cornerRadius: 8,
-                        displayColors: false,
-                        callbacks: {
-                            label: function(context) {
-                                return ` Total: ${context.parsed.y} tutorías`;
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0F331F',
+                            titleFont: { family: 'Inter', size: 13, weight: '600' },
+                            bodyFont: { family: 'Inter', size: 12 },
+                            padding: 12,
+                            cornerRadius: 8,
+                            displayColors: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return ` Total: ${context.parsed.y} sesiones`;
+                                }
                             }
                         }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        suggestedMax: 5,
-                        ticks: {
-                            precision: 0,
-                            stepSize: 1,
-                            color: '#64748B',
-                            font: {
-                                family: 'Inter',
-                                size: 11
-                            }
-                        },
-                        grid: {
-                            color: '#F1F5F9',
-                            drawBorder: false
-                        }
                     },
-                    x: {
-                        grid: {
-                            display: false
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: Math.max(valRealizadas, valPendientes) + 2,
+                            ticks: {
+                                precision: 0,
+                                color: '#64748B',
+                                font: { family: 'Inter', size: 11 }
+                            },
+                            grid: { color: '#F1F5F9', drawBorder: false }
                         },
-                        ticks: {
-                            color: '#334155',
-                            font: {
-                                family: 'Inter',
-                                size: 12,
-                                weight: '600'
+                        x: {
+                            grid: { display: false },
+                            ticks: {
+                                color: '#334155',
+                                font: { family: 'Inter', size: 12, weight: '600' }
                             }
                         }
                     }
                 }
-            }
-        });
+            });
+        }
+
+        // Configuración de Gráfica Dona
+        const canvasDona = document.getElementById('graficaDona');
+        if (canvasDona) {
+            const ctxDona = canvasDona.getContext('2d');
+            const valRealizadas = {{ realizadas if realizadas is defined else 0 }};
+            const valPendientes = {{ pendientes if pendientes is defined else 0 }};
+
+            new Chart(ctxDona, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Realizadas', 'Pendientes'],
+                    datasets: [{
+                        data: [valRealizadas, valPendientes],
+                        backgroundColor: ['#1A5333', '#F59E0B'],
+                        borderWidth: 3,
+                        borderColor: '#FFFFFF',
+                        hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '72%',
+                    animation: {
+                        animateRotate: true,
+                        duration: 1400
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: '#0F331F',
+                            titleFont: { family: 'Inter', size: 12, weight: '600' },
+                            bodyFont: { family: 'Inter', size: 11 },
+                            padding: 10,
+                            cornerRadius: 8
+                        }
+                    }
+                }
+            });
+        }
     });
 </script>
-
 </body>
 </html>
