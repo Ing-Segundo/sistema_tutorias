@@ -66,7 +66,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url("{{ url_for('static', filename='img/manchas.jpeg') if url_for is defined else 'manchas.jpeg' }}");
+            background-image: url("{{ url_for('assets', filename='img/manchas.jpeg') if url_for is defined else '/assets/img/manchas.jpeg' }}");
             background-repeat: repeat;
             background-size: 380px auto;
             opacity: 0.35;
