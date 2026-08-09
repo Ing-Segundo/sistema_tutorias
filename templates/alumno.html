@@ -168,12 +168,12 @@
                     </div>
 
                     <div class="p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-200/80">
-                            <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Nombre Completo</span>
-                            <p class="text-sm font-semibold text-slate-800 truncate">
-                                {{ alumno.usuario.nombre_completo if alumno is defined and alumno.usuario else 'Arce Rosales Fernanda Dalet' }}
-                            </p>
-                        </div>
+                    <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-200/80">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Nombre Completo</span>
+                        <p class="text-sm font-semibold text-slate-800 break-words leading-tight">
+                            {{ alumno.usuario.nombre_completo if alumno is defined and alumno.usuario else 'Arce Rosales Fernanda Dalet' }}
+                        </p>
+                    </div>
 
                         <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-200/80">
                             <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Tutor Asignado</span>
