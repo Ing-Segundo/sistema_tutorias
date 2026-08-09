@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" data-theme="light" class="h-full scroll-smooth">
+<html lang="es" data-theme="light" class="h-full scroll-smooth bg-[#EAF2ED]">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -43,7 +43,7 @@
             --brand-primary: #0E7C70;
             --brand-primary-hover: #0B6359;
             --brand-accent: #15803D;
-            --bg-canvas: #F8FAFC;
+            --bg-canvas: #EAF2ED;
             --card-bg: rgba(255, 255, 255, 0.95);
             --text-primary: #0F172A;
             --text-secondary: #475569;
@@ -65,12 +65,30 @@
             }
         }
 
+        /* Capa con textura de manchas de alumno.html */
         body {
             font-family: 'Inter', system-ui, -apple-system, sans-serif;
             background-color: var(--bg-canvas);
             color: var(--text-primary);
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
+            position: relative;
+            min-height: 100vh;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("{% if url_for is defined %}{{ url_for('static', filename='img/manchas.jpeg') }}{% else %}/assets/img/manchas.jpeg{% endif %}");
+            background-repeat: repeat;
+            background-size: 380px auto;
+            opacity: 0.35;
+            pointer-events: none;
+            z-index: 0;
         }
 
         /* Glassmorphism & Enterprise Surface Elevation */
@@ -173,9 +191,9 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-0 lg:p-6 selection:bg-teal-500 selection:text-white">
+<body class="min-h-screen flex items-center justify-center p-0 lg:p-6 selection:bg-teal-500 selection:text-white relative">
 
-    <div class="w-full max-w-6xl min-h-screen lg:min-h-[680px] grid grid-cols-1 lg:grid-cols-12 glass-panel lg:rounded-3xl overflow-hidden">
+    <div class="w-full max-w-6xl min-h-screen lg:min-h-[680px] grid grid-cols-1 lg:grid-cols-12 glass-panel lg:rounded-3xl overflow-hidden relative z-10">
         
         <!-- VISUAL HERO PANEL (DESKTOP / TABLET LARGE) -->
         <div class="hidden lg:flex lg:col-span-6 mesh-gradient-bg p-12 flex-col justify-between relative overflow-hidden">
