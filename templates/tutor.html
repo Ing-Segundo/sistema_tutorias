@@ -48,7 +48,7 @@
     <!-- Chart.js para gráficas por grupo -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Lucide Icons (Cargado en <head> para evitar parpadeos de iconos) -->
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
@@ -275,9 +275,11 @@
                                 <select id="id_alumno" name="id_alumno" required 
                                     class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-[#1A5333] focus:ring-2 focus:ring-[#1A5333]/20 transition-all outline-none">
                                     <option value="" disabled selected>Selecciona alumno</option>
-                                    {% for a in alumnos %}
-                                        <option value="{{ a.id }}">{{ a.usuario.nombre_completo if a.usuario else 'Sin nombre' }} ({{ a.usuario.credencial if a.usuario else '' }})</option>
-                                    {% endfor %}
+                                    {% if alumnos %}
+                                        {% for a in alumnos %}
+                                            <option value="{{ a.id }}">{{ a.usuario.nombre_completo if a.usuario else 'Sin nombre' }} ({{ a.usuario.credencial if a.usuario else 'Sin matrícula' }})</option>
+                                        {% endfor %}
+                                    {% endif %}
                                 </select>
                             </div>
 
@@ -336,96 +338,98 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                {% for t in tutorias %}
-                                <tr class="hover:bg-slate-50/70 transition-colors group">
-                                    <td class="py-4 px-6 font-medium text-slate-800 whitespace-nowrap">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="w-7 h-7 rounded-full bg-emerald-50 text-[#1A5333] border border-emerald-100 flex items-center justify-center text-xs font-bold shrink-0">
-                                                {{ t.alumno.usuario.nombre_completo.strip()[0] if t.alumno and t.alumno.usuario and t.alumno.usuario.nombre_completo else 'A' }}
+                                {% if tutorias %}
+                                    {% for t in tutorias %}
+                                    <tr class="hover:bg-slate-50/70 transition-colors group">
+                                        <td class="py-4 px-6 font-medium text-slate-800 whitespace-nowrap">
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="w-7 h-7 rounded-full bg-emerald-50 text-[#1A5333] border border-emerald-100 flex items-center justify-center text-xs font-bold shrink-0">
+                                                    {{ t.alumno.usuario.nombre_completo.strip()[0] if t.alumno and t.alumno.usuario and t.alumno.usuario.nombre_completo else 'A' }}
+                                                </div>
+                                                <span>{{ t.alumno.usuario.nombre_completo if t.alumno and t.alumno.usuario else 'Sin Alumno' }}</span>
                                             </div>
-                                            <span>{{ t.alumno.usuario.nombre_completo if t.alumno and t.alumno.usuario else 'Sin Alumno' }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 whitespace-nowrap text-slate-600">
-                                        <div class="flex items-center gap-2">
-                                            <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A5333] transition-colors"></i>
-                                            <span>
-                                                {% if t.fecha.strftime is defined %}
-                                                    {{ t.fecha.strftime('%d/%m/%Y') }}
-                                                {% else %}
-                                                    {{ t.fecha }}
-                                                {% endif %}
-                                            </span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 text-slate-700 max-w-xs truncate font-normal">
-                                        {{ t.tema }}
-                                    </td>
-                                    <td class="py-4 px-6 whitespace-nowrap">
-                                        {% if t.estado == 'Solicitada' %}
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                                                Solicitada
-                                            </span>
-                                        {% elif t.estado == 'Realizada' %}
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                                                Realizada
-                                            </span>
-                                        {% elif t.estado == 'En proceso' %}
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200/60">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
-                                                En proceso
-                                            </span>
-                                        {% else %}
-                                            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
-                                                {{ t.estado }}
-                                            </span>
-                                        {% endif %}
-                                    </td>
-                                    <td class="py-4 px-6 whitespace-nowrap text-right">
-                                        <div class="flex items-center justify-end gap-1.5">
+                                        </td>
+                                        <td class="py-4 px-6 whitespace-nowrap text-slate-600">
+                                            <div class="flex items-center gap-2">
+                                                <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 group-hover:text-[#1A5333] transition-colors"></i>
+                                                <span>
+                                                    {% if t.fecha and t.fecha.strftime is defined %}
+                                                        {{ t.fecha.strftime('%d/%m/%Y') }}
+                                                    {% else %}
+                                                        {{ t.fecha }}
+                                                    {% endif %}
+                                                </span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 px-6 text-slate-700 max-w-xs truncate font-normal">
+                                            {{ t.tema }}
+                                        </td>
+                                        <td class="py-4 px-6 whitespace-nowrap">
                                             {% if t.estado == 'Solicitada' %}
-                                                <a href="{{ url_for('aceptar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
-                                                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
-                                                    <span>Aceptar</span>
-                                                </a>
-                                                <a href="{{ url_for('form_editar_tutoria', id=t.id) }}" class="inline-flex items-center p-1 text-[#1A5333] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20" title="Editar">
-                                                    <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
-                                                </a>
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                                    Solicitada
+                                                </span>
+                                            {% elif t.estado == 'Realizada' %}
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                                    Realizada
+                                                </span>
+                                            {% elif t.estado == 'En proceso' %}
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-sky-50 text-sky-700 border border-sky-200/60">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-sky-500 animate-pulse"></span>
+                                                    En proceso
+                                                </span>
+                                            {% else %}
+                                                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                                                    {{ t.estado }}
+                                                </span>
                                             {% endif %}
+                                        </td>
+                                        <td class="py-4 px-6 whitespace-nowrap text-right">
+                                            <div class="flex items-center justify-end gap-1.5">
+                                                {% if t.estado == 'Solicitada' %}
+                                                    <a href="{{ url_for('aceptar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                                                        <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                                                        <span>Aceptar</span>
+                                                    </a>
+                                                    <a href="{{ url_for('form_editar_tutoria', id=t.id) }}" class="inline-flex items-center p-1 text-[#1A5333] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20" title="Editar">
+                                                        <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
+                                                    </a>
+                                                {% endif %}
 
-                                            {% if t.estado in ['Asignada por el tutor', 'Asignada por tutor', 'Confirmada'] %}
-                                                <a href="{{ url_for('iniciar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-[#1A5333] hover:bg-[#144228] border border-transparent rounded-lg transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1A5333]/20">
-                                                    <i data-lucide="play" class="w-3.5 h-3.5"></i>
-                                                    <span>Iniciar</span>
-                                                </a>
-                                            {% endif %}
+                                                {% if t.estado in ['Asignada por el tutor', 'Asignada por tutor', 'Confirmada'] %}
+                                                    <a href="{{ url_for('iniciar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-white bg-[#1A5333] hover:bg-[#144228] border border-transparent rounded-lg transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-[#1A5333]/20">
+                                                        <i data-lucide="play" class="w-3.5 h-3.5"></i>
+                                                        <span>Iniciar</span>
+                                                    </a>
+                                                {% endif %}
 
-                                            {% if t.estado in ['Asignada por el tutor', 'Asignada por tutor', 'En proceso', 'Realizada'] %}
-                                                <!-- VISTA HTML DE LA FICHA -->
-                                                <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20" title="Ver HTML">
-                                                    <i data-lucide="eye" class="w-3.5 h-3.5"></i>
-                                                    <span>Ficha</span>
-                                                </a>
-                                                
-                                                <!-- DESCARGA DIRECTA DE LA FICHA EN PDF -->
-                                                <a href="{{ url_for('descargar_ficha_tutoria_pdf', id=t.id) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/20" title="Descargar PDF">
-                                                    <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
-                                                    <span>PDF</span>
-                                                </a>
-                                            {% endif %}
+                                                {% if t.estado in ['Asignada por el tutor', 'Asignada por tutor', 'En proceso', 'Realizada'] %}
+                                                    <!-- VISTA HTML DE LA FICHA -->
+                                                    <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20" title="Ver HTML">
+                                                        <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+                                                        <span>Ficha</span>
+                                                    </a>
+                                                    
+                                                    <!-- DESCARGA DIRECTA DE LA FICHA EN PDF -->
+                                                    <a href="{{ url_for('descargar_ficha_tutoria_pdf', id=t.id) }}" target="_blank" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-rose-700 bg-rose-50 hover:bg-rose-100 border border-rose-200 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-rose-500/20" title="Descargar PDF">
+                                                        <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                                                        <span>PDF</span>
+                                                    </a>
+                                                {% endif %}
 
-                                            {% if t.estado not in ['Asignada por el tutor', 'Asignada por tutor', 'En proceso', 'Realizada'] %}
-                                                <a href="{{ url_for('completar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
-                                                    <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
-                                                    <span>Completar</span>
-                                                </a>
-                                            {% endif %}
-                                        </div>
-                                    </td>
-                                </tr>
+                                                {% if t.estado not in ['Asignada por el tutor', 'Asignada por tutor', 'En proceso', 'Realizada'] %}
+                                                    <a href="{{ url_for('completar_tutoria', id=t.id) }}" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500/20">
+                                                        <i data-lucide="check-check" class="w-3.5 h-3.5"></i>
+                                                        <span>Completar</span>
+                                                    </a>
+                                                {% endif %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
                                 {% else %}
                                 <tr>
                                     <td colspan="5" class="py-12 text-center text-slate-400">
@@ -438,7 +442,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
@@ -475,34 +479,36 @@
                                 </tr>
                             </thead>
                             <tbody class="divide-y divide-slate-100">
-                                {% for a in alumnos %}
-                                <tr class="hover:bg-slate-50/70 transition-colors">
-                                    <td class="py-4 px-6 font-mono text-xs text-slate-500">
-                                        {{ a.usuario.credencial if a.usuario and a.usuario.credencial else 'N/A' }}
-                                    </td>
-                                    <td class="py-4 px-6 font-medium text-slate-800 whitespace-nowrap">
-                                        <div class="flex items-center gap-2.5">
-                                            <div class="w-7 h-7 rounded-full bg-emerald-50 text-[#1A5333] border border-emerald-100 flex items-center justify-center text-xs font-bold shrink-0">
-                                                {{ a.usuario.nombre_completo.strip()[0] if a.usuario and a.usuario.nombre_completo else 'A' }}
+                                {% if alumnos %}
+                                    {% for a in alumnos %}
+                                    <tr class="hover:bg-slate-50/70 transition-colors">
+                                        <td class="py-4 px-6 font-mono text-xs text-slate-500">
+                                            {{ a.usuario.credencial if a.usuario and a.usuario.credencial else 'N/A' }}
+                                        </td>
+                                        <td class="py-4 px-6 font-medium text-slate-800 whitespace-nowrap">
+                                            <div class="flex items-center gap-2.5">
+                                                <div class="w-7 h-7 rounded-full bg-emerald-50 text-[#1A5333] border border-emerald-100 flex items-center justify-center text-xs font-bold shrink-0">
+                                                    {{ a.usuario.nombre_completo.strip()[0] if a.usuario and a.usuario.nombre_completo else 'A' }}
+                                                </div>
+                                                <span>{{ a.usuario.nombre_completo if a.usuario else 'Sin Nombre' }}</span>
                                             </div>
-                                            <span>{{ a.usuario.nombre_completo if a.usuario else 'Sin Nombre' }}</span>
-                                        </div>
-                                    </td>
-                                    <td class="py-4 px-6 text-slate-600">
-                                        {{ a.rendimiento or 'Sin registro' }}
-                                    </td>
-                                    <td class="py-4 px-6 whitespace-nowrap text-slate-600">
-                                        <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700">
-                                            {{ a.lista_tutorias|length if a.lista_tutorias else 0 }} tutoría(s)
-                                        </span>
-                                    </td>
-                                    <td class="py-4 px-6 whitespace-nowrap text-right">
-                                        <button onclick="alternarVista('general')" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1A5333] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all">
-                                            <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
-                                            <span>Agendar</span>
-                                        </button>
-                                    </td>
-                                </tr>
+                                        </td>
+                                        <td class="py-4 px-6 text-slate-600">
+                                            {{ a.rendimiento or 'Sin registro' }}
+                                        </td>
+                                        <td class="py-4 px-6 whitespace-nowrap text-slate-600">
+                                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 text-slate-700">
+                                                {{ a.lista_tutorias|length if a.lista_tutorias else 0 }} tutoría(s)
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-6 whitespace-nowrap text-right">
+                                            <button onclick="alternarVista('general')" class="inline-flex items-center gap-1 px-2.5 py-1 text-xs font-medium text-[#1A5333] bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all">
+                                                <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+                                                <span>Agendar</span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
                                 {% else %}
                                 <tr>
                                     <td colspan="5" class="py-12 text-center text-slate-400">
@@ -514,7 +520,7 @@
                                         </div>
                                     </td>
                                 </tr>
-                                {% endfor %}
+                                {% endif %}
                             </tbody>
                         </table>
                     </div>
@@ -564,7 +570,7 @@
                         </div>
                         <div>
                             <p class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">Promedio General</p>
-                            <h4 class="text-2xl font-bold text-slate-800 mt-0.5" id="stat-promedio-grupo">8.5</h4>
+                            <h4 class="text-2xl font-bold text-slate-800 mt-0.5" id="stat-promedio-grupo">0.0</h4>
                         </div>
                     </div>
 
@@ -636,7 +642,7 @@
                                 </tr>
                             </thead>
                             <tbody id="tabla-cuerpo-alumnos" class="divide-y divide-slate-100">
-                                <!-- Filas inyectadas dinámicamente mediante JS -->
+                                <!-- Filas inyectadas dinámicamente -->
                             </tbody>
                         </table>
                     </div>
@@ -717,16 +723,16 @@
 
 </div>
 
-<!-- LÓGICA DINÁMICA DE ALUMNOS, GRUPOS Y GRÁFICAS DESDE LA BASE DE DATOS -->
+<!-- LÓGICA DINÁMICA DE ALUMNOS, GRUPOS Y GRÁFICAS -->
 <script>
-    // 1. Obtener la lista real de alumnos asignados al tutor actual provenientes de Jinja2 (SQLAlchemy)
+    // 1. Obtención e Inyección Segura de Datos Jinja2 -> JavaScript
     const alumnosReales = [
         {% if alumnos %}
             {% for a in alumnos %}
             {
-                id: {{ a.id }},
-                matricula: {{ (a.usuario.credencial if a.usuario else 'SIN-MATRICULA')|tojson }},
-                nombre: {{ (a.usuario.nombre_completo if a.usuario else 'Sin nombre')|tojson }},
+                id: {{ a.id|tojson }},
+                matricula: {{ (a.usuario.credencial if a.usuario and a.usuario.credencial else 'SIN-MATRICULA')|tojson }},
+                nombre: {{ (a.usuario.nombre_completo if a.usuario and a.usuario.nombre_completo else 'Sin nombre')|tojson }},
                 rendimiento: {{ (a.rendimiento or 'Sin registro')|tojson }},
                 tutoriasCount: {{ a.lista_tutorias|length if a.lista_tutorias else 0 }},
                 realizadasCount: {{ a.lista_tutorias|selectattr('estado', 'equalto', 'Realizada')|list|length if a.lista_tutorias else 0 }}
@@ -735,13 +741,13 @@
         {% endif %}
     ];
 
-    // Detectar Tutor
-    const nombreTutorActual = {{ (tutor.usuario.nombre_completo if tutor and tutor.usuario else '')|tojson }}.toLowerCase();
+    // Detectar Tutor Activo
+    const nombreTutorActual = {{ (tutor.usuario.nombre_completo if tutor and tutor.usuario and tutor.usuario.nombre_completo else '')|tojson }}.toLowerCase();
     let esSilvia = nombreTutorActual.includes('silvia');
     let gruposTutor = esSilvia ? ['81', '82'] : ['83', '84'];
-    let nombreTutorFormatted = esSilvia ? 'Dra. Silvia Sofia Castrejon' : 'Prof. Juan Manuel Tovar';
+    let nombreTutorFormatted = {{ (tutor.usuario.nombre_completo if tutor and tutor.usuario and tutor.usuario.nombre_completo else 'Docente Tutor')|tojson }};
 
-    // Organizar los alumnos en sus respectivos grupos
+    // Organizar alumnos por grupo
     const baseAlumnosGrupos = {};
     const mitad = Math.ceil(alumnosReales.length / 2);
     
@@ -761,7 +767,7 @@
     let chartEstatusInstancia = null;
     let grupoSeleccionadoActivo = gruposTutor[0];
 
-    // Alternar vistas
+    // Alternar visibilidad de vistas
     function alternarVista(vista) {
         const vistaGen = document.getElementById('vista-general');
         const vistaAlum = document.getElementById('vista-alumnos');
@@ -771,12 +777,12 @@
         const navAlumnos = document.getElementById('nav-alumnos');
         const navGrupos = document.getElementById('nav-grupos');
 
-        // Resetear visibilidad
+        // Ocultar vistas
         vistaGen.classList.add('hidden');
         vistaAlum.classList.add('hidden');
         vistaGrup.classList.add('hidden');
 
-        // Resetear estilos de navegación
+        // Estilos de la navegación
         const claseInactiva = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group";
         const claseActiva = "w-full relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all group bg-emerald-800/60 text-white border border-emerald-600/40";
 
@@ -796,31 +802,37 @@
             navInicio.className = claseActiva;
         }
         
+        // Cerrar menú responsivo mobile
         const checkboxDrawer = document.getElementById('menu-drawer');
         if (checkboxDrawer) checkboxDrawer.checked = false;
     }
 
-    // Inicializar vista de grupos
+    // Configuración general de grupos
     function cargarConfiguracionGrupos() {
-        document.getElementById('info-tutor-grupos').textContent = `Tutor: ${nombreTutorFormatted} · Grupos a su cargo: ${gruposTutor.join(' y ')}`;
+        const elemInfo = document.getElementById('info-tutor-grupos');
+        if(elemInfo) {
+            elemInfo.textContent = `Tutor: ${nombreTutorFormatted} · Grupos a su cargo: ${gruposTutor.join(' y ')}`;
+        }
 
         const contenedorBotones = document.getElementById('contenedor-botones-grupo');
-        contenedorBotones.innerHTML = '';
+        if (contenedorBotones) {
+            contenedorBotones.innerHTML = '';
 
-        gruposTutor.forEach(grupo => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.onclick = () => seleccionarGrupo(grupo);
-            btn.id = `btn-grupo-${grupo}`;
-            btn.className = `px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${grupo === grupoSeleccionadoActivo ? 'bg-white text-[#1A5333] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`;
-            btn.textContent = `Grupo ${grupo}`;
-            contenedorBotones.appendChild(btn);
-        });
+            gruposTutor.forEach(grupo => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.onclick = () => seleccionarGrupo(grupo);
+                btn.id = `btn-grupo-${grupo}`;
+                btn.className = `px-3.5 py-1.5 text-xs font-bold rounded-lg transition-all ${grupo === grupoSeleccionadoActivo ? 'bg-white text-[#1A5333] shadow-sm' : 'text-slate-500 hover:text-slate-800'}`;
+                btn.textContent = `Grupo ${grupo}`;
+                contenedorBotones.appendChild(btn);
+            });
+        }
 
         seleccionarGrupo(grupoSeleccionadoActivo);
     }
 
-    // Seleccionar Grupo y renderizar
+    // Cambiar de grupo activo
     function seleccionarGrupo(grupo) {
         grupoSeleccionadoActivo = grupo;
 
@@ -837,7 +849,7 @@
 
         const alumnos = baseAlumnosGrupos[grupo] || [];
 
-        // Calcular Estadísticas
+        // Cálculo de estadísticos
         const totalAlumnos = alumnos.length;
         const promedioSuma = alumnos.reduce((acc, curr) => acc + curr.promedio, 0);
         const promedioGeneral = totalAlumnos > 0 ? (promedioSuma / totalAlumnos).toFixed(1) : '0.0';
@@ -849,40 +861,47 @@
         document.getElementById('stat-asistencia-grupo').textContent = `${porcentajeAsistencia}%`;
         document.getElementById('titulo-tabla-alumnos').textContent = `Alumnos Asignados · Grupo ${grupo}`;
 
-        // Renderizar Tabla
+        // Renderizado de tabla dinámicamente
         const tbody = document.getElementById('tabla-cuerpo-alumnos');
-        tbody.innerHTML = '';
+        if (tbody) {
+            tbody.innerHTML = '';
 
-        if (alumnos.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No hay alumnos asignados a este grupo.</td></tr>`;
-        } else {
-            alumnos.forEach(alumno => {
-                let badgeEstatus = '';
-                if (alumno.estatus === 'Realizada') {
-                    badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Atendido</span>';
-                } else if (alumno.estatus === 'Pendiente') {
-                    badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Programado</span>';
-                } else {
-                    badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/60"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Sin Tutoría</span>';
-                }
+            if (alumnos.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-400">No hay alumnos asignados a este grupo.</td></tr>`;
+            } else {
+                alumnos.forEach(alumno => {
+                    let badgeEstatus = '';
+                    if (alumno.estatus === 'Realizada') {
+                        badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60"><span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>Atendido</span>';
+                    } else if (alumno.estatus === 'Pendiente') {
+                        badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200/60"><span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>Programado</span>';
+                    } else {
+                        badgeEstatus = '<span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200/60"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>Sin Tutoría</span>';
+                    }
 
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50/70 transition-colors";
-                tr.innerHTML = `
-                    <td class="py-3.5 px-6 font-mono text-xs text-slate-500">${alumno.matricula}</td>
-                    <td class="py-3.5 px-6 font-medium text-slate-800">${alumno.nombre}</td>
-                    <td class="py-3.5 px-6 text-slate-600 font-semibold">Grupo ${grupo}</td>
-                    <td class="py-3.5 px-6 text-slate-600">${alumno.rendimiento}</td>
-                    <td class="py-3.5 px-6 whitespace-nowrap">${badgeEstatus}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50/70 transition-colors";
+                    tr.innerHTML = `
+                        <td class="py-3.5 px-6 font-mono text-xs text-slate-500">${alumno.matricula}</td>
+                        <td class="py-3.5 px-6 font-medium text-slate-800">${alumno.nombre}</td>
+                        <td class="py-3.5 px-6 text-slate-600 font-semibold">Grupo ${grupo}</td>
+                        <td class="py-3.5 px-6 text-slate-600">${alumno.rendimiento}</td>
+                        <td class="py-3.5 px-6 whitespace-nowrap">${badgeEstatus}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
         }
 
         renderizarGraficasGrupo(alumnos, grupo);
+
+        // Re-inicializar iconos inyectados dinámicamente
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
     }
 
-    // Renderizar Chart.js
+    // Dibujado de gráficas Chart.js
     function renderizarGraficasGrupo(alumnos, grupo) {
         const nombres = alumnos.map(a => {
             const partes = a.nombre.split(' ');
@@ -896,74 +915,81 @@
             'En Riesgo': alumnos.filter(a => a.estatus === 'En Riesgo').length
         };
 
-        // Gráfica de Barras
-        const ctxPromedios = document.getElementById('chartPromedios').getContext('2d');
-        if (chartPromediosInstancia) chartPromediosInstancia.destroy();
+        // Gráfica 1: Barras
+        const canvasProm = document.getElementById('chartPromedios');
+        if (canvasProm) {
+            const ctxPromedios = canvasProm.getContext('2d');
+            if (chartPromediosInstancia) chartPromediosInstancia.destroy();
 
-        chartPromediosInstancia = new Chart(ctxPromedios, {
-            type: 'bar',
-            data: {
-                labels: nombres.length > 0 ? nombres : ['Sin datos'],
-                datasets: [{
-                    label: `Promedio estimado Grupo ${grupo}`,
-                    data: promedios.length > 0 ? promedios : [0],
-                    backgroundColor: 'rgba(26, 83, 51, 0.85)',
-                    borderColor: '#1A5333',
-                    borderWidth: 1,
-                    borderRadius: 6
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { min: 0, max: 10, ticks: { stepSize: 2 } }
+            chartPromediosInstancia = new Chart(ctxPromedios, {
+                type: 'bar',
+                data: {
+                    labels: nombres.length > 0 ? nombres : ['Sin datos'],
+                    datasets: [{
+                        label: `Promedio estimado Grupo ${grupo}`,
+                        data: promedios.length > 0 ? promedios : [0],
+                        backgroundColor: 'rgba(26, 83, 51, 0.85)',
+                        borderColor: '#1A5333',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
                 },
-                plugins: { legend: { display: false } }
-            }
-        });
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { min: 0, max: 10, ticks: { stepSize: 2 } }
+                    },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
 
-        // Gráfica de Donut
-        const ctxEstatus = document.getElementById('chartEstatus').getContext('2d');
-        if (chartEstatusInstancia) chartEstatusInstancia.destroy();
+        // Gráfica 2: Donut
+        const canvasEst = document.getElementById('chartEstatus');
+        if (canvasEst) {
+            const ctxEstatus = canvasEst.getContext('2d');
+            if (chartEstatusInstancia) chartEstatusInstancia.destroy();
 
-        chartEstatusInstancia = new Chart(ctxEstatus, {
-            type: 'doughnut',
-            data: {
-                labels: ['Atendidos', 'Programados', 'Sin Tutoría'],
-                datasets: [{
-                    data: [estatusCount['Realizada'], estatusCount['Pendiente'], estatusCount['En Riesgo']],
-                    backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
-                    borderWidth: 2,
-                    borderColor: '#ffffff'
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: { boxWidth: 12, font: { size: 11 } }
+            chartEstatusInstancia = new Chart(ctxEstatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Atendidos', 'Programados', 'Sin Tutoría'],
+                    datasets: [{
+                        data: [estatusCount['Realizada'], estatusCount['Pendiente'], estatusCount['En Riesgo']],
+                        backgroundColor: ['#10B981', '#F59E0B', '#EF4444'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { boxWidth: 12, font: { size: 11 } }
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
-    // Inicializar Iconos Lucide al cargar el DOM
+    // Inicialización al cargar el DOM
     document.addEventListener("DOMContentLoaded", function () {
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
 
+        // Prevenir selección de fechas pasadas en formulario
         const fechaInput = document.getElementById("fecha");
         if (fechaInput) {
-            const hoyLocal = new Date();
-            const year = hoyLocal.getFullYear();
-            const month = String(hoyLocal.getMonth() + 1).padStart(2, '0');
-            const day = String(hoyLocal.getDate()).padStart(2, '0');
-            fechaInput.setAttribute("min", `${year}-${month}-${day}`);
+            const hoy = new Date();
+            const yyyy = hoy.getFullYear();
+            const mm = String(hoy.getMonth() + 1).padStart(2, '0');
+            const dd = String(hoy.getDate()).padStart(2, '0');
+            fechaInput.setAttribute("min", `${yyyy}-${mm}-${dd}`);
         }
     });
 </script>
