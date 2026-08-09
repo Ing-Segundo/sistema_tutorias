@@ -6,7 +6,8 @@ from fpdf import FPDF
 from functools import wraps
 import jwt, shutil, os, threading, time
 
-app = Flask(__name__)
+# Configuración adaptada para reconocer la carpeta 'assets' en Render/GitHub
+app = Flask(__name__, static_folder='assets', static_url_path='/assets')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'clave_segura_sistema_tutorias_2026_utn')
 
 CARPETA_BASE = os.path.abspath(os.path.dirname(__file__))
@@ -190,9 +191,10 @@ def inicializar_base_datos():
             usr_coord.contrasena = generate_password_hash("clave_coordinador")
             usr_coord.bloqueado = False
 
+        # Mapa para asociar credencial del tutor a su id_usuario de la BD
         mapa_tutores = {}
 
-        # Tutores
+        # Tutores (Crea o Sincroniza contraseña)
         for cred, nombre in TUTORES_INICIALES:
             usr = Usuario.query.filter_by(credencial=cred).first()
             if not usr:
@@ -211,7 +213,7 @@ def inicializar_base_datos():
                 usr.intentos_fallidos = 0
             mapa_tutores[cred] = usr.id
                 
-        # Alumnos
+        # Alumnos (Crea o Sincroniza contraseña y asigna Tutor)
         for cred, nombre, cred_tutor in ALUMNOS_INICIALES:
             usr = Usuario.query.filter_by(credencial=cred).first()
             id_tutor_asignado = mapa_tutores.get(cred_tutor)
@@ -487,34 +489,6 @@ def completar_tutoria(id):
     db.session.commit()
     flash("Tutoría marcada como realizada", "success")
     return redirect(url_for("panel_tutor"))
-
-@app.route("/tutor/descargar-ficha-pdf/<int:id>")
-@requiere_rol("tutor")
-def descargar_ficha_tutoria_pdf(id):
-    tutoria = Tutoria.query.get_or_404(id)
-    if tutoria.id_tutor != g.uid:
-        flash("No tienes permiso para ver esta tutoría", "error")
-        return redirect(url_for("panel_tutor"))
-    
-    nombre_alumno = tutoria.alumno.usuario.nombre_completo if tutoria.alumno and tutoria.alumno.usuario else "N/A"
-    fecha_str = tutoria.fecha.strftime("%d/%m/%Y") if tutoria.fecha else ""
-    
-    datos = [
-        ["Alumno", nombre_alumno],
-        ["Fecha", fecha_str],
-        ["Tema", tutoria.tema or ""],
-        ["Estado", tutoria.estado or ""],
-        ["Carrera", tutoria.carrera or "N/A"],
-        ["Grupo", tutoria.grupo or "N/A"],
-        ["Horario", f"{tutoria.hr_inicio} - {tutoria.hr_salida}"],
-        ["Motivo", tutoria.motivo or "N/A"],
-        ["Puntos Relevantes", tutoria.puntos_relevantes or "N/A"],
-        ["Compromisos", tutoria.compromisos or "N/A"],
-        ["Observaciones", tutoria.observaciones or "N/A"]
-    ]
-    
-    ruta = generar_pdf(datos, f"Ficha de Tutoría Individual #{tutoria.id}", ["Campo", "Detalle"])
-    return send_file(ruta, as_attachment=True, download_name=f"ficha_tutoria_{id}.pdf")
 
 @app.route("/reporte-tutor-pdf")
 @requiere_rol("tutor")
