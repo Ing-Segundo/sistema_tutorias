@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-50">
+<html lang="es" class="h-full bg-[#FAF0E6]/30">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,24 +13,21 @@
                 extend: {
                     colors: {
                         brand: {
-                            50: '#E6F7F5',
-                            100: '#CCEBE8',
-                            500: '#0E7C70',
-                            600: '#0C6B61',
-                            700: '#0A5A52',
+                            50: '#F0FFF0',   <!-- Verde muérdago claro -->
+                            100: '#DDFCDD',
+                            500: '#228B22',   <!-- Verde bosque (Secondary/Accent) -->
+                            600: '#1A5333',   <!-- Verde oscuro institucional -->
+                            700: '#133E26',
+                            bg: '#FAF0E6',    <!-- Lino / Fondo suave -->
                         },
-                        sec: {
-                            500: '#15803D',
-                            600: '#166534',
-                        },
-                        accent: '#86D977',
+                        accent: '#228B22',
                     },
                     fontFamily: {
                         sans: ['Inter', 'system-ui', 'sans-serif'],
                     },
                     boxShadow: {
-                        'saas-card': '0 0 0 1px rgba(229, 231, 235, 0.8), 0 4px 12px -2px rgba(14, 124, 112, 0.03)',
-                        'saas-hover': '0 0 0 1px rgba(14, 124, 112, 0.25), 0 12px 24px -4px rgba(14, 124, 112, 0.08)',
+                        'saas-card': '0 0 0 1px rgba(26, 83, 51, 0.08), 0 4px 12px -2px rgba(26, 83, 51, 0.04)',
+                        'saas-hover': '0 0 0 1px rgba(26, 83, 51, 0.25), 0 12px 24px -4px rgba(26, 83, 51, 0.12)',
                     }
                 }
             }
@@ -47,18 +44,17 @@
 
     <style>
         :root {
-            --brand-primary: #0E7C70;
-            --brand-hover: #0C6B61;
+            --brand-primary: #1A5333;
+            --brand-hover: #228B22;
         }
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #F8FAFC;
+            background-color: #FAF0E6;
             background-image: 
-                radial-gradient(circle at 100% 0%, rgba(14, 124, 112, 0.03) 0%, transparent 40%),
-                radial-gradient(circle at 0% 100%, rgba(134, 217, 119, 0.04) 0%, transparent 40%);
+                radial-gradient(circle at 100% 0%, rgba(34, 139, 34, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 0% 100%, rgba(26, 83, 51, 0.05) 0%, transparent 40%);
             background-attachment: fixed;
         }
-        /* Ajustado para eliminar el desenfoque en móviles manteniendo la apariencia translúcida */
         .glass-panel {
             background: rgba(255, 255, 255, 0.95);
         }
@@ -70,27 +66,32 @@
     <input id="menu-drawer" type="checkbox" class="drawer-toggle" />
 
     <!-- CONTENIDO PRINCIPAL -->
-    <div class="drawer-content flex flex-col min-w-0 bg-slate-50/50">
+    <div class="drawer-content flex flex-col min-w-0 bg-[#FAF0E6]/20">
 
         <!-- BARRA SUPERIOR (NAVBAR) -->
-        <header class="sticky top-0 z-30 h-16 glass-panel border-b border-slate-200/80 px-4 lg:px-8 flex items-center justify-between">
+        <header class="sticky top-0 z-30 h-16 glass-panel border-b border-[#1A5333]/10 px-4 lg:px-8 flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <label for="menu-drawer" aria-label="Abrir menú de navegación" class="lg:hidden cursor-pointer p-2 rounded-lg text-slate-500 hover:text-slate-800 hover:bg-slate-100 transition-colors">
                     <i data-lucide="menu" class="w-5 h-5"></i>
                 </label>
                 
-                <div class="flex items-center gap-2">
-                    <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 hidden sm:inline-block">Plataforma</span>
-                    <span class="text-slate-300 hidden sm:inline-block">/</span>
-                    <h1 class="text-sm md:text-base font-semibold text-slate-800 flex items-center gap-2">
-                        <i data-lucide="layout-dashboard" class="w-4 h-4 text-brand-500"></i>
-                        Panel Alumno
-                    </h1>
+                <div class="flex items-center gap-3">
+                    <!-- Logo institucional discreto para mobile/pantallas pequeñas -->
+                    <img src="ut.png" alt="Logo UT" class="h-7 w-auto object-contain lg:hidden" />
+                    <span class="text-slate-300 lg:hidden">|</span>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-slate-400 hidden sm:inline-block">Plataforma</span>
+                        <span class="text-slate-300 hidden sm:inline-block">/</span>
+                        <h1 class="text-sm md:text-base font-semibold text-slate-800 flex items-center gap-2">
+                            <i data-lucide="layout-dashboard" class="w-4 h-4 text-brand-600"></i>
+                            Panel Alumno
+                        </h1>
+                    </div>
                 </div>
             </div>
 
             <div class="flex items-center gap-3">
-                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 border border-slate-200/80 text-xs font-medium text-slate-600">
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-50 border border-brand-500/20 text-xs font-medium text-brand-600">
                     <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                     <span>Conectado</span>
                 </div>
@@ -129,9 +130,9 @@
             <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <!-- Tarjeta de Datos del Alumno -->
                 <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden flex flex-col justify-between">
-                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-[#FAF0E6]/30">
                         <div class="flex items-center gap-2.5">
-                            <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                            <div class="p-2 rounded-lg bg-brand-50 text-brand-600 border border-brand-500/20">
                                 <i data-lucide="user-check" class="w-5 h-5"></i>
                             </div>
                             <div>
@@ -146,16 +147,16 @@
                     </div>
 
                     <div class="p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-200/60">
+                        <div class="bg-[#FAF0E6]/30 p-4 rounded-xl border border-slate-200/60">
                             <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Nombre Completo</span>
                             <p class="text-sm font-semibold text-slate-800 truncate">{{ alumno.usuario.nombre_completo }}</p>
                         </div>
 
-                        <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-200/60">
+                        <div class="bg-[#FAF0E6]/30 p-4 rounded-xl border border-slate-200/60">
                             <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Tutor Asignado</span>
                             <div>
                                 {% if alumno.tutor %}
-                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-50 text-brand-700 border border-brand-100">
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-brand-50 text-brand-600 border border-brand-500/20">
                                         <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
                                         {{ alumno.tutor.nombre_completo }}
                                     </span>
@@ -167,9 +168,9 @@
                             </div>
                         </div>
 
-                        <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-200/60">
+                        <div class="bg-[#FAF0E6]/30 p-4 rounded-xl border border-slate-200/60">
                             <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Rendimiento</span>
-                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200/60">
                                 {{ alumno.rendimiento or 'No registrado' }}
                             </span>
                         </div>
@@ -184,11 +185,11 @@
                             <span class="text-2xl font-bold text-slate-800">{{ tutorias|length }}</span>
                             <span class="text-[11px] font-medium text-slate-500 block">Total Solicitudes</span>
                         </div>
-                        <div class="p-3 bg-emerald-50/50 rounded-xl border border-emerald-100 text-center">
-                            <span class="text-2xl font-bold text-emerald-700">
+                        <div class="p-3 bg-brand-50/60 rounded-xl border border-brand-500/10 text-center">
+                            <span class="text-2xl font-bold text-brand-600">
                                 {{ tutorias|selectattr('estado', 'equalto', 'Realizada')|list|length }}
                             </span>
-                            <span class="text-[11px] font-medium text-emerald-600 block">Completadas</span>
+                            <span class="text-[11px] font-medium text-brand-600 block">Completadas</span>
                         </div>
                     </div>
                     <div class="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
@@ -200,9 +201,9 @@
 
             <!-- NUEVA SECCIÓN: MATERIAS Y HORARIO -->
             <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-[#FAF0E6]/30">
                     <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                        <div class="p-2 rounded-lg bg-brand-50 text-brand-600 border border-brand-500/20">
                             <i data-lucide="book-open" class="w-5 h-5"></i>
                         </div>
                         <div>
@@ -297,9 +298,9 @@
 
             <!-- NUEVA SECCIÓN: CALIFICACIONES -->
             <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-[#FAF0E6]/30">
                     <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                        <div class="p-2 rounded-lg bg-brand-50 text-brand-600 border border-brand-500/20">
                             <i data-lucide="award" class="w-5 h-5"></i>
                         </div>
                         <div>
@@ -412,9 +413,9 @@
 
             <!-- SECCIÓN: SOLICITAR NUEVA TUTORÍA -->
             <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-[#FAF0E6]/30">
                     <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                        <div class="p-2 rounded-lg bg-brand-50 text-brand-600 border border-brand-500/20">
                             <i data-lucide="calendar-plus" class="w-5 h-5"></i>
                         </div>
                         <div>
@@ -431,7 +432,7 @@
                                 Fecha Programada <span class="text-rose-500">*</span>
                             </label>
                             <input type="date" name="fecha" id="fecha" required 
-                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 focus:bg-white focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 transition-all outline-none" />
                         </div>
 
                         <div class="md:col-span-5 space-y-1.5">
@@ -439,11 +440,11 @@
                                 Tema o Asunto <span class="text-rose-500">*</span>
                             </label>
                             <input type="text" name="tema" id="tema" placeholder="Ej. Dudas sobre Proyecto Final de Algoritmos" required 
-                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-500 focus:ring-2 focus:ring-brand-500/20 transition-all outline-none" />
+                                class="w-full h-10 px-3.5 text-sm bg-slate-50/50 border border-slate-200 rounded-lg text-slate-800 placeholder-slate-400 focus:bg-white focus:border-brand-600 focus:ring-2 focus:ring-brand-600/20 transition-all outline-none" />
                         </div>
 
                         <div class="md:col-span-3">
-                            <button type="submit" class="w-full h-10 bg-brand-500 hover:bg-brand-600 active:scale-[0.99] text-white font-medium text-sm rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-500/30">
+                            <button type="submit" class="w-full h-10 bg-brand-600 hover:bg-brand-500 active:scale-[0.99] text-white font-medium text-sm rounded-lg transition-all shadow-sm hover:shadow-md flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-brand-600/30">
                                 <i data-lucide="send" class="w-4 h-4"></i>
                                 <span>Enviar Solicitud</span>
                             </button>
@@ -454,9 +455,9 @@
 
             <!-- SECCIÓN: HISTORIAL DE TUTORÍAS -->
             <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all overflow-hidden">
-                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-[#FAF0E6]/30">
                     <div class="flex items-center gap-2.5">
-                        <div class="p-2 rounded-lg bg-brand-50 text-brand-500 border border-brand-100">
+                        <div class="p-2 rounded-lg bg-brand-50 text-brand-600 border border-brand-500/20">
                             <i data-lucide="history" class="w-5 h-5"></i>
                         </div>
                         <div>
@@ -482,7 +483,7 @@
                             <tr class="hover:bg-slate-50/70 transition-colors group">
                                 <td class="py-4 px-6 whitespace-nowrap font-medium text-slate-800">
                                     <div class="flex items-center gap-2">
-                                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-500 transition-colors"></i>
+                                        <i data-lucide="calendar" class="w-3.5 h-3.5 text-slate-400 group-hover:text-brand-600 transition-colors"></i>
                                         <span>{{ t.fecha.strftime('%d/%m/%Y') }}</span>
                                     </div>
                                 </td>
@@ -496,8 +497,8 @@
                                             Solicitada
                                         </span>
                                     {% elif t.estado == 'Realizada' %}
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200/60">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-brand-50 text-brand-600 border border-brand-500/20">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-brand-500"></span>
                                             Realizada
                                         </span>
                                     {% elif t.estado == 'En proceso' %}
@@ -522,7 +523,7 @@
                                 </td>
                                 <td class="py-4 px-6 whitespace-nowrap text-right">
                                     {% if t.estado in ['Asignada por tutor', 'En proceso', 'Realizada'] %}
-                                        <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                                        <a href="{{ url_for('ver_tutoria_individual', id=t.id) }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-brand-600 bg-brand-50 hover:bg-brand-100 border border-brand-500/20 rounded-lg transition-all focus:outline-none focus:ring-2 focus:ring-brand-600/20">
                                             <i data-lucide="eye" class="w-3.5 h-3.5"></i>
                                             <span>Ver Detalle</span>
                                         </a>
@@ -554,18 +555,18 @@
 
     <!-- MENÚ LATERAL (SIDEBAR) -->
     <div class="drawer-side z-50">
-        <!-- Removido 'backdrop-blur-sm' del overlay para evitar borrosidad al abrir el menú lateral en móviles -->
         <label for="menu-drawer" aria-label="Cerrar menú de navegación" class="drawer-overlay bg-slate-900/20"></label>
         <aside class="bg-white w-72 h-full border-r border-slate-200/80 flex flex-col justify-between p-4 shadow-sm">
             <div class="space-y-6">
-                <!-- LOGO & BRANDING -->
-                <div class="flex items-center gap-3 px-3 py-2 border-b border-slate-100 pb-4">
-                    <div class="w-9 h-9 rounded-xl bg-brand-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
-                        <i data-lucide="graduation-cap" class="w-5 h-5"></i>
+                <!-- LOGO & BRANDING INSTITUCIONAL -->
+                <div class="flex items-center gap-3 px-2 py-2 border-b border-slate-100 pb-4">
+                    <!-- Integración formal del logo ut.png manteniendo su proporción original -->
+                    <div class="flex items-center justify-center p-1 bg-[#FAF0E6]/50 rounded-xl border border-brand-500/10 shrink-0">
+                        <img src="ut.png" alt="Logo Universidad Tecnológica" class="h-10 w-auto object-contain" />
                     </div>
-                    <div class="flex flex-col">
-                        <span class="text-base font-bold text-slate-800 tracking-tight leading-none">Tutorías EDU</span>
-                        <span class="text-[10px] font-semibold text-brand-500 tracking-wider uppercase mt-1">Portal Estudiantil</span>
+                    <div class="flex flex-col min-w-0">
+                        <span class="text-sm font-bold text-slate-800 tracking-tight leading-snug truncate">Sistema de Tutorías</span>
+                        <span class="text-[10px] font-bold text-brand-600 tracking-wider uppercase">Portal Estudiantil</span>
                     </div>
                 </div>
 
@@ -573,18 +574,18 @@
                 <nav class="space-y-1">
                     <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Navegación</span>
                     
-                    <a href="{{ url_for('panel_alumno') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'panel_alumno' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="home" class="w-4 h-4 {% if request.endpoint != 'panel_alumno' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
+                    <a href="{{ url_for('panel_alumno') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'panel_alumno' %}bg-brand-50 text-brand-600 font-semibold{% else %}text-slate-600 hover:bg-[#FAF0E6]/50 hover:text-brand-600{% endif %}">
+                        <i data-lucide="home" class="w-4 h-4 {% if request.endpoint != 'panel_alumno' %}text-slate-400 group-hover:text-brand-600{% endif %} transition-colors"></i>
                         <span>Inicio</span>
                     </a>
 
-                    <a href="{{ url_for('reporte_alumno_pdf') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'reporte_alumno_pdf' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="file-text" class="w-4 h-4 {% if request.endpoint != 'reporte_alumno_pdf' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
+                    <a href="{{ url_for('reporte_alumno_pdf') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'reporte_alumno_pdf' %}bg-brand-50 text-brand-600 font-semibold{% else %}text-slate-600 hover:bg-[#FAF0E6]/50 hover:text-brand-600{% endif %}">
+                        <i data-lucide="file-text" class="w-4 h-4 {% if request.endpoint != 'reporte_alumno_pdf' %}text-slate-400 group-hover:text-brand-600{% endif %} transition-colors"></i>
                         <span>Reporte PDF</span>
                     </a>
 
-                    <a href="{{ url_for('reportes_alumno') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'reportes_alumno' %}bg-brand-50 text-brand-500 font-semibold{% else %}text-slate-600 hover:bg-slate-50 hover:text-brand-500{% endif %}">
-                        <i data-lucide="pie-chart" class="w-4 h-4 {% if request.endpoint != 'reportes_alumno' %}text-slate-400 group-hover:text-brand-500{% endif %} transition-colors"></i>
+                    <a href="{{ url_for('reportes_alumno') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm transition-all group {% if request.endpoint == 'reportes_alumno' %}bg-brand-50 text-brand-600 font-semibold{% else %}text-slate-600 hover:bg-[#FAF0E6]/50 hover:text-brand-600{% endif %}">
+                        <i data-lucide="pie-chart" class="w-4 h-4 {% if request.endpoint != 'reportes_alumno' %}text-slate-400 group-hover:text-brand-600{% endif %} transition-colors"></i>
                         <span>Mis Reportes</span>
                     </a>
                 </nav>
@@ -592,19 +593,19 @@
 
             <!-- FOOTER DEL SIDEBAR -->
             <div class="pt-4 border-t border-slate-100 space-y-3">
-                <div class="p-3 rounded-xl bg-slate-50 border border-slate-100 flex items-center gap-3">
-                    <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-700 flex items-center justify-center font-bold text-xs shrink-0">
+                <div class="p-3 rounded-xl bg-[#FAF0E6]/40 border border-brand-500/10 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
                         {{ alumno.usuario.nombre_completo[0] if alumno.usuario and alumno.usuario.nombre_completo else 'A' }}
                     </div>
                     <div class="flex flex-col min-w-0">
                         <span class="text-xs font-semibold text-slate-800 truncate">{{ alumno.usuario.nombre_completo if alumno.usuario else 'Alumno' }}</span>
-                        <span class="text-[10px] text-slate-400 truncate">Alumno Activo</span>
+                        <span class="text-[10px] text-slate-500 truncate">Alumno Activo</span>
                     </div>
                 </div>
 
                 <div class="flex items-center gap-1.5 px-2 text-[11px] text-slate-400">
-                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-500"></i>
-                    <span>Acceso de Alumno Seguro</span>
+                    <i data-lucide="shield-check" class="w-3.5 h-3.5 text-brand-500"></i>
+                    <span>Acceso Institucional Seguro</span>
                 </div>
             </div>
         </aside>
