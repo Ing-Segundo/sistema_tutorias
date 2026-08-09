@@ -78,7 +78,6 @@ TUTORES_INICIALES = [
 ]
 
 ALUMNOS_INICIALES = [
-    # GRUPO 81 -> Tutor: silvia.castrejon
     ("TIC-310113", "Andrade Carlos Ricardo", "silvia.castrejon"),
     ("TIC-310095", "Beltrán Peña Samantha Milliani", "silvia.castrejon"),
     ("TIC-310099", "Fernández López Angela Ailin", "silvia.castrejon"),
@@ -101,7 +100,6 @@ ALUMNOS_INICIALES = [
     ("TIC-310001", "Rubio Romero Katherine Jais", "silvia.castrejon"),
     ("TI-310142", "Vázquez Cortez Jorge Alejandro", "silvia.castrejon"),
     
-    # GRUPO 82 -> Tutor: silvia.castrejon
     ("TIC-310173", "Aguilar Núñez José Manuel", "silvia.castrejon"),
     ("TIC-310012", "Aranda Martínez Eimy Eileen", "silvia.castrejon"),
     ("TIC-310049", "Esparza Burgara Jesús Gabriel", "silvia.castrejon"),
@@ -127,7 +125,6 @@ ALUMNOS_INICIALES = [
     ("TIC-310156", "Velasco Sánchez Raúl Mauricio", "silvia.castrejon"),
     ("TIC-310011", "Medina Delgado Alan Emir", "silvia.castrejon"),
     
-    # GRUPO 83 -> Tutor: juan.tovar
     ("TIC-310072", "Araujo Robledo Alain Javier", "juan.tovar"),
     ("TIC-310048", "Cisneros Macías Alondra Guadalupe", "juan.tovar"),
     ("TIC-310143", "Flores Ochoa Kervin Geovanni", "juan.tovar"),
@@ -149,7 +146,6 @@ ALUMNOS_INICIALES = [
     ("TIC-310094", "Ruiz Mendoza Gilberto", "juan.tovar"),
     ("TIC-310102", "Topete Sánchez José Carlos", "juan.tovar"),
     
-    # GRUPO 84 -> Tutor: juan.tovar
     ("TIC-310120", "Alvarado Rodríguez Alexis Ariel", "juan.tovar"),
     ("TIC-310020", "Barajas Rosales Erick Geovanny", "juan.tovar"),
     ("TIC-310128", "García Correa Bertha Odalys", "juan.tovar"),
@@ -182,7 +178,6 @@ def inicializar_base_datos():
         if not ConfiguracionRespaldos.query.first(): 
             db.session.add(ConfiguracionRespaldos())
             
-        # Coordinador
         usr_coord = Usuario.query.filter_by(credencial="coordinador").first()
         if not usr_coord:
             admin = Usuario(tipo="coordinador", credencial="coordinador", nombre_completo="Coordinador General", contrasena=generate_password_hash("clave_coordinador"))
@@ -191,10 +186,8 @@ def inicializar_base_datos():
             usr_coord.contrasena = generate_password_hash("clave_coordinador")
             usr_coord.bloqueado = False
 
-        # Mapa para asociar credencial del tutor a su id_usuario de la BD
         mapa_tutores = {}
 
-        # Tutores (Crea o Sincroniza contraseña)
         for cred, nombre in TUTORES_INICIALES:
             usr = Usuario.query.filter_by(credencial=cred).first()
             if not usr:
@@ -213,7 +206,6 @@ def inicializar_base_datos():
                 usr.intentos_fallidos = 0
             mapa_tutores[cred] = usr.id
                 
-        # Alumnos (Crea o Sincroniza contraseña y asigna Tutor)
         for cred, nombre, cred_tutor in ALUMNOS_INICIALES:
             usr = Usuario.query.filter_by(credencial=cred).first()
             id_tutor_asignado = mapa_tutores.get(cred_tutor)
@@ -370,18 +362,24 @@ def salir():
 @requiere_rol("alumno")
 def panel_alumno():
     alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
-    tutorias = Tutoria.query.filter_by(id_alumno=alumno.id).order_by(Tutoria.fecha.desc()).all()
+    tutorias = Tutoria.query.filter_by(id_alumno=alumno.id).order_by(Tutoria.fecha.desc()).all() if alumno else []
     return render_template("alumno.html", alumno=alumno, tutorias=tutorias)
 
 @app.route("/solicitar-tutoria", methods=["POST"])
 @requiere_rol("alumno")
 def solicitar_tutoria():
     alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
-    fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
-    tema = request.form["tema"].strip()
+    try:
+        fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
+    except (ValueError, KeyError):
+        flash("La fecha proporcionada no es válida", "error")
+        return redirect(url_for("panel_alumno"))
+
+    tema = request.form.get("tema", "").strip()
     if not tema:
         flash("El tema no puede estar vacío", "error")
         return redirect(url_for("panel_alumno"))
+
     nueva = Tutoria(id_alumno=alumno.id, id_tutor=alumno.id_tutor, fecha=fecha, tema=tema, estado="Solicitada")
     db.session.add(nueva)
     db.session.commit()
@@ -392,16 +390,16 @@ def solicitar_tutoria():
 @requiere_rol("alumno")
 def reporte_alumno_pdf():
     alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
-    tutorias = Tutoria.query.filter_by(id_alumno=alumno.id).all()
+    tutorias = Tutoria.query.filter_by(id_alumno=alumno.id).all() if alumno else []
     datos = [(t.fecha.strftime("%d/%m/%Y"), t.tema, t.estado, t.observaciones[:30]) for t in tutorias]
-    ruta = generar_pdf(datos, f"Mis Tutorías - {alumno.usuario.nombre_completo}", ["Fecha", "Tema", "Estado", "Observaciones"])
+    ruta = generar_pdf(datos, f"Mis Tutorías - {alumno.usuario.nombre_completo if alumno and alumno.usuario else ''}", ["Fecha", "Tema", "Estado", "Observaciones"])
     return send_file(ruta, as_attachment=True, download_name="mis_tutorias.pdf")
 
 @app.route("/reportes-alumno")
 @requiere_rol("alumno")
 def reportes_alumno():
     alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
-    mis_tutorias = Tutoria.query.filter_by(id_alumno=alumno.id).all()
+    mis_tutorias = Tutoria.query.filter_by(id_alumno=alumno.id).all() if alumno else []
     total = len(mis_tutorias)
     realizadas = sum(1 for t in mis_tutorias if t.estado == "Realizada")
     pendientes = sum(1 for t in mis_tutorias if t.estado in ["Solicitada", "Confirmada", "Asignada por tutor"])
@@ -444,10 +442,14 @@ def editar_tutoria(id):
     if tut.id_tutor != g.uid:
         flash("No tienes permiso para modificar esta tutoría", "error")
         return redirect(url_for("panel_tutor"))
-    tut.fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
-    tut.tema = request.form["tema"]
-    tut.estado = request.form["estado"]
-    tut.observaciones = request.form["observaciones"]
+    try:
+        tut.fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
+    except (ValueError, KeyError):
+        flash("Fecha inválida", "error")
+        return redirect(url_for("panel_tutor"))
+    tut.tema = request.form.get("tema", tut.tema)
+    tut.estado = request.form.get("estado", tut.estado)
+    tut.observaciones = request.form.get("observaciones", tut.observaciones)
     db.session.commit()
     flash("Tutoría actualizada", "success")
     return redirect(url_for("panel_tutor"))
@@ -456,26 +458,49 @@ def editar_tutoria(id):
 @requiere_rol("tutor")
 def actualizar_horario():
     tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
-    tutor.horario = request.form["horario"]
-    db.session.commit()
-    flash("Horario actualizado", "success")
+    if tutor:
+        tutor.horario = request.form.get("horario", tutor.horario)
+        db.session.commit()
+        flash("Horario actualizado", "success")
     return redirect(url_for("panel_tutor"))
 
 @app.route("/tutor/crear-tutoria", methods=["POST"])
 @requiere_rol("tutor")
 def crear_tutoria():
-    fecha = datetime.strptime(request.form["fecha"], "%Y-%m-%d")
-    id_alumno = request.form["id_alumno"]
-    nueva = Tutoria(
-        id_alumno=id_alumno, 
-        id_tutor=g.uid, 
-        fecha=fecha, 
-        tema=request.form["tema"], 
-        estado="Asignada por tutor"
-    )
-    db.session.add(nueva)
-    db.session.commit()
-    flash("Tutoría creada", "success")
+    try:
+        raw_id_alumno = request.form.get("id_alumno")
+        raw_fecha = request.form.get("fecha")
+        tema = request.form.get("tema", "").strip()
+
+        if not raw_id_alumno or not raw_fecha or not tema:
+            flash("Todos los campos marcados son obligatorios", "error")
+            return redirect(url_for("panel_tutor"))
+
+        id_alumno = int(raw_id_alumno)
+        fecha = datetime.strptime(raw_fecha, "%Y-%m-%d")
+
+        alumno = Alumno.query.get(id_alumno)
+        if not alumno:
+            flash("El alumno seleccionado no existe", "error")
+            return redirect(url_for("panel_tutor"))
+
+        nueva = Tutoria(
+            id_alumno=id_alumno, 
+            id_tutor=g.uid, 
+            fecha=fecha, 
+            tema=tema, 
+            estado="Asignada por tutor"
+        )
+        db.session.add(nueva)
+        db.session.commit()
+        flash("Tutoría creada exitosamente", "success")
+    except ValueError:
+        db.session.rollback()
+        flash("Formato de datos no válido (verifique la fecha o selección del alumno)", "error")
+    except Exception as e:
+        db.session.rollback()
+        flash("Ocurrió un error inesperado al procesar la tutoría", "error")
+
     return redirect(url_for("panel_tutor"))
 
 @app.route("/tutor/completar/<int:id>")
@@ -495,8 +520,8 @@ def completar_tutoria(id):
 def reporte_tutor_pdf():
     tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
     tutorias = Tutoria.query.filter_by(id_tutor=g.uid).all()
-    datos = [(t.alumno.usuario.nombre_completo, t.fecha.strftime("%d/%m/%Y"), t.tema, t.estado) for t in tutorias]
-    ruta = generar_pdf(datos, f"Tutorías a mi cargo - {tutor.usuario.nombre_completo}", ["Alumno", "Fecha", "Tema", "Estado"])
+    datos = [(t.alumno.usuario.nombre_completo if t.alumno and t.alumno.usuario else 'Sin Alumno', t.fecha.strftime("%d/%m/%Y"), t.tema, t.estado) for t in tutorias]
+    ruta = generar_pdf(datos, f"Tutorías a mi cargo - {tutor.usuario.nombre_completo if tutor and tutor.usuario else ''}", ["Alumno", "Fecha", "Tema", "Estado"])
     return send_file(ruta, as_attachment=True, download_name="tutorias_tutor.pdf")
 
 @app.route("/reportes-tutor")
@@ -532,7 +557,7 @@ def ver_tutoria_individual(id):
         return redirect(url_for("panel_tutor"))
     if g.rol == "alumno":
         alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
-        if tutoria.id_alumno != alumno.id:
+        if not alumno or tutoria.id_alumno != alumno.id:
             flash("No tienes acceso", "error")
             return redirect(url_for("panel_alumno"))
     if request.method == "POST":
@@ -550,6 +575,22 @@ def ver_tutoria_individual(id):
         flash("Cambios guardados correctamente", "success")
         return redirect(url_for("ver_tutoria_individual", id=id))
     return render_template("tutoria_individual.html", tutoria=tutoria)
+
+@app.route("/descargar-ficha-tutoria-pdf/<int:id>")
+@requiere_rol("tutor", "alumno")
+def descargar_ficha_tutoria_pdf(id):
+    tutoria = Tutoria.query.get_or_404(id)
+    if g.rol == "tutor" and tutoria.id_tutor != g.uid:
+        flash("No tienes permiso", "error")
+        return redirect(url_for("panel_tutor"))
+    datos = [
+        ["Alumno", tutoria.alumno.usuario.nombre_completo if tutoria.alumno and tutoria.alumno.usuario else "N/A"],
+        ["Fecha", tutoria.fecha.strftime("%d/%m/%Y") if tutoria.fecha else "N/A"],
+        ["Tema", tutoria.tema],
+        ["Estado", tutoria.estado]
+    ]
+    ruta = generar_pdf(datos, f"Ficha de Tutoría #{tutoria.id}", ["Campo", "Detalle"])
+    return send_file(ruta, as_attachment=True, download_name=f"ficha_tutoria_{tutoria.id}.pdf")
 
 # ===================== COORDINADOR =====================
 @app.route("/panel-coordinador")
@@ -658,10 +699,11 @@ def eliminar_respaldo(nombre):
 @requiere_rol("coordinador")
 def config_respaldos():
     cfg = ConfiguracionRespaldos.query.first()
-    cfg.activo = "activo" in request.form
-    cfg.intervalo_horas = int(request.form["intervalo"])
-    db.session.commit()
-    flash("Configuración guardada", "success")
+    if cfg:
+        cfg.activo = "activo" in request.form
+        cfg.intervalo_horas = int(request.form["intervalo"])
+        db.session.commit()
+        flash("Configuración guardada", "success")
     return redirect(url_for("panel_coordinador"))
 
 @app.route("/reporte-general-pdf")
