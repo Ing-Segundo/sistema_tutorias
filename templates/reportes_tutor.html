@@ -468,12 +468,7 @@
                         <i data-lucide="home" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
                         <span>Inicio</span>
                     </a>
-
-                    <a href="{% if url_for is defined %}{{ url_for('reporte_tutor_pdf') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
-                        <i data-lucide="file-text" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
-                        <span>Reporte PDF</span>
-                    </a>
-
+                    
                     <a href="{% if url_for is defined %}{{ url_for('reportes_tutor') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all group bg-emerald-800/60 text-white border border-emerald-600/40">
                         <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-300"></i>
                         <span>Mis Reportes</span>

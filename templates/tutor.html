@@ -456,9 +456,17 @@
                                 <p class="text-xs text-slate-500">Listado general de estudiantes tutorados</p>
                             </div>
                         </div>
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
-                            {{ alumnos|length if alumnos else 0 }} Alumnos
-                        </span>
+                        <div class="flex items-center gap-2">
+                            {% if session.get('rol') == 'coordinador' %}
+                            <a href="{{ url_for('actualizar_asignacion_masiva') }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 rounded-lg transition-all">
+                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                                <span>Actualizar Asignación Masiva</span>
+                            </a>
+                            {% endif %}
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-600 border border-slate-200">
+                                {{ alumnos|length if alumnos else 0 }} Alumnos
+                            </span>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -670,11 +678,6 @@
                         <span>Grupos Asignados</span>
                     </button>
 
-                    <a href="{{ url_for('reporte_tutor_pdf') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
-                        <i data-lucide="file-text" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
-                        <span>Reporte PDF</span>
-                    </a>
-
                     <a href="{{ url_for('reportes_tutor') }}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
                         <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
                         <span>Mis Reportes</span>
@@ -724,7 +727,7 @@
 
     const nombreTutorActual = {{ (tutor.usuario.nombre_completo if tutor and tutor.usuario and tutor.usuario.nombre_completo else '')|tojson }}.toLowerCase();
     let esSilvia = nombreTutorActual.includes('silvia');
-    let gruposTutor = esSilvia ? ['81', '82'] : ['83', '84'];
+    let gruposTutor = esSilvia ? ['91', '92'] : ['93', '94'];
     let nombreTutorFormatted = {{ (tutor.usuario.nombre_completo if tutor and tutor.usuario and tutor.usuario.nombre_completo else 'Docente Tutor')|tojson }};
 
     const baseAlumnosGrupos = {};
