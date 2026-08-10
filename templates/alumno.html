@@ -161,15 +161,19 @@
                                 <p class="text-xs text-slate-500">Información general de perfil y asignación</p>
                             </div>
                         </div>
+                        <a href="{% if url_for is defined %}{{ url_for('reporte_alumno_pdf') }}{% else %}#{% endif %}" class="inline-flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-[#1A5333] bg-white hover:bg-emerald-50 border border-emerald-300 rounded-lg transition-all shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/20">
+                            <i data-lucide="file-text" class="w-4 h-4 text-[#1A5333]"></i>
+                            <span class="hidden sm:inline">Exportar PDF</span>
+                        </a>
                     </div>
 
                     <div class="p-5 sm:p-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-200/80">
-                            <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Nombre Completo</span>
-                            <p class="text-sm font-semibold text-slate-800 break-words leading-tight">
-                                {{ alumno.usuario.nombre_completo if alumno is defined and alumno.usuario else 'Arce Rosales Fernanda Dalet' }}
-                            </p>
-                        </div>
+                    <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-200/80">
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Nombre Completo</span>
+                        <p class="text-sm font-semibold text-slate-800 break-words leading-tight">
+                            {{ alumno.usuario.nombre_completo if alumno is defined and alumno.usuario else 'Arce Rosales Fernanda Dalet' }}
+                        </p>
+                    </div>
 
                         <div class="bg-slate-50/70 p-4 rounded-xl border border-slate-200/80">
                             <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block mb-1">Tutor Asignado</span>
@@ -593,6 +597,11 @@
                     <a href="{% if url_for is defined %}{{ url_for('panel_alumno') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all group bg-emerald-800/60 text-white border border-emerald-600/40">
                         <i data-lucide="home" class="w-4 h-4 text-emerald-300"></i>
                         <span>Inicio</span>
+                    </a>
+
+                    <a href="{% if url_for is defined %}{{ url_for('reporte_alumno_pdf') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
+                        <i data-lucide="file-text" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
+                        <span>Reporte PDF</span>
                     </a>
 
                     <a href="{% if url_for is defined %}{{ url_for('reportes_alumno') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
