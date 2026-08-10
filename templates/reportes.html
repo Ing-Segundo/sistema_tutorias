@@ -188,7 +188,7 @@
                         </span>
                     </div>
 
-                    <!-- Tarjetas de Métricas Rápidas (Se quitó Confirmadas) -->
+                    <!-- Tarjetas de Métricas Rápidas (Sin la opción 'Confirmadas') -->
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
                             <div class="flex items-center justify-between text-slate-400 mb-2">
@@ -219,7 +219,7 @@
 
                         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all col-span-2 sm:col-span-3">
                             <div class="flex items-center justify-between text-emerald-600 mb-2">
-                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Realizadas con Éxito</span>
+                                <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Realizadas Éxito</span>
                                 <i data-lucide="check-check" class="w-4 h-4"></i>
                             </div>
                             <div class="flex items-baseline gap-2">
@@ -303,12 +303,12 @@
                         </div>
 
                         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
-                            <div class="flex items-center justify-between text-emerald-500 mb-2">
+                            <div class="flex items-center justify-between text-teal-600 mb-2">
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Activos</span>
                                 <i data-lucide="user-check" class="w-4 h-4"></i>
                             </div>
-                            <p class="text-2xl font-bold text-emerald-600">{{ activos if activos is defined else 135 }}</p>
-                            <span class="text-[10px] text-emerald-700/70 font-medium block mt-1">Acceso habilitado</span>
+                            <p class="text-2xl font-bold text-teal-600">{{ activos if activos is defined else 135 }}</p>
+                            <span class="text-[10px] text-teal-700/70 font-medium block mt-1">Acceso habilitado</span>
                         </div>
 
                         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all col-span-2 sm:col-span-2">
@@ -367,7 +367,7 @@
                     </div>
                     <div class="p-4 rounded-xl bg-slate-50 border border-slate-200/80 space-y-1.5">
                         <span class="font-bold text-slate-800 text-sm flex items-center gap-1.5">
-                            <i data-lucide="users" class="w-4 h-4 text-indigo-600"></i>
+                            <i data-lucide="users" class="w-4 h-4 text-blue-600"></i>
                             Distribución Tutor/Alumno
                         </span>
                         <p class="leading-relaxed">El promedio actual de atención permite cumplimiento estricto del plan reticular sin saturar los horarios lectivos.</p>
@@ -444,7 +444,7 @@
 
 </div>
 
-<!-- INITIALIZER & CHART.JS CONFIGURATION SCRIPT -->
+<!-- SCRIPT DE CONFIGURACIÓN DE CHART.JS -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         // Inicializar Lucide Icons
@@ -465,7 +465,7 @@
         const numTutores = {{ total_tutores if total_tutores is defined else 15 }};
         const numCoordinadores = {{ total_coordinadores if total_coordinadores is defined else 3 }};
 
-        // 1. Gráfica de Tutorías (Barras estilizadas - SIN "Confirmadas" y con Colores Relevantes)
+        // 1. Gráfica de Tutorías (Barras - Sin 'Confirmadas' y con colores únicos)
         const ctx1 = document.getElementById('graficaTutorias');
         if (ctx1) {
             new Chart(ctx1.getContext('2d'), {
@@ -476,9 +476,9 @@
                         label: 'Número de Tutorías',
                         data: [numSolicitadas, numAsignadas, numRealizadas],
                         backgroundColor: [
-                            '#F59E0B', // Amber 500 - Alerta / Pendiente
-                            '#0EA5E9', // Sky 500 - Asignada / En proceso
-                            '#10B981'  // Emerald 500 - Completada con éxito
+                            '#F59E0B', // Ámbar (Pendientes/Solicitadas)
+                            '#0EA5E9', // Cian / Azul Claro (Asignadas)
+                            '#10B981'  // Verde Esmeralda (Realizadas con éxito)
                         ],
                         hoverBackgroundColor: [
                             '#D97706',
@@ -539,24 +539,24 @@
                         data: [numAlumnos, numTutores, numCoordinadores],
                         backgroundColor: [
                             '#3B82F6', // Azul brillante (Alumnos)
-                            '#10B981', // Verde esmeralda (Tutores)
-                            '#8B5CF6'  // Púrpura elegante (Coordinadores)
+                            '#059669', // Verde Bosque / Menta (Tutores)
+                            '#8B5CF6'  // Púrpura (Coordinadores)
                         ],
                         hoverBackgroundColor: [
                             '#2563EB',
-                            '#059669',
+                            '#047857',
                             '#7C3AED'
                         ],
                         borderWidth: 4,
                         borderColor: '#FFFFFF',
-                        spacing: 6,      // Espaciado entre segmentos para evitar que queden apachurrados
+                        spacing: 6,       // Espaciado que evita que 1 usuario se comprima
                         hoverOffset: 8
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '60%',      // Ancho suficiente para evitar deformación cuando un valor sea 1 o muy pequeño
+                    cutout: '60%',       // Ancho óptimo para dar presencia visual incluso con baja cantidad de datos
                     animation: {
                         animateScale: true,
                         animateRotate: true,
