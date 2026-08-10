@@ -48,7 +48,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Chart.js CDN (Agregado desde reportes.html) -->
+    <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.8/dist/chart.umd.min.js"></script>
 
     <style>
@@ -433,7 +433,7 @@
                 </section>
             </div>
 
-            <!-- NUEVA SECCIÓN INTEGRADA: ESTADÍSTICAS GENERALES (Proveniente de reportes.html) -->
+            <!-- SECCIÓN 2: ESTADÍSTICAS GENERALES -->
             <div id="sec-estadisticas" class="tab-content-section space-y-6">
                 <!-- BANNER EXPLICATIVO -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-slide-up">
@@ -667,40 +667,7 @@
                 </section>
             </div>
 
-            <!-- SECCIÓN 3: REPORTES PDF -->
-            <div id="sec-reportes" class="tab-content-section space-y-6">
-                <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
-                    <div class="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-                        <div class="flex items-center gap-2.5">
-                            <div class="p-2 rounded-lg bg-emerald-50 text-[#1A5333] border border-emerald-100">
-                                <i data-lucide="file-text" class="w-5 h-5"></i>
-                            </div>
-                            <div>
-                                <h2 class="text-base font-semibold text-slate-800">Generación de Reportes PDF</h2>
-                                <p class="text-xs text-slate-500">Exporta informes generales en formato PDF</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="p-5 sm:p-6 space-y-6">
-                        <div class="p-5 rounded-2xl bg-gradient-to-r from-[#1A5333] to-[#144228] text-white flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-md">
-                            <div class="space-y-1">
-                                <h3 class="font-bold text-base flex items-center gap-2">
-                                    <i data-lucide="file-check" class="w-5 h-5"></i>
-                                    Reporte General Consolidado
-                                </h3>
-                                <p class="text-xs text-emerald-100">Descarga un documento PDF completo con todos los usuarios del sistema.</p>
-                            </div>
-                            <a href="{% if url_for is defined %}{{ url_for('reporte_general_pdf') }}{% else %}#{% endif %}" class="inline-flex items-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#1A5333] bg-white hover:bg-emerald-50 rounded-xl transition-all shadow-sm shrink-0">
-                                <i data-lucide="download" class="w-4 h-4 text-rose-500"></i>
-                                <span>Descargar PDF General</span>
-                            </a>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            <!-- SECCIÓN 4: RESPALDOS Y AUDITORÍA -->
+            <!-- SECCIÓN 3: RESPALDOS Y AUDITORÍA -->
             <div id="sec-respaldos" class="tab-content-section space-y-6">
                 <!-- CONFIGURACIÓN DE RESPALDOS AUTOMÁTICOS -->
                 <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
@@ -832,7 +799,7 @@
                     </div>
                 </div>
 
-                <!-- ELEMENTOS DE NAVEGACIÓN -->
+                <!-- ELEMENTOS DE NAVEGACIÓN UNIFICADOS -->
                 <nav class="space-y-1">
                     <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-emerald-200/60 block mb-2">Navegación</span>
                     
@@ -841,15 +808,9 @@
                         <span>Usuarios y Métricas</span>
                     </button>
 
-                    <!-- Modificado: Ahora es un botón en vez de enlace externo -->
                     <button onclick="switchTab('sec-estadisticas', 'Estadísticas Generales', this)" class="tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
                         <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
                         <span>Estadísticas Generales</span>
-                    </button>
-
-                    <button onclick="switchTab('sec-reportes', 'Reportes PDF', this)" class="tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
-                        <i data-lucide="file-text" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
-                        <span>Reportes PDF</span>
                     </button>
 
                     <button onclick="switchTab('sec-respaldos', 'Respaldos', this)" class="tab-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
