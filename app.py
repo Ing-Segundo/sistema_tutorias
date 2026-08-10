@@ -6,7 +6,6 @@ from functools import wraps
 import jwt, shutil, os, threading, time, io
 import openpyxl
 
-# Configuración adaptada para reconocer la carpeta 'assets' en Render/GitHub
 app = Flask(__name__, static_folder='assets', static_url_path='/assets')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'clave_segura_sistema_tutorias_2026_utn')
 
@@ -99,7 +98,6 @@ ALUMNOS_INICIALES = [
     ("TIC-310150", "Robles Ramírez Jorge Alexander", "silvia.castrejon"),
     ("TIC-310001", "Rubio Romero Katherine Jais", "silvia.castrejon"),
     ("TI-310142", "Vázquez Cortez Jorge Alejandro", "silvia.castrejon"),
-    
     ("TIC-310173", "Aguilar Núñez José Manuel", "silvia.castrejon"),
     ("TIC-310012", "Aranda Martínez Eimy Eileen", "silvia.castrejon"),
     ("TIC-310049", "Esparza Burgara Jesús Gabriel", "silvia.castrejon"),
@@ -124,7 +122,6 @@ ALUMNOS_INICIALES = [
     ("TIC-310137", "Topete Fregoso José Armando", "silvia.castrejon"),
     ("TIC-310156", "Velasco Sánchez Raúl Mauricio", "silvia.castrejon"),
     ("TIC-310011", "Medina Delgado Alan Emir", "silvia.castrejon"),
-    
     ("TIC-310072", "Araujo Robledo Alain Javier", "juan.tovar"),
     ("TIC-310048", "Cisneros Macías Alondra Guadalupe", "juan.tovar"),
     ("TIC-310143", "Flores Ochoa Kervin Geovanni", "juan.tovar"),
@@ -145,7 +142,6 @@ ALUMNOS_INICIALES = [
     ("TIC-310168", "Rosales García Sherlyn Vanessa", "juan.tovar"),
     ("TIC-310094", "Ruiz Mendoza Gilberto", "juan.tovar"),
     ("TIC-310102", "Topete Sánchez José Carlos", "juan.tovar"),
-    
     ("TIC-310120", "Alvarado Rodríguez Alexis Ariel", "juan.tovar"),
     ("TIC-310020", "Barajas Rosales Erick Geovanny", "juan.tovar"),
     ("TIC-310128", "García Correa Bertha Odalys", "juan.tovar"),
@@ -184,7 +180,7 @@ def inicializar_base_datos():
                 tipo="coordinador", 
                 credencial="coordinador", 
                 nombre_completo="Coordinador General", 
-                contrasena=generate_password_hash("coordinador") # Cambiado a 'coordinador' para mayor sencillez
+                contrasena=generate_password_hash("coordinador")
             )
             db.session.add(admin)
         else:
@@ -382,6 +378,10 @@ def reportes_alumno():
 @requiere_rol("tutor")
 def panel_tutor():
     tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
+    if not tutor:
+        tutor = Tutor(usuario_id=g.uid)
+        db.session.add(tutor)
+        db.session.commit()
     tutorias = Tutoria.query.filter_by(id_tutor=g.uid).order_by(Tutoria.fecha.desc()).all()
     alumnos = Alumno.query.filter_by(id_tutor=g.uid).all()
     return render_template("tutor.html", tutor=tutor, alumnos=alumnos, tutorias=tutorias)
@@ -468,7 +468,7 @@ def crear_tutoria():
         flash("Tutoría creada exitosamente", "success")
     except ValueError:
         db.session.rollback()
-        flash("Formato de datos no válido (verifique la fecha o selección del alumno)", "error")
+        flash("Formato de datos no válido", "error")
     except Exception as e:
         db.session.rollback()
         flash("Ocurrió un error inesperado al procesar la tutoría", "error")
@@ -609,12 +609,17 @@ def descargar_ficha_tutoria_excel(id):
 @app.route("/panel-coordinador")
 @requiere_rol("coordinador")
 def panel_coordinador():
+    cfg = ConfiguracionRespaldos.query.first()
+    if not cfg:
+        cfg = ConfiguracionRespaldos()
+        db.session.add(cfg)
+        db.session.commit()
     return render_template("coordinador.html", 
                            usuarios=Usuario.query.all(), 
                            tutorias=Tutoria.query.all(),
                            auditoria=Auditoria.query.order_by(Auditoria.fecha.desc()).limit(30).all(),
                            respaldos=os.listdir(CARPETA_RESPALDOS), 
-                           cfg=ConfiguracionRespaldos.query.first())
+                           cfg=cfg)
 
 @app.route("/reportes")
 @requiere_rol("coordinador")
