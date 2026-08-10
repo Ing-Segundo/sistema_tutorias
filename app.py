@@ -622,7 +622,6 @@ def reportes():
     return render_template("reportes.html",
                            total_tutorias=Tutoria.query.count(), 
                            solicitadas=Tutoria.query.filter_by(estado="Solicitada").count(),
-                           confirmadas=Tutoria.query.filter_by(estado="Confirmada").count(), 
                            realizadas=Tutoria.query.filter_by(estado="Realizada").count(),
                            asignadas=Tutoria.query.filter_by(estado="Asignada por tutor").count(), 
                            total_alumnos=Usuario.query.filter_by(tipo="alumno").count(),
