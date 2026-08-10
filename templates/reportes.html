@@ -18,10 +18,10 @@
                             200: '#C2DFCD',
                             300: '#94C7A7',
                             400: '#228B22',
-                            500: '#1A5333',   /* Verde sólido principal */
-                            600: '#144228',   /* Verde oscuro sidebar */
+                            500: '#1A5333',
+                            600: '#144228',
                             700: '#0F331F',
-                            bg: '#FAF0E6',    /* Tono crema/piel jaguar */
+                            bg: '#FAF0E6',
                         },
                         accent: '#228B22',
                     },
@@ -57,7 +57,6 @@
             --brand-hover: #144228;
         }
 
-        /* Textura de manchas sobre fondo crema/verde suave */
         body {
             font-family: 'Inter', sans-serif;
             background-color: #EAF2ED;
@@ -86,7 +85,6 @@
             -webkit-backdrop-filter: blur(8px);
         }
 
-        /* Animaciones suaves para paneles y tarjetas */
         .animate-fade-in {
             animation: fadeIn 0.5s ease-out forwards;
         }
@@ -144,10 +142,10 @@
             </div>
         </header>
 
-        <!-- CUERPO PRINCIPAL CON TODAS LAS SECCIONES -->
+        <!-- CUERPO PRINCIPAL -->
         <main class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6 animate-fade-in">
 
-            <!-- CABECERA INFORMATIVA / BANNER EXPLICATIVO -->
+            <!-- BANNER EXPLICATIVO -->
             <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 sm:p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 animate-slide-up">
                 <div class="space-y-1">
                     <div class="flex items-center gap-2">
@@ -167,12 +165,11 @@
                 </div>
             </section>
 
-            <!-- GRID PRINCIPAL DE MÓDULOS -->
+            <!-- GRID PRINCIPAL -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
                 <!-- MÓDULO 1: GESTIÓN DE TUTORÍAS -->
                 <section class="space-y-4 flex flex-col">
-                    <!-- Título del Módulo -->
                     <div class="flex items-center justify-between bg-white/80 backdrop-blur p-4 rounded-xl border border-slate-200/80 shadow-sm">
                         <div class="flex items-center gap-2.5">
                             <div class="p-2 rounded-lg bg-emerald-50 text-[#1A5333] border border-emerald-100">
@@ -184,18 +181,18 @@
                             </div>
                         </div>
                         <span class="text-xs font-semibold px-2.5 py-1 bg-slate-100 text-slate-600 rounded-lg border border-slate-200">
-                            Total: {{ total_tutorias if total_tutorias is defined else 18 }}
+                            Total: {{ total_tutorias if total_tutorias is defined else 0 }}
                         </span>
                     </div>
 
-                    <!-- Tarjetas de Métricas Rápidas (Sin la opción 'Confirmadas') -->
-                    <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                    <!-- Tarjetas de Métricas -->
+                    <div class="grid grid-cols-2 sm:grid-cols-2 gap-3">
                         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
                             <div class="flex items-center justify-between text-slate-400 mb-2">
                                 <span class="text-[11px] font-bold uppercase tracking-wider">Total</span>
                                 <i data-lucide="layers" class="w-4 h-4 text-[#1A5333]"></i>
                             </div>
-                            <p class="text-2xl font-bold text-slate-800">{{ total_tutorias if total_tutorias is defined else 18 }}</p>
+                            <p class="text-2xl font-bold text-slate-800">{{ total_tutorias if total_tutorias is defined else 0 }}</p>
                             <span class="text-[10px] text-slate-400 block mt-1">Sesiones registradas</span>
                         </div>
 
@@ -204,7 +201,7 @@
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Solicitadas</span>
                                 <i data-lucide="clock" class="w-4 h-4"></i>
                             </div>
-                            <p class="text-2xl font-bold text-amber-500">{{ solicitadas if solicitadas is defined else 5 }}</p>
+                            <p class="text-2xl font-bold text-amber-500">{{ solicitadas if solicitadas is defined else 0 }}</p>
                             <span class="text-[10px] text-amber-700/70 font-medium block mt-1">Pendientes de atención</span>
                         </div>
 
@@ -213,26 +210,26 @@
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Asignadas</span>
                                 <i data-lucide="user-check" class="w-4 h-4"></i>
                             </div>
-                            <p class="text-2xl font-bold text-sky-500">{{ asignadas if asignadas is defined else 4 }}</p>
+                            <p class="text-2xl font-bold text-sky-500">{{ asignadas if asignadas is defined else 0 }}</p>
                             <span class="text-[10px] text-sky-700/70 font-medium block mt-1">Tutor designado</span>
                         </div>
 
-                        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all col-span-2 sm:col-span-3">
+                        <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
                             <div class="flex items-center justify-between text-emerald-600 mb-2">
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Realizadas Éxito</span>
                                 <i data-lucide="check-check" class="w-4 h-4"></i>
                             </div>
                             <div class="flex items-baseline gap-2">
-                                <p class="text-2xl font-bold text-emerald-600">{{ realizadas if realizadas is defined else 9 }}</p>
+                                <p class="text-2xl font-bold text-emerald-600">{{ realizadas if realizadas is defined else 0 }}</p>
                                 <span class="text-xs font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                                     Concluidas
                                 </span>
                             </div>
-                            <span class="text-[10px] text-slate-400 block mt-1">Con minuta u observaciones guardadas</span>
+                            <span class="text-[10px] text-slate-400 block mt-1">Con minuta guardada</span>
                         </div>
                     </div>
 
-                    <!-- Gráfica e Interpretación -->
+                    <!-- Gráfica de Barras -->
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex-1 flex flex-col justify-between space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Estado Operacional de Sesiones</h3>
@@ -245,11 +242,10 @@
                             <canvas id="graficaTutorias"></canvas>
                         </div>
 
-                        <!-- Bloque Explicativo -->
                         <div class="p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80 text-xs text-slate-600 flex items-start gap-3">
                             <i data-lucide="info" class="w-4 h-4 text-[#1A5333] shrink-0 mt-0.5"></i>
                             <p class="leading-relaxed">
-                                <strong>Utilidad pedagógica:</strong> Permite identificar cuellos de botella entre solicitudes y asignaciones. Una mayor proporción de tutorías en estado <em>Realizadas</em> refleja un seguimiento oportuno del desempeño estudiantil.
+                                <strong>Utilidad pedagógica:</strong> Permite identificar cuellos de botella entre solicitudes y asignaciones.
                             </p>
                         </div>
                     </div>
@@ -257,7 +253,6 @@
 
                 <!-- MÓDULO 2: GESTIÓN DE USUARIOS -->
                 <section class="space-y-4 flex flex-col">
-                    <!-- Título del Módulo -->
                     <div class="flex items-center justify-between bg-white/80 backdrop-blur p-4 rounded-xl border border-slate-200/80 shadow-sm">
                         <div class="flex items-center gap-2.5">
                             <div class="p-2 rounded-lg bg-emerald-50 text-[#1A5333] border border-emerald-100">
@@ -273,14 +268,14 @@
                         </span>
                     </div>
 
-                    <!-- Tarjetas de Métricas Rápidas -->
+                    <!-- Tarjetas de Métricas -->
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
                         <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-saas-card hover:shadow-saas-hover transition-all">
                             <div class="flex items-center justify-between text-blue-600 mb-2">
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Alumnos</span>
                                 <i data-lucide="graduation-cap" class="w-4 h-4"></i>
                             </div>
-                            <p class="text-2xl font-bold text-blue-600">{{ total_alumnos if total_alumnos is defined else 120 }}</p>
+                            <p class="text-2xl font-bold text-blue-600">{{ total_alumnos if total_alumnos is defined else 0 }}</p>
                             <span class="text-[10px] text-slate-400 block mt-1">Matrícula inscrita</span>
                         </div>
 
@@ -289,7 +284,7 @@
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Tutores</span>
                                 <i data-lucide="book-open" class="w-4 h-4"></i>
                             </div>
-                            <p class="text-2xl font-bold text-emerald-600">{{ total_tutores if total_tutores is defined else 15 }}</p>
+                            <p class="text-2xl font-bold text-emerald-600">{{ total_tutores if total_tutores is defined else 0 }}</p>
                             <span class="text-[10px] text-slate-400 block mt-1">Docentes asignados</span>
                         </div>
 
@@ -298,7 +293,7 @@
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Coordinadores</span>
                                 <i data-lucide="shield-check" class="w-4 h-4"></i>
                             </div>
-                            <p class="text-2xl font-bold text-purple-600">{{ total_coordinadores if total_coordinadores is defined else 3 }}</p>
+                            <p class="text-2xl font-bold text-purple-600">{{ total_coordinadores if total_coordinadores is defined else 0 }}</p>
                             <span class="text-[10px] text-slate-400 block mt-1">Administración</span>
                         </div>
 
@@ -307,7 +302,7 @@
                                 <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400">Activos</span>
                                 <i data-lucide="user-check" class="w-4 h-4"></i>
                             </div>
-                            <p class="text-2xl font-bold text-teal-600">{{ activos if activos is defined else 135 }}</p>
+                            <p class="text-2xl font-bold text-teal-600">{{ activos if activos is defined else 0 }}</p>
                             <span class="text-[10px] text-teal-700/70 font-medium block mt-1">Acceso habilitado</span>
                         </div>
 
@@ -317,16 +312,16 @@
                                 <i data-lucide="user-x" class="w-4 h-4"></i>
                             </div>
                             <div class="flex items-baseline gap-2">
-                                <p class="text-2xl font-bold text-rose-600">{{ bloqueados if bloqueados is defined else 3 }}</p>
+                                <p class="text-2xl font-bold text-rose-600">{{ bloqueados if bloqueados is defined else 0 }}</p>
                                 <span class="text-xs font-semibold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
                                     Restringidos
                                 </span>
                             </div>
-                            <span class="text-[10px] text-slate-400 block mt-1">Requieren revisión académica o administrativa</span>
+                            <span class="text-[10px] text-slate-400 block mt-1">Requieren revisión académica</span>
                         </div>
                     </div>
 
-                    <!-- Gráfica e Interpretación -->
+                    <!-- Gráfica de Usuarios (Ajustada con minAngle) -->
                     <div class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-5 flex-1 flex flex-col justify-between space-y-4">
                         <div class="flex items-center justify-between border-b border-slate-100 pb-3">
                             <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Distribución Proporcional de Roles</h3>
@@ -339,11 +334,10 @@
                             <canvas id="graficaUsuarios"></canvas>
                         </div>
 
-                        <!-- Bloque Explicativo -->
                         <div class="p-3.5 bg-slate-50/80 rounded-xl border border-slate-200/80 text-xs text-slate-600 flex items-start gap-3">
                             <i data-lucide="help-circle" class="w-4 h-4 text-[#1A5333] shrink-0 mt-0.5"></i>
                             <p class="leading-relaxed">
-                                <strong>¿Para qué sirve?</strong> Ayuda a garantizar que la proporción entre alumnos y tutores permanezca equilibrada, asegurando atención personalizada sin sobrecargar la agenda laboral de los profesores.
+                                <strong>¿Para qué sirve?</strong> Permite supervisar la distribución del personal docente respecto a la masa estudiantil.
                             </p>
                         </div>
                     </div>
@@ -351,7 +345,7 @@
 
             </div>
 
-            <!-- SECCIÓN RESUMEN EJECUTIVO PARA DOCENTES Y COORDINADORES -->
+            <!-- SECCIÓN RESUMEN EJECUTIVO -->
             <section class="bg-white rounded-2xl border border-slate-200/80 shadow-saas-card p-6 space-y-4">
                 <div class="flex items-center gap-2 border-b border-slate-100 pb-3">
                     <i data-lucide="award" class="w-5 h-5 text-[#1A5333]"></i>
@@ -385,12 +379,11 @@
         </main>
     </div>
 
-    <!-- MENÚ LATERAL (SIDEBAR) VERDE -->
+    <!-- SIDEBAR -->
     <div class="drawer-side z-50">
         <label for="menu-drawer" aria-label="Cerrar menú de navegación" class="drawer-overlay bg-slate-900/30"></label>
         <aside class="bg-[#1A5333] text-white w-72 h-full flex flex-col justify-between p-4 shadow-xl">
             <div class="space-y-6">
-                <!-- BRANDING DE SIDEBAR -->
                 <div class="flex items-center gap-3 px-3 py-2 border-b border-emerald-700/50 pb-4">
                     <div class="w-9 h-9 rounded-xl bg-emerald-600/50 border border-emerald-400/30 flex items-center justify-center text-white shrink-0">
                         <i data-lucide="graduation-cap" class="w-5 h-5"></i>
@@ -401,20 +394,16 @@
                     </div>
                 </div>
 
-                <!-- ELEMENTOS DE NAVEGACIÓN -->
                 <nav class="space-y-1">
                     <span class="px-3 text-[10px] font-bold uppercase tracking-wider text-emerald-200/60 block mb-2">Navegación</span>
-                    
                     <a href="{% if url_for is defined %}{{ url_for('panel_coordinador') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
                         <i data-lucide="home" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
                         <span>Inicio</span>
                     </a>
-
                     <a href="{% if url_for is defined %}{{ url_for('reportes') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all group bg-emerald-800/60 text-white border border-emerald-600/40">
                         <i data-lucide="pie-chart" class="w-4 h-4 text-emerald-300"></i>
                         <span>Estadísticas Generales</span>
                     </a>
-
                     <a href="{% if url_for is defined %}{{ url_for('reporte_general_pdf') }}{% else %}#{% endif %}" class="relative flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium text-emerald-100 hover:bg-emerald-800/40 hover:text-white transition-all group">
                         <i data-lucide="file-text" class="w-4 h-4 text-emerald-300/70 group-hover:text-emerald-200 transition-colors"></i>
                         <span>Reporte PDF</span>
@@ -422,7 +411,6 @@
                 </nav>
             </div>
 
-            <!-- FOOTER DEL SIDEBAR VERDE -->
             <div class="pt-4 border-t border-emerald-700/50 space-y-3">
                 <div class="p-3 rounded-xl bg-emerald-800/40 border border-emerald-600/30 flex items-center gap-3">
                     <div class="w-8 h-8 rounded-full bg-emerald-100 text-[#1A5333] flex items-center justify-center font-bold text-xs shrink-0">
@@ -444,28 +432,25 @@
 
 </div>
 
-<!-- SCRIPT DE CONFIGURACIÓN DE CHART.JS -->
+<!-- SCRIPT DE CHART.JS -->
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Inicializar Lucide Icons
         if (typeof lucide !== 'undefined') {
             lucide.createIcons();
         }
 
-        // Configuración Global de Chart.js
         Chart.defaults.font.family = "'Inter', system-ui, -apple-system, sans-serif";
         Chart.defaults.color = '#64748B';
 
-        // Variables dinámicas Jinja2 con valores por defecto
-        const numSolicitadas = {{ solicitadas if solicitadas is defined else 5 }};
-        const numAsignadas = {{ asignadas if asignadas is defined else 4 }};
-        const numRealizadas = {{ realizadas if realizadas is defined else 9 }};
+        const numSolicitadas = {{ solicitadas if solicitadas is defined else 0 }};
+        const numAsignadas = {{ asignadas if asignadas is defined else 0 }};
+        const numRealizadas = {{ realizadas if realizadas is defined else 0 }};
 
-        const numAlumnos = {{ total_alumnos if total_alumnos is defined else 120 }};
-        const numTutores = {{ total_tutores if total_tutores is defined else 15 }};
-        const numCoordinadores = {{ total_coordinadores if total_coordinadores is defined else 3 }};
+        const numAlumnos = {{ total_alumnos if total_alumnos is defined else 0 }};
+        const numTutores = {{ total_tutores if total_tutores is defined else 0 }};
+        const numCoordinadores = {{ total_coordinadores if total_coordinadores is defined else 0 }};
 
-        // 1. Gráfica de Tutorías (Barras - Sin 'Confirmadas' y con colores únicos)
+        // 1. Gráfica de Tutorías (Barras - Sin 'Confirmadas')
         const ctx1 = document.getElementById('graficaTutorias');
         if (ctx1) {
             new Chart(ctx1.getContext('2d'), {
@@ -476,9 +461,9 @@
                         label: 'Número de Tutorías',
                         data: [numSolicitadas, numAsignadas, numRealizadas],
                         backgroundColor: [
-                            '#F59E0B', // Ámbar (Pendientes/Solicitadas)
-                            '#0EA5E9', // Cian / Azul Claro (Asignadas)
-                            '#10B981'  // Verde Esmeralda (Realizadas con éxito)
+                            '#F59E0B',
+                            '#0EA5E9',
+                            '#10B981'
                         ],
                         hoverBackgroundColor: [
                             '#D97706',
@@ -528,7 +513,7 @@
             });
         }
 
-        // 2. Gráfica de Usuarios (Doughnut amplio con separación anticolapso)
+        // 2. Gráfica de Usuarios (Con minAngle para visibilidad de valores reducidos)
         const ctx2 = document.getElementById('graficaUsuarios');
         if (ctx2) {
             new Chart(ctx2.getContext('2d'), {
@@ -538,25 +523,27 @@
                     datasets: [{
                         data: [numAlumnos, numTutores, numCoordinadores],
                         backgroundColor: [
-                            '#3B82F6', // Azul brillante (Alumnos)
-                            '#059669', // Verde Bosque / Menta (Tutores)
-                            '#8B5CF6'  // Púrpura (Coordinadores)
+                            '#2563EB', // Azul
+                            '#10B981', // Verde Esmeralda 
+                            '#8B5CF6'  // Púrpura
                         ],
                         hoverBackgroundColor: [
-                            '#2563EB',
-                            '#047857',
-                            '#7C3AED'
+                            '#1D4ED8',
+                            '#059669',
+                            '#6D28D9'
                         ],
-                        borderWidth: 4,
+                        borderWidth: 3,
                         borderColor: '#FFFFFF',
-                        spacing: 6,       // Espaciado que evita que 1 usuario se comprima
-                        hoverOffset: 8
+                        spacing: 4,
+                        hoverOffset: 6
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    cutout: '60%',       // Ancho óptimo para dar presencia visual incluso con baja cantidad de datos
+                    cutout: '65%',
+                    // Asigna un ángulo mínimo a cada segmento para dar volumen a datos bajos (p. ej. 1 usuario)
+                    minAngle: 15,
                     animation: {
                         animateScale: true,
                         animateRotate: true,
