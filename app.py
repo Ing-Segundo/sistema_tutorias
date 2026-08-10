@@ -386,15 +386,6 @@ def solicitar_tutoria():
     flash("Solicitud enviada al tutor correctamente", "success")
     return redirect(url_for("panel_alumno"))
 
-@app.route("/reporte-alumno-pdf")
-@requiere_rol("alumno")
-def reporte_alumno_pdf():
-    alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
-    tutorias = Tutoria.query.filter_by(id_alumno=alumno.id).all() if alumno else []
-    datos = [(t.fecha.strftime("%d/%m/%Y"), t.tema, t.estado, t.observaciones[:30]) for t in tutorias]
-    ruta = generar_pdf(datos, f"Mis Tutorías - {alumno.usuario.nombre_completo if alumno and alumno.usuario else ''}", ["Fecha", "Tema", "Estado", "Observaciones"])
-    return send_file(ruta, as_attachment=True, download_name="mis_tutorias.pdf")
-
 @app.route("/reportes-alumno")
 @requiere_rol("alumno")
 def reportes_alumno():
@@ -534,6 +525,28 @@ def reportes_tutor():
     realizadas = sum(1 for t in mis_tutorias if t.estado == "Realizada")
     pendientes = sum(1 for t in mis_tutorias if t.estado in ["Solicitada", "Confirmada", "Asignada por tutor"])
     return render_template("reportes_tutor.html", total=total, realizadas=realizadas, pendientes=pendientes, alumnos=mis_alumnos, tutorias=mis_tutorias)
+
+@app.route("/coordinador/actualizar-asignacion-masiva")
+@requiere_rol("coordinador")
+def actualizar_asignacion_masiva():
+    mapa_tutores = {}
+    for cred, nombre in TUTORES_INICIALES:
+        usr = Usuario.query.filter_by(credencial=cred).first()
+        if usr:
+            mapa_tutores[cred] = usr.id
+
+    actualizados = 0
+    for cred, nombre, cred_tutor in ALUMNOS_INICIALES:
+        usr = Usuario.query.filter_by(credencial=cred).first()
+        id_tutor_asignado = mapa_tutores.get(cred_tutor)
+        
+        if usr and usr.perfil_alumno:
+            usr.perfil_alumno.id_tutor = id_tutor_asignado
+            actualizados += 1
+            
+    db.session.commit()
+    flash(f"Se actualizaron {actualizados} asignaciones de tutorías correctamente.", "success")
+    return redirect(url_for("panel_coordinador"))
 
 # ===================== TUTORÍA INDIVIDUAL =====================
 @app.route("/iniciar-tutoria/<int:id>")
