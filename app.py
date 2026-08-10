@@ -180,11 +180,16 @@ def inicializar_base_datos():
             
         usr_coord = Usuario.query.filter_by(credencial="coordinador").first()
         if not usr_coord:
-            admin = Usuario(tipo="coordinador", credencial="coordinador", nombre_completo="Coordinador General", contrasena=generate_password_hash("clave_coordinador"))
+            admin = Usuario(
+                tipo="coordinador", 
+                credencial="coordinador", 
+                nombre_completo="Coordinador General", 
+                contrasena=generate_password_hash("coordinador") # Cambiado a 'coordinador' para mayor sencillez
+            )
             db.session.add(admin)
         else:
-            usr_coord.contrasena = generate_password_hash("clave_coordinador")
             usr_coord.bloqueado = False
+            usr_coord.intentos_fallidos = 0
 
         mapa_tutores = {}
 
@@ -201,7 +206,6 @@ def inicializar_base_datos():
                 db.session.flush()
                 db.session.add(Tutor(usuario_id=usr.id))
             else:
-                usr.contrasena = generate_password_hash(cred)
                 usr.bloqueado = False
                 usr.intentos_fallidos = 0
             mapa_tutores[cred] = usr.id
@@ -221,7 +225,6 @@ def inicializar_base_datos():
                 db.session.flush()
                 db.session.add(Alumno(usuario_id=usr.id, id_tutor=id_tutor_asignado, rendimiento="Sin registro"))
             else:
-                usr.contrasena = generate_password_hash(cred)
                 usr.bloqueado = False
                 usr.intentos_fallidos = 0
                 if usr.perfil_alumno:
