@@ -2,9 +2,9 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, timezone
-from fpdf import FPDF
 from functools import wraps
-import jwt, shutil, os, threading, time
+import jwt, shutil, os, threading, time, io
+import openpyxl
 
 # Configuración adaptada para reconocer la carpeta 'assets' en Render/GitHub
 app = Flask(__name__, static_folder='assets', static_url_path='/assets')
@@ -255,28 +255,6 @@ def tarea_respaldo_automatico():
 
 threading.Thread(target=tarea_respaldo_automatico, daemon=True).start()
 
-# ===================== FUNCIONES AUXILIARES =====================
-def generar_pdf(datos, titulo, columnas):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", "B", 16)
-    pdf.cell(0, 10, titulo.encode('latin-1', 'replace').decode('latin-1'), ln=True, align="C")
-    pdf.ln(5)
-    pdf.set_font("Arial", "B", 10)
-    anchos = [40, 50, 40, 50]
-    for i, col in enumerate(columnas):
-        pdf.cell(anchos[i], 8, col.encode('latin-1', 'replace').decode('latin-1'), border=1, align="C")
-    pdf.ln()
-    pdf.set_font("Arial", "", 9)
-    for fila in datos:
-        for i, celda in enumerate(fila):
-            texto = str(celda).encode('latin-1', 'replace').decode('latin-1')
-            pdf.cell(anchos[i], 8, texto, border=1, align="C")
-        pdf.ln()
-    ruta = os.path.join(CARPETA_BASE, f"reporte_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf")
-    pdf.output(ruta)
-    return ruta
-
 # ===================== JWT COMPLEMENTARIO =====================
 JWT_ALGORITMO = "HS256"
 JWT_MINUTOS_EXPIRACION = 30
@@ -506,15 +484,6 @@ def completar_tutoria(id):
     flash("Tutoría marcada como realizada", "success")
     return redirect(url_for("panel_tutor"))
 
-@app.route("/reporte-tutor-pdf")
-@requiere_rol("tutor")
-def reporte_tutor_pdf():
-    tutor = Tutor.query.filter_by(usuario_id=g.uid).first()
-    tutorias = Tutoria.query.filter_by(id_tutor=g.uid).all()
-    datos = [(t.alumno.usuario.nombre_completo if t.alumno and t.alumno.usuario else 'Sin Alumno', t.fecha.strftime("%d/%m/%Y"), t.tema, t.estado) for t in tutorias]
-    ruta = generar_pdf(datos, f"Tutorías a mi cargo - {tutor.usuario.nombre_completo if tutor and tutor.usuario else ''}", ["Alumno", "Fecha", "Tema", "Estado"])
-    return send_file(ruta, as_attachment=True, download_name="tutorias_tutor.pdf")
-
 @app.route("/reportes-tutor")
 @requiere_rol("tutor")
 def reportes_tutor():
@@ -589,21 +558,49 @@ def ver_tutoria_individual(id):
         return redirect(url_for("ver_tutoria_individual", id=id))
     return render_template("tutoria_individual.html", tutoria=tutoria)
 
-@app.route("/descargar-ficha-tutoria-pdf/<int:id>")
+@app.route("/descargar-ficha-tutoria-excel/<int:id>")
 @requiere_rol("tutor", "alumno")
-def descargar_ficha_tutoria_pdf(id):
+def descargar_ficha_tutoria_excel(id):
     tutoria = Tutoria.query.get_or_404(id)
     if g.rol == "tutor" and tutoria.id_tutor != g.uid:
         flash("No tienes permiso", "error")
         return redirect(url_for("panel_tutor"))
+
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Ficha de Tutoría"
+
+    ws.append(["Campo", "Detalle"])
     datos = [
+        ["ID Tutoría", tutoria.id],
         ["Alumno", tutoria.alumno.usuario.nombre_completo if tutoria.alumno and tutoria.alumno.usuario else "N/A"],
+        ["Matrícula", tutoria.alumno.usuario.credencial if tutoria.alumno and tutoria.alumno.usuario else "N/A"],
         ["Fecha", tutoria.fecha.strftime("%d/%m/%Y") if tutoria.fecha else "N/A"],
+        ["Carrera", tutoria.carrera],
+        ["Grupo", tutoria.grupo],
         ["Tema", tutoria.tema],
-        ["Estado", tutoria.estado]
+        ["Estado", tutoria.estado],
+        ["Hora Inicio", tutoria.hr_inicio],
+        ["Hora Salida", tutoria.hr_salida],
+        ["Motivo", tutoria.motivo],
+        ["Puntos Relevantes", tutoria.puntos_relevantes],
+        ["Compromisos", tutoria.compromisos],
+        ["Observaciones", tutoria.observaciones],
     ]
-    ruta = generar_pdf(datos, f"Ficha de Tutoría #{tutoria.id}", ["Campo", "Detalle"])
-    return send_file(ruta, as_attachment=True, download_name=f"ficha_tutoria_{tutoria.id}.pdf")
+
+    for fila in datos:
+        ws.append(fila)
+
+    stream = io.BytesIO()
+    wb.save(stream)
+    stream.seek(0)
+
+    return send_file(
+        stream,
+        as_attachment=True,
+        download_name=f"ficha_tutoria_{tutoria.id}.xlsx",
+        mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    )
 
 # ===================== COORDINADOR =====================
 @app.route("/panel-coordinador")
@@ -718,13 +715,6 @@ def config_respaldos():
         db.session.commit()
         flash("Configuración guardada", "success")
     return redirect(url_for("panel_coordinador"))
-
-@app.route("/reporte-general-pdf")
-@requiere_rol("coordinador")
-def reporte_general_pdf():
-    datos = [(u.tipo.upper(), u.credencial, u.nombre_completo, "Bloqueado" if u.bloqueado else "Activo") for u in Usuario.query.all()]
-    ruta = generar_pdf(datos, "Reporte General de Usuarios", ["Rol", "Credencial", "Nombre", "Estado"])
-    return send_file(ruta, as_attachment=True, download_name="reporte_general.pdf")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
