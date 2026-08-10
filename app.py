@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, g
+from flask import Flask, render_template, request, redirect, url_for, session, flash, send_file, g, make_response
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, timedelta, timezone
@@ -274,6 +274,139 @@ def generar_pdf(datos, titulo, columnas):
             pdf.cell(anchos[i], 8, texto, border=1, align="C")
         pdf.ln()
     ruta = os.path.join(CARPETA_BASE, f"reporte_{datetime.now().strftime('%Y%m%d%H%M%S')}.pdf")
+    pdf.output(ruta)
+    return ruta
+
+class PDFReporteTutoria(FPDF):
+    def header(self):
+        self.set_font("Arial", "B", 11)
+        self.set_text_color(26, 83, 51) # Color verde institucional
+        self.cell(0, 5, "UNIVERSIDAD TECNOLÓGICA DE NAYARIT", ln=True, align="C")
+        self.set_font("Arial", "B", 9)
+        self.set_text_color(51, 65, 85)
+        self.cell(0, 5, "INGENIERÍA EN DESARROLLO Y GESTIÓN DE SOFTWARE", ln=True, align="C")
+        self.set_font("Arial", "", 8)
+        self.set_text_color(100, 116, 139)
+        self.cell(0, 4, "Organismo Público Descentralizado · Gobierno del Estado de Nayarit", ln=True, align="C")
+        self.ln(3)
+
+    def footer(self):
+        self.set_y(-15)
+        self.set_font("Arial", "I", 7)
+        self.set_text_color(100, 116, 139)
+        self.cell(0, 10, "Documento generado por el Sistema de Tutorías de la Universidad Tecnológica de Nayarit.", align="C")
+
+def generar_pdf_tutoria_individual(tutoria):
+    pdf = PDFReporteTutoria()
+    pdf.add_page()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    
+    def txt(t):
+        return str(t or '').encode('latin-1', 'replace').decode('latin-1')
+
+    # Título principal
+    pdf.set_fill_color(26, 83, 51)
+    pdf.set_text_color(255, 255, 255)
+    pdf.set_font("Arial", "B", 11)
+    pdf.cell(0, 7, "REPORTE DE TUTORÍA INDIVIDUAL", ln=True, align="C", fill=True)
+    pdf.ln(3)
+
+    # Meta Información
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font("Arial", "", 9)
+    fecha_str = tutoria.fecha.strftime("%d/%m/%Y") if tutoria.fecha else "N/A"
+    pdf.cell(60, 5, f"Folio de Registro: #{tutoria.id}")
+    pdf.cell(60, 5, f"Estado: {txt(tutoria.estado)}")
+    pdf.cell(70, 5, f"Fecha emision: {fecha_str}", ln=True, align="R")
+    pdf.ln(3)
+
+    # SECCIÓN 1: INFORMACIÓN GENERAL
+    pdf.set_fill_color(225, 239, 230)
+    pdf.set_text_color(15, 51, 31)
+    pdf.set_font("Arial", "B", 9)
+    pdf.cell(0, 6, "  1. INFORMACIÓN GENERAL", ln=True, fill=True)
+    
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font("Arial", "", 9)
+    
+    nombre_alumno = tutoria.alumno.usuario.nombre_completo if tutoria.alumno and tutoria.alumno.usuario else "N/A"
+    
+    pdf.cell(100, 6, f"CARRERA: {txt(tutoria.carrera or 'INGENIERÍA EN DESARROLLO Y GESTIÓN DE SOFTWARE')}", border=1)
+    pdf.cell(45, 6, f"GRUPO: {txt(tutoria.grupo or 'N/A')}", border=1)
+    pdf.cell(45, 6, f"FOLIO: #{tutoria.id}", border=1, ln=True)
+    
+    pdf.cell(190, 6, f"ALUMNO: {txt(nombre_alumno)}", border=1, ln=True)
+    
+    pdf.cell(60, 6, f"FECHA: {fecha_str}", border=1)
+    pdf.cell(65, 6, f"HORA INICIO: {txt(tutoria.hr_inicio or '--:--')}", border=1)
+    pdf.cell(65, 6, f"HORA FIN: {txt(tutoria.hr_salida or '--:--')}", border=1, ln=True)
+    pdf.ln(4)
+
+    # SECCIÓN 2: MOTIVO DE LA TUTORÍA
+    pdf.set_fill_color(225, 239, 230)
+    pdf.set_text_color(15, 51, 31)
+    pdf.set_font("Arial", "B", 9)
+    pdf.cell(0, 6, "  2. MOTIVO DE LA TUTORÍA (marcar con una X el o los que apliquen)", ln=True, fill=True)
+    
+    motivos_sel = [m.strip() for m in tutoria.motivo.split(',')] if tutoria.motivo else []
+    
+    motivos_opciones = [
+        "Reprobacion", "Ausentismo", "Problemas economicos",
+        "Indisciplina", "Falta de atencion", "Problemas familiares",
+        "Impuntualidad", "Falta de compromiso", "Rendimiento bajo",
+        "Otros"
+    ]
+    
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font("Arial", "", 8)
+    
+    col_w = 63
+    for i, m in enumerate(motivos_opciones):
+        marca = "[ X ]" if any(m.lower() in ms.lower() for ms in motivos_sel) else "[   ]"
+        pdf.cell(col_w, 5, f"{marca}  {txt(m)}")
+        if (i + 1) % 3 == 0 or i == len(motivos_opciones) - 1:
+            pdf.ln()
+    pdf.ln(3)
+
+    # SECCIÓN 3: OBSERVACIONES Y SEGUIMIENTO
+    pdf.set_fill_color(225, 239, 230)
+    pdf.set_text_color(15, 51, 31)
+    pdf.set_font("Arial", "B", 9)
+    pdf.cell(0, 6, "  3. OBSERVACIONES Y SEGUIMIENTO", ln=True, fill=True)
+    pdf.ln(2)
+
+    def agregar_bloque_texto(subtitulo, contenido):
+        pdf.set_text_color(0, 0, 0)
+        pdf.set_font("Arial", "B", 8)
+        pdf.cell(0, 4, txt(subtitulo), ln=True)
+        pdf.set_font("Arial", "", 8)
+        pdf.multi_cell(0, 4, txt(contenido or "Sin información registrada."), border=1)
+        pdf.ln(2)
+
+    agregar_bloque_texto("PUNTOS RELEVANTES:", tutoria.puntos_relevantes)
+    agregar_bloque_texto("COMPROMISOS Y ACUERDOS:", tutoria.compromisos)
+    agregar_bloque_texto("OBSERVACIONES FINALES DEL TUTOR:", tutoria.observaciones)
+
+    # SECCIÓN 4: FIRMAS DE CONFORMIDAD
+    pdf.ln(2)
+    pdf.set_fill_color(225, 239, 230)
+    pdf.set_text_color(15, 51, 31)
+    pdf.set_font("Arial", "B", 9)
+    pdf.cell(0, 6, "  4. FIRMAS DE CONFORMIDAD", ln=True, fill=True)
+    pdf.ln(12)
+
+    y_linea = pdf.get_y()
+    pdf.line(15, y_linea, 65, y_linea)
+    pdf.line(80, y_linea, 130, y_linea)
+    pdf.line(145, y_linea, 195, y_linea)
+
+    pdf.set_font("Arial", "", 8)
+    pdf.set_text_color(0, 0, 0)
+    pdf.cell(65, 4, "Firma del Alumno", align="C")
+    pdf.cell(65, 4, "Firma del Tutor", align="C")
+    pdf.cell(60, 4, "Vo. Bo. Coordinacion", align="C", ln=True)
+
+    ruta = os.path.join(CARPETA_BASE, f"ficha_tutoria_{tutoria.id}.pdf")
     pdf.output(ruta)
     return ruta
 
@@ -583,13 +716,8 @@ def descargar_ficha_tutoria_pdf(id):
     if g.rol == "tutor" and tutoria.id_tutor != g.uid:
         flash("No tienes permiso", "error")
         return redirect(url_for("panel_tutor"))
-    datos = [
-        ["Alumno", tutoria.alumno.usuario.nombre_completo if tutoria.alumno and tutoria.alumno.usuario else "N/A"],
-        ["Fecha", tutoria.fecha.strftime("%d/%m/%Y") if tutoria.fecha else "N/A"],
-        ["Tema", tutoria.tema],
-        ["Estado", tutoria.estado]
-    ]
-    ruta = generar_pdf(datos, f"Ficha de Tutoría #{tutoria.id}", ["Campo", "Detalle"])
+    
+    ruta = generar_pdf_tutoria_individual(tutoria)
     return send_file(ruta, as_attachment=True, download_name=f"ficha_tutoria_{tutoria.id}.pdf")
 
 # ===================== COORDINADOR =====================
