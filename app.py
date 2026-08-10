@@ -386,15 +386,6 @@ def solicitar_tutoria():
     flash("Solicitud enviada al tutor correctamente", "success")
     return redirect(url_for("panel_alumno"))
 
-@app.route("/reporte-alumno-pdf")
-@requiere_rol("alumno")
-def reporte_alumno_pdf():
-    alumno = Alumno.query.filter_by(usuario_id=g.uid).first()
-    tutorias = Tutoria.query.filter_by(id_alumno=alumno.id).all() if alumno else []
-    datos = [(t.fecha.strftime("%d/%m/%Y"), t.tema, t.estado, t.observaciones[:30]) for t in tutorias]
-    ruta = generar_pdf(datos, f"Mis Tutorías - {alumno.usuario.nombre_completo if alumno and alumno.usuario else ''}", ["Fecha", "Tema", "Estado", "Observaciones"])
-    return send_file(ruta, as_attachment=True, download_name="mis_tutorias.pdf")
-
 @app.route("/reportes-alumno")
 @requiere_rol("alumno")
 def reportes_alumno():
