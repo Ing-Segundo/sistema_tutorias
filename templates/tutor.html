@@ -732,7 +732,7 @@
 
     const nombreTutorActual = {{ (tutor.usuario.nombre_completo if tutor and tutor.usuario and tutor.usuario.nombre_completo else '')|tojson }}.toLowerCase();
     let esSilvia = nombreTutorActual.includes('silvia');
-    let gruposTutor = esSilvia ? ['81', '82'] : ['83', '84'];
+    let gruposTutor = esSilvia ? ['91', '92'] : ['93', '94'];
     let nombreTutorFormatted = {{ (tutor.usuario.nombre_completo if tutor and tutor.usuario and tutor.usuario.nombre_completo else 'Docente Tutor')|tojson }};
 
     const baseAlumnosGrupos = {};
